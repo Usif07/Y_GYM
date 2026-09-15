@@ -6,7 +6,7 @@
         public int ClassId { get; set; }
         public Classe Class { get; set; }
         public int CoachId { get; set; }
-        public Coache Coach { get; set; }
+        public Coach Coach { get; set; }
         public int AvailablePlaces { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }

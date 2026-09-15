@@ -5,6 +5,7 @@ namespace Y_Gem.Data
 {
     public class ApplicationDbContext : DbContext
     {
+      
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -12,7 +13,7 @@ namespace Y_Gem.Data
 
         public DbSet<User> Users { get; set; }
         public DbSet<Admin> Admins { get; set; }
-        public DbSet<Coache> Coaches { get; set; }
+        public DbSet<Coach> Coaches { get; set; }
         public DbSet<Member> Members { get; set; }
         public DbSet<Staff> Staffs { get; set; }
         public DbSet<Classe> Classes { get; set; }
@@ -32,7 +33,7 @@ namespace Y_Gem.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Admin>().ToTable("Admins");
-            modelBuilder.Entity<Coache>().ToTable("Coaches");
+            modelBuilder.Entity<Coach>().ToTable("Coaches");
             modelBuilder.Entity<Member>().ToTable("Members");
             modelBuilder.Entity<Staff>().ToTable("Staffs");
 

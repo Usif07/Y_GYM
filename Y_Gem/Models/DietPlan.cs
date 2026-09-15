@@ -6,7 +6,7 @@
         public int MemberId { get; set; }
         public Member Member { get; set; }
         public int CoachId { get; set; }
-        public Coache Coach { get; set; }
+        public Coach Coach { get; set; }
         public string? PlanDetails { get; set; }
         public DateTime StartDate { get; set; }
 

@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Y_Gem.Data;
+using Y_GYM.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IMembershipPlans,MembershipPlans>();
 
 var app = builder.Build();
 
