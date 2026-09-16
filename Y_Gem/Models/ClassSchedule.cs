@@ -11,5 +11,7 @@
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
+        // الأعضاء اللي حجزوا في الحصة دي - الكوتش بيستخدمها عشان يأكد الحضور
+        public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
 }

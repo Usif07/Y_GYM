@@ -5,7 +5,6 @@ namespace Y_Gem.Data
 {
     public class ApplicationDbContext : DbContext
     {
-      
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -56,8 +55,13 @@ namespace Y_Gem.Data
 
             modelBuilder.Entity<DietPlan>()
                 .HasOne(d => d.Coach)
-                .WithMany()
+                .WithMany(c => c.DietPlans)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<ClassSchedule>()
+                .HasOne(cs => cs.Coach)
+                .WithMany(c => c.ClassSchedules)
+                .OnDelete(DeleteBehavior.Cascade);
 
             
             modelBuilder.Entity<Booking>()
@@ -67,7 +71,7 @@ namespace Y_Gem.Data
 
             modelBuilder.Entity<Booking>()
                 .HasOne(b => b.ClassSchedule)
-                .WithMany()
+                .WithMany(cs => cs.Bookings)
                 .OnDelete(DeleteBehavior.NoAction);
         }
     }
