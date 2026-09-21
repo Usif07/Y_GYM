@@ -5,9 +5,13 @@
         public int Id { get; set; }
         public int SubscriptionId { get; set; }
         public Subscription Subscriptions { get; set; }
-        public  double AmountPaid { get; set; }
+        public double AmountPaid { get; set; }
         public DateTime? PaymentDate { get; set; }
+
        
+        public int? StaffId { get; set; }
+        public Staff Staff { get; set; }
+
 
     }
 }

@@ -1,0 +1,63 @@
+@model IEnumerable<Y_Gem.Models.Progress>
+@{
+    ViewData["Title"] = "My Progress";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-dark">Track My Progress</h2>
+
+    <div class="row">
+        <div class="col-md-5 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h6 class="text-secondary fw-bold mb-3">Record a New Weight</h6>
+                    <form method="post" asp-action="AddProgress">
+                        <div class="mb-3">
+                            <label class="form-label">Weight (kg)</label>
+                            <input type="number" name="weight" step="0.1" class="form-control" required />
+                        </div>
+                        <button type="submit" class="btn btn-dark">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            @if (!Model.Any())
+            {
+                <div class="alert alert-light border text-center py-5">
+                    <p class="mb-0 text-muted">No records yet — Start by entering your current weight</p>
+                </div>
+            }
+            else
+            {
+                <canvas id="progressChart" height="200"></canvas>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @if (Model.Any())
+    {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+        <script>
+            const ctx = document.getElementById('progressChart');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [@Html.Raw(string.Join(",", Model.Select(p => $"'{p.RecordDate:dd/MM}'")))],
+                    datasets: [{
+                        label: 'Weight (kg)',
+                        data: [@string.Join(",", Model.Select(p => p.Weight))],
+                        borderColor: '#212529',
+                        backgroundColor: 'rgba(33,37,41,0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: { responsive: true }
+            });
+        </script>
+    }
+}

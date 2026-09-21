@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Y_Gem.Data;
 
@@ -11,9 +12,11 @@ using Y_Gem.Data;
 namespace Y_GYM.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260915204533_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -244,6 +247,9 @@ namespace Y_GYM.Migrations
                     b.Property<DateTime>("BookingDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("ClassScheduleId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsAttended")
                         .HasColumnType("bit");
 
@@ -259,9 +265,9 @@ namespace Y_GYM.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MemberId");
+                    b.HasIndex("ClassScheduleId");
 
-                    b.HasIndex("ScheduleId");
+                    b.HasIndex("MemberId");
 
                     b.ToTable("Bookings");
                 });
@@ -314,7 +320,6 @@ namespace Y_GYM.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("CoachId1")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("EndTime")
@@ -540,6 +545,9 @@ namespace Y_GYM.Migrations
                     b.Property<int>("MemberId")
                         .HasColumnType("int");
 
+                    b.Property<int>("MembershipPlansId")
+                        .HasColumnType("int");
+
                     b.Property<int>("PlanId")
                         .HasColumnType("int");
 
@@ -554,7 +562,7 @@ namespace Y_GYM.Migrations
 
                     b.HasIndex("MemberId");
 
-                    b.HasIndex("PlanId");
+                    b.HasIndex("MembershipPlansId");
 
                     b.ToTable("Subscriptions");
                 });
@@ -630,16 +638,16 @@ namespace Y_GYM.Migrations
 
             modelBuilder.Entity("Y_Gem.Models.Booking", b =>
                 {
+                    b.HasOne("Y_Gem.Models.ClassSchedule", "ClassSchedule")
+                        .WithMany()
+                        .HasForeignKey("ClassScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Y_Gem.Models.Member", "Member")
                         .WithMany("Bookings")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Y_Gem.Models.ClassSchedule", "ClassSchedule")
-                        .WithMany()
-                        .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("ClassSchedule");
@@ -668,19 +676,17 @@ namespace Y_GYM.Migrations
 
             modelBuilder.Entity("Y_Gem.Models.ClassSchedule", b =>
                 {
-                    b.HasOne("Y_Gem.Models.Classe", "Classe")
+                    b.HasOne("Y_Gem.Models.Classe", "Class")
                         .WithMany()
                         .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Y_Gem.Models.Coach", "Coach")
                         .WithMany()
-                        .HasForeignKey("CoachId1")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("CoachId1");
 
-                    b.Navigation("Classe");
+                    b.Navigation("Class");
 
                     b.Navigation("Coach");
                 });
@@ -760,15 +766,15 @@ namespace Y_GYM.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Y_Gem.Models.MembershipPlan", "MembershipPlan")
+                    b.HasOne("Y_Gem.Models.MembershipPlan", "MembershipPlans")
                         .WithMany()
-                        .HasForeignKey("PlanId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("MembershipPlansId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Member");
 
-                    b.Navigation("MembershipPlan");
+                    b.Navigation("MembershipPlans");
                 });
 
             modelBuilder.Entity("Y_Gem.Models.Member", b =>

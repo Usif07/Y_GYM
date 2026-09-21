@@ -1,74 +1,89 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿// Data/ApplicationDbContext.cs
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Y_Gem.Models;
+using Microsoft.AspNetCore.Identity;
+
 
 namespace Y_Gem.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-      
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
-            : base(options)
-        {
-        }
+            : base(options) { }
 
-        public DbSet<User> Users { get; set; }
-        public DbSet<Admin> Admins { get; set; }
-        public DbSet<Coach> Coaches { get; set; }
         public DbSet<Member> Members { get; set; }
-        public DbSet<Staff> Staffs { get; set; }
-        public DbSet<Classe> Classes { get; set; }
-        public DbSet<ClassSchedule> ClassSchedules { get; set; }
-        public DbSet<DietPlan> DietPlans { get; set; }
+        public DbSet<Staff> Staff { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<MembershipPlan> MembershipPlans { get; set; }
         public DbSet<Payment> Payments { get; set; }
-        public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<CheckIn> CheckIns { get; set; }
         public DbSet<Booking> Bookings { get; set; }
-        public DbSet<Progress> Progresses { get; set; }
+        public DbSet<ClassSchedule> ClassSchedules { get; set; }
+        public DbSet<Classe> Classes { get; set; }
+        public DbSet<Coach> Coaches { get; set; }
+        public DbSet<Admin> Admins { get; set; }
+        public DbSet<DietPlan> DietPlans { get; set; }
+        public DbSet<Progress> ProgressLogs { get; set; }
 
-
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
 
-            modelBuilder.Entity<Admin>().ToTable("Admins");
-            modelBuilder.Entity<Coach>().ToTable("Coaches");
-            modelBuilder.Entity<Member>().ToTable("Members");
-            modelBuilder.Entity<Staff>().ToTable("Staffs");
+            // Member <-> ApplicationUser (1-to-1)
+            builder.Entity<Member>()
+                .HasOne(m => m.User)
+                .WithOne()
+                .HasForeignKey<Member>(m => m.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-           
-            modelBuilder.Entity<CheckIn>()
-                .HasOne(c => c.Staff)
+            // Staff <-> ApplicationUser (1-to-1)
+            builder.Entity<Staff>()
+                .HasOne(s => s.User)
+                .WithOne()
+                .HasForeignKey<Staff>(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Subscription>()
+                .HasOne(s => s.MembershipPlan)
                 .WithMany()
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(s => s.PlanId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<CheckIn>()
-                .HasOne(c => c.Member)
-                .WithMany()
-                .OnDelete(DeleteBehavior.NoAction);
-
-         
-            modelBuilder.Entity<DietPlan>()
-                .HasOne(d => d.Member)
-                .WithMany()
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<DietPlan>()
-                .HasOne(d => d.Coach)
-                .WithMany()
-                .OnDelete(DeleteBehavior.NoAction);
-
-            
-            modelBuilder.Entity<Booking>()
-                .HasOne(b => b.Member)
-                .WithMany()
-                .OnDelete(DeleteBehavior.NoAction);
-
-            modelBuilder.Entity<Booking>()
+            builder.Entity<Booking>()
                 .HasOne(b => b.ClassSchedule)
                 .WithMany()
-                .OnDelete(DeleteBehavior.NoAction);
+                .HasForeignKey(b => b.ScheduleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            // منع Cascade Delete المتعدد المسارات في CheckIn
+            builder.Entity<CheckIn>()
+                .HasOne(c => c.Member)
+                .WithMany(m => m.CheckIns)
+                .HasForeignKey(c => c.MemberId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<CheckIn>()
+                .HasOne(c => c.Staff)
+                .WithMany(s => s.CheckIns)
+                .HasForeignKey(c => c.StaffId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ClassSchedule>()
+                .HasOne(cs => cs.Coach)
+                .WithMany()
+                .HasForeignKey("CoachId1")     // العمود الـ string الحقيقي
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<ClassSchedule>()
+                .HasOne(cs => cs.Classe)
+                .WithMany()
+                .HasForeignKey(cs => cs.ClassId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
+
+
+
     }
 }
