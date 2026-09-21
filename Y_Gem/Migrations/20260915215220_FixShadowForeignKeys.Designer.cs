@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Y_Gem.Data;
 
@@ -11,9 +12,11 @@ using Y_Gem.Data;
 namespace Y_GYM.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260915215220_FixShadowForeignKeys")]
+    partial class FixShadowForeignKeys
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -310,11 +313,13 @@ namespace Y_GYM.Migrations
                     b.Property<int>("ClassId")
                         .HasColumnType("int");
 
+                    b.Property<int>("ClasseId")
+                        .HasColumnType("int");
+
                     b.Property<int>("CoachId")
                         .HasColumnType("int");
 
                     b.Property<string>("CoachId1")
-                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("EndTime")
@@ -325,7 +330,7 @@ namespace Y_GYM.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClassId");
+                    b.HasIndex("ClasseId");
 
                     b.HasIndex("CoachId1");
 
@@ -670,15 +675,13 @@ namespace Y_GYM.Migrations
                 {
                     b.HasOne("Y_Gem.Models.Classe", "Classe")
                         .WithMany()
-                        .HasForeignKey("ClassId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("ClasseId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Y_Gem.Models.Coach", "Coach")
                         .WithMany()
-                        .HasForeignKey("CoachId1")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .HasForeignKey("CoachId1");
 
                     b.Navigation("Classe");
 

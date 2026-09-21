@@ -1,0 +1,31 @@
+@model Y_Gem.Models.Staff
+@{
+    ViewData["Title"] = "Employee Control Panel";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-dark">Hello، @Model.User.FullName</h2>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <a asp-action="RegisterMember" class="text-decoration-none">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center py-4">
+                        <h6 class="fw-bold text-dark">Register a New Member</h6>
+                    </div>
+                </div>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">Log In (Check-in)</h6>
+                    <form method="post" asp-action="CheckIn">
+                        <input type="text" name="qrCode" class="form-control mb-2" placeholder="Scan or enter the member code" required />
+                        <button type="submit" class="btn btn-dark w-100">Check</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

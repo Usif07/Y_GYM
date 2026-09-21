@@ -1,0 +1,74 @@
+@model Y_Gem.Models.Member
+@{
+    ViewData["Title"] = "Control Panel";
+    var sub = ViewBag.ActiveSubscription as Y_Gem.Models.Subscription;
+    var nextBooking = ViewBag.NextBooking as Y_Gem.Models.Booking;
+    int attendance = ViewBag.AttendanceThisMonth ?? 0;
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4 text-dark">Hello، @Model.User.FullName</h2>
+
+    <div class="row g-3">
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-secondary fw-bold">Subscription Status</h6>
+                    @if (sub != null)
+                    {
+                        <p class="fs-4 text-success mb-0">@sub.MembershipPlan.Name</p>
+                        <small class="text-muted">Remaining @((sub.EndDate - DateTime.Now).Days) Day</small>
+                    }
+                    else
+                    {
+                        <p class="fs-5 text-danger mb-0">There is no active subscription</p>
+                        <a asp-action="Plans" asp-controller="Home" class="btn btn-sm btn-dark mt-2">Subscribe Now</a>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-secondary fw-bold">Attendance This Month</h6>
+                    <p class="fs-3 mb-0">@attendance</p>
+                    <small class="text-muted">Once</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-secondary fw-bold">Current Weight</h6>
+                    <p class="fs-3 mb-0">@Model.Weight</p>
+                    <small class="text-muted">Kg</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-secondary fw-bold">Next Class</h6>
+                    @if (nextBooking != null)
+                    {
+                        <p class="fs-6 mb-0">@nextBooking.ClassSchedule.Classe.Name</p>
+                        <small class="text-muted">@nextBooking.ClassSchedule.StartTime.ToString("dd/MM HH:mm")</small>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">No bookings</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Schedule" class="btn btn-dark px-4">View the class schedule</a>
+        <a asp-action="MyBookings" class="btn btn-outline-secondary px-4 ms-2">My bookings</a>
+        <a asp-action="Progress" class="btn btn-outline-secondary px-4 ms-2">My Progress</a>
+    </div>
+</div>

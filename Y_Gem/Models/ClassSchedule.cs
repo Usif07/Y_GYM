@@ -4,7 +4,7 @@
     {
         public int Id { get; set; }
         public int ClassId { get; set; }
-        public Classe Class { get; set; }
+        public Classe Classe { get; set; }
         public int CoachId { get; set; }
         public Coach Coach { get; set; }
         public int AvailablePlaces { get; set; }

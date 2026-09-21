@@ -1,6 +1,6 @@
 ﻿namespace Y_Gem.Models
 {
-    public class Admin : User
+    public class Admin : ApplicationUser
     {
 
     }
