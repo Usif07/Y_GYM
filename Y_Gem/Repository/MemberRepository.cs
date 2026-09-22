@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
-using Y_Gem.Data;
-using Y_Gem.Models;
+using Y_GYM.Data;
+using Y_GYM.Models;
 
-namespace Y_Gem.Repository
+namespace Y_GYM.Repository
 {
     public class MemberRepository : GenericRepository<Member>, IMemberRepository
     {
@@ -16,7 +16,7 @@ namespace Y_Gem.Repository
             =>  _dbSet
                 .Include(m => m.User)
                 .Include(m => m.Subscriptions).ThenInclude(s => s.MembershipPlan)
-                .Include(m => m.Bookings).ThenInclude(b => b.ClassSchedule).ThenInclude(cs => cs.Classe)
+                .Include(m => m.Booking).ThenInclude(b => b.ClassSchedule).ThenInclude(cs => cs.Class)
                 .FirstOrDefault(m => m.Id == memberId);
 
         public Subscription GetActiveSubscription(int memberId)

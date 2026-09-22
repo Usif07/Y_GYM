@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
-using Y_Gem.Data;
+using Y_GYM.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Y_Gem.Models;
-using Y_Gem.Repository;
+using Y_GYM.Models;
+using Y_GYM.Repository;
 using Microsoft.EntityFrameworkCore;
-using Y_Gem.Models.ViewModels;
+using Y_GYM.Models.ViewModels;
 
 
-namespace Y_Gem.Controllers
+namespace Y_GYM.Controllers
 {
     // [Authorize(Roles = "Staff")]
     public class StaffController : Controller
@@ -118,7 +118,7 @@ namespace Y_Gem.Controllers
                 var payment = new Payment
                 {
                     SubscriptionId = subscription.Id,
-                    AmountPaid = amountPaid,
+                    Amount = (decimal)amountPaid,
                     PaymentDate = DateTime.Now,
                     StaffId = staffId
                 };

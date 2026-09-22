@@ -1,4 +1,4 @@
-﻿using Y_Gem.Models;
+﻿using Y_GYM.Models;
 
 namespace Y_GYM.Repository
 {

@@ -1,4 +1,4 @@
-@model IEnumerable<Y_Gem.Models.ClassSchedule>
+@model IEnumerable<Y_GYM.Models.ClassSchedule>
 @{
     ViewData["Title"] = "Class Schedule";
 }
@@ -29,7 +29,7 @@
                     @foreach (var s in Model)
                     {
                         <tr>
-                            <td>@s.Classe.Name</td>
+                            <td>@s.Class.Name</td>
                             <td>@s.Coach.coachSpecialty</td>
                             <td>@s.StartTime.ToString("ddd dd/MM - HH:mm")</td>
                             <td>

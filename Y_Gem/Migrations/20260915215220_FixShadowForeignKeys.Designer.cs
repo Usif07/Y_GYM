@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Y_Gem.Data;
+using Y_GYM.Data;
 
 #nullable disable
 
@@ -158,7 +158,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Y_GYM.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -236,7 +236,7 @@ namespace Y_GYM.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Booking", b =>
+            modelBuilder.Entity("Y_GYM.Models.Booking", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -269,7 +269,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.CheckIn", b =>
+            modelBuilder.Entity("Y_GYM.Models.CheckIn", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -299,7 +299,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("CheckIns");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.ClassSchedule", b =>
+            modelBuilder.Entity("Y_GYM.Models.ClassSchedule", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -337,7 +337,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("ClassSchedules");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Classe", b =>
+            modelBuilder.Entity("Y_GYM.Models.Classe", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -357,7 +357,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("Classes");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.DietPlan", b =>
+            modelBuilder.Entity("Y_GYM.Models.DietPlan", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -389,7 +389,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("DietPlans");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Member", b =>
+            modelBuilder.Entity("Y_GYM.Models.Member", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -427,7 +427,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("Members");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.MembershipPlan", b =>
+            modelBuilder.Entity("Y_GYM.Models.MembershipPlan", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -450,7 +450,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("MembershipPlans");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Payment", b =>
+            modelBuilder.Entity("Y_GYM.Models.Payment", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -479,7 +479,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("Payments");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Progress", b =>
+            modelBuilder.Entity("Y_GYM.Models.Progress", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -503,7 +503,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("ProgressLogs");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Staff", b =>
+            modelBuilder.Entity("Y_GYM.Models.Staff", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -531,7 +531,7 @@ namespace Y_GYM.Migrations
                     b.ToTable("Staff");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Subscription", b =>
+            modelBuilder.Entity("Y_GYM.Models.Subscription", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -564,16 +564,16 @@ namespace Y_GYM.Migrations
                     b.ToTable("Subscriptions");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Admin", b =>
+            modelBuilder.Entity("Y_GYM.Models.Admin", b =>
                 {
-                    b.HasBaseType("Y_Gem.Models.ApplicationUser");
+                    b.HasBaseType("Y_GYM.Models.ApplicationUser");
 
                     b.HasDiscriminator().HasValue("Admin");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Coach", b =>
+            modelBuilder.Entity("Y_GYM.Models.Coach", b =>
                 {
-                    b.HasBaseType("Y_Gem.Models.ApplicationUser");
+                    b.HasBaseType("Y_GYM.Models.ApplicationUser");
 
                     b.Property<string>("coachSpecialty")
                         .IsRequired()
@@ -593,7 +593,7 @@ namespace Y_GYM.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Y_Gem.Models.ApplicationUser", null)
+                    b.HasOne("Y_GYM.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -602,7 +602,7 @@ namespace Y_GYM.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Y_Gem.Models.ApplicationUser", null)
+                    b.HasOne("Y_GYM.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -617,7 +617,7 @@ namespace Y_GYM.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Y_Gem.Models.ApplicationUser", null)
+                    b.HasOne("Y_GYM.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -626,22 +626,22 @@ namespace Y_GYM.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Y_Gem.Models.ApplicationUser", null)
+                    b.HasOne("Y_GYM.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Booking", b =>
+            modelBuilder.Entity("Y_GYM.Models.Booking", b =>
                 {
-                    b.HasOne("Y_Gem.Models.Member", "Member")
+                    b.HasOne("Y_GYM.Models.Member", "Member")
                         .WithMany("Bookings")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Y_Gem.Models.ClassSchedule", "ClassSchedule")
+                    b.HasOne("Y_GYM.Models.ClassSchedule", "ClassSchedule")
                         .WithMany()
                         .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -652,15 +652,15 @@ namespace Y_GYM.Migrations
                     b.Navigation("Member");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.CheckIn", b =>
+            modelBuilder.Entity("Y_GYM.Models.CheckIn", b =>
                 {
-                    b.HasOne("Y_Gem.Models.Member", "Member")
+                    b.HasOne("Y_GYM.Models.Member", "Member")
                         .WithMany("CheckIns")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Y_Gem.Models.Staff", "Staff")
+                    b.HasOne("Y_GYM.Models.Staff", "Staff")
                         .WithMany("CheckIns")
                         .HasForeignKey("StaffId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -671,15 +671,15 @@ namespace Y_GYM.Migrations
                     b.Navigation("Staff");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.ClassSchedule", b =>
+            modelBuilder.Entity("Y_GYM.Models.ClassSchedule", b =>
                 {
-                    b.HasOne("Y_Gem.Models.Classe", "Classe")
+                    b.HasOne("Y_GYM.Models.Classe", "Classe")
                         .WithMany()
                         .HasForeignKey("ClasseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Y_Gem.Models.Coach", "Coach")
+                    b.HasOne("Y_GYM.Models.Coach", "Coach")
                         .WithMany()
                         .HasForeignKey("CoachId1");
 
@@ -688,13 +688,13 @@ namespace Y_GYM.Migrations
                     b.Navigation("Coach");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.DietPlan", b =>
+            modelBuilder.Entity("Y_GYM.Models.DietPlan", b =>
                 {
-                    b.HasOne("Y_Gem.Models.Coach", "Coach")
+                    b.HasOne("Y_GYM.Models.Coach", "Coach")
                         .WithMany()
                         .HasForeignKey("CoachId1");
 
-                    b.HasOne("Y_Gem.Models.Member", "Member")
+                    b.HasOne("Y_GYM.Models.Member", "Member")
                         .WithMany()
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -705,24 +705,24 @@ namespace Y_GYM.Migrations
                     b.Navigation("Member");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Member", b =>
+            modelBuilder.Entity("Y_GYM.Models.Member", b =>
                 {
-                    b.HasOne("Y_Gem.Models.ApplicationUser", "User")
+                    b.HasOne("Y_GYM.Models.ApplicationUser", "User")
                         .WithOne()
-                        .HasForeignKey("Y_Gem.Models.Member", "UserId")
+                        .HasForeignKey("Y_GYM.Models.Member", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Payment", b =>
+            modelBuilder.Entity("Y_GYM.Models.Payment", b =>
                 {
-                    b.HasOne("Y_Gem.Models.Staff", "Staff")
+                    b.HasOne("Y_GYM.Models.Staff", "Staff")
                         .WithMany("PaymentsHandled")
                         .HasForeignKey("StaffId");
 
-                    b.HasOne("Y_Gem.Models.Subscription", "Subscriptions")
+                    b.HasOne("Y_GYM.Models.Subscription", "Subscriptions")
                         .WithMany()
                         .HasForeignKey("SubscriptionId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -733,9 +733,9 @@ namespace Y_GYM.Migrations
                     b.Navigation("Subscriptions");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Progress", b =>
+            modelBuilder.Entity("Y_GYM.Models.Progress", b =>
                 {
-                    b.HasOne("Y_Gem.Models.Member", "Member")
+                    b.HasOne("Y_GYM.Models.Member", "Member")
                         .WithMany("ProgressLogs")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -744,26 +744,26 @@ namespace Y_GYM.Migrations
                     b.Navigation("Member");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Staff", b =>
+            modelBuilder.Entity("Y_GYM.Models.Staff", b =>
                 {
-                    b.HasOne("Y_Gem.Models.ApplicationUser", "User")
+                    b.HasOne("Y_GYM.Models.ApplicationUser", "User")
                         .WithOne()
-                        .HasForeignKey("Y_Gem.Models.Staff", "UserId")
+                        .HasForeignKey("Y_GYM.Models.Staff", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Subscription", b =>
+            modelBuilder.Entity("Y_GYM.Models.Subscription", b =>
                 {
-                    b.HasOne("Y_Gem.Models.Member", "Member")
+                    b.HasOne("Y_GYM.Models.Member", "Member")
                         .WithMany("Subscriptions")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Y_Gem.Models.MembershipPlan", "MembershipPlan")
+                    b.HasOne("Y_GYM.Models.MembershipPlan", "MembershipPlan")
                         .WithMany()
                         .HasForeignKey("PlanId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -774,7 +774,7 @@ namespace Y_GYM.Migrations
                     b.Navigation("MembershipPlan");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Member", b =>
+            modelBuilder.Entity("Y_GYM.Models.Member", b =>
                 {
                     b.Navigation("Bookings");
 
@@ -785,7 +785,7 @@ namespace Y_GYM.Migrations
                     b.Navigation("Subscriptions");
                 });
 
-            modelBuilder.Entity("Y_Gem.Models.Staff", b =>
+            modelBuilder.Entity("Y_GYM.Models.Staff", b =>
                 {
                     b.Navigation("CheckIns");
 

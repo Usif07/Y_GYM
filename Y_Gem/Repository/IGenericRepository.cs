@@ -15,7 +15,7 @@
 // Repository/IGenericRepository.cs
 using System.Linq.Expressions;
 
-namespace Y_Gem.Repository
+namespace Y_GYM.Repository
 {
     public interface IGenericRepository<T> where T : class
     {

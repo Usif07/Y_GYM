@@ -1,8 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using Y_Gem.Data;
 using Microsoft.AspNetCore.Identity;
-using Y_Gem.Models;
-using Y_Gem.Repository;
+using Microsoft.EntityFrameworkCore;
+using Y_GYM.Data;
+using Y_GYM.Models;
+using Y_GYM.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +21,17 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
+builder.Services.AddScoped<ICoachRepository, CoachRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<ICheckInRepository, CheckInRepository>();
+builder.Services.AddScoped<IClassRepository, ClassRepository>();
+builder.Services.AddScoped<IClassScheduleRepository, ClassScheduleRepository>();
+builder.Services.AddScoped<IDietPlanRepository, DietPlanRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
 builder.Services.AddControllersWithViews();
 

@@ -1,8 +1,7 @@
-﻿using Y_Gem.Data;
-using Y_Gem.Models;
+﻿using Y_GYM.Data;
+using Y_GYM.Models;
 
-namespace Y_GYM.Repository
-{
+namespace Y_GYM.Repository{
     public class MembershipPlans : IMembershipPlans
     {
         private readonly ApplicationDbContext context;

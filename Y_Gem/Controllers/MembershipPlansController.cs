@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Y_Gem.Models;
+using Y_GYM.Models;
 using Y_GYM.Repository;
 
 namespace Y_GYM.Controllers

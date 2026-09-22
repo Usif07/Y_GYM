@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;//?
-using Y_Gem.Data;
+using Y_GYM.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using Y_Gem.Models;
-using Y_Gem.Repository;
+using Y_GYM.Models;
+using Y_GYM.Repository;
 
 
 
-namespace Y_Gem.Controllers
+namespace Y_GYM.Controllers
 {
     // [Authorize(Roles = "Member")]
     public class MemberController : Controller
@@ -36,7 +36,7 @@ namespace Y_Gem.Controllers
             ViewBag.ActiveSubscription =  _memberRepo.GetActiveSubscription(member.Id);
             ViewBag.AttendanceThisMonth =  _memberRepo.GetAttendanceCountThisMonth(member.Id);
             ViewBag.NextBooking =  _context.Bookings
-                .Include(b => b.ClassSchedule).ThenInclude(cs => cs.Classe)
+                .Include(b => b.ClassSchedule).ThenInclude(cs => cs.Class)
                 .Where(b => b.MemberId == member.Id && b.ClassSchedule.StartTime > DateTime.Now && b.Status == "Confirmed")
                 .OrderBy(b => b.ClassSchedule.StartTime)
                 .FirstOrDefault();
@@ -47,7 +47,7 @@ namespace Y_Gem.Controllers
         public IActionResult Schedule()
         {
             var schedules =  _context.ClassSchedules
-                .Include(cs => cs.Classe)
+                .Include(cs => cs.Class)
                 .Include(cs => cs.Coach)
                 .Where(cs => cs.StartTime > DateTime.Now)
                 .OrderBy(cs => cs.StartTime)
@@ -166,7 +166,7 @@ namespace Y_Gem.Controllers
             // var member =  _memberRepo.GetByUserId(userId);
 
             var bookings =  _context.Bookings
-                .Include(b => b.ClassSchedule).ThenInclude(cs => cs.Classe)
+                .Include(b => b.ClassSchedule).ThenInclude(cs => cs.Class)
                 .Include(b => b.ClassSchedule).ThenInclude(cs => cs.Coach)
                 .Where(b => b.MemberId == member.Id)
                 .OrderByDescending(b => b.ClassSchedule.StartTime)

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Y_Gem.Models.ViewModels
+namespace Y_GYM.Models.ViewModels
 {
     public class RegisterMemberVM
     {

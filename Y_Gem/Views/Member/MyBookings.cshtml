@@ -1,4 +1,4 @@
-@model IEnumerable<Y_Gem.Models.Booking>
+@model IEnumerable<Y_GYM.Models.Booking>
 @{
     ViewData["Title"] = "My bookings";
     var now = DateTime.Now;
@@ -24,7 +24,7 @@
                 <div class="col-md-4">
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
-                            <h6 class="fw-bold">@b.ClassSchedule.Classe.Name</h6>
+                            <h6 class="fw-bold">@b.ClassSchedule.Class.Name</h6>
                             <p class="text-muted mb-1">@b.ClassSchedule.StartTime.ToString("ddd dd/MM - HH:mm")</p>
                             <form method="post" asp-action="CancelBooking">
                                 <input type="hidden" name="bookingId" value="@b.Id" />
@@ -61,7 +61,7 @@
                     @foreach (var b in past)
                     {
                         <tr>
-                            <td>@b.ClassSchedule.Classe.Name</td>
+                            <td>@b.ClassSchedule.Class.Name</td>
                             <td>@b.ClassSchedule.StartTime.ToString("dd/MM/yyyy")</td>
                             <td>
                                 @if (b.Status == "Cancelled")

@@ -1,11 +1,11 @@
 ﻿// Data/ApplicationDbContext.cs
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Y_Gem.Models;
+using Y_GYM.Models;
 using Microsoft.AspNetCore.Identity;
 
 
-namespace Y_Gem.Data
+namespace Y_GYM.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
@@ -20,7 +20,7 @@ namespace Y_Gem.Data
         public DbSet<CheckIn> CheckIns { get; set; }
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<ClassSchedule> ClassSchedules { get; set; }
-        public DbSet<Classe> Classes { get; set; }
+        public DbSet<Class> Classes { get; set; }
         public DbSet<Coach> Coaches { get; set; }
         public DbSet<Admin> Admins { get; set; }
         public DbSet<DietPlan> DietPlans { get; set; }
@@ -77,7 +77,7 @@ namespace Y_Gem.Data
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<ClassSchedule>()
-                .HasOne(cs => cs.Classe)
+                .HasOne(cs => cs.Class)
                 .WithMany()
                 .HasForeignKey(cs => cs.ClassId)
                 .OnDelete(DeleteBehavior.Restrict);
