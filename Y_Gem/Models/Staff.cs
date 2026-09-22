@@ -1,4 +1,4 @@
-﻿// namespace Y_Gem.Models
+﻿// namespace Y_GYM.Models
 // {
 //     public class Staff : User
 //     {
@@ -9,7 +9,7 @@
 
 
 // Models/Staff.cs
-namespace Y_Gem.Models
+namespace Y_GYM.Models
 {
     public class Staff
     {

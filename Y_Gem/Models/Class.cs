@@ -1,6 +1,6 @@
-﻿namespace Y_Gem.Models
+﻿namespace Y_GYM.Models
 {
-    public class Classe
+    public class Class
     {
         public int Id { get; set; }
         public int Capacity { get; set; }

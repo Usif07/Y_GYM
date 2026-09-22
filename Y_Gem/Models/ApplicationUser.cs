@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 
-namespace Y_Gem.Models
+namespace Y_GYM.Models
 {
     public class ApplicationUser : IdentityUser
     {

@@ -1,9 +1,9 @@
 // Repository/StaffRepository.cs
 using Microsoft.EntityFrameworkCore;
-using Y_Gem.Data;
-using Y_Gem.Models;
+using Y_GYM.Data;
+using Y_GYM.Models;
 
-namespace Y_Gem.Repository
+namespace Y_GYM.Repository
 {
     public class StaffRepository : GenericRepository<Staff>, IStaffRepository
     {

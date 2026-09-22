@@ -1,8 +1,8 @@
-@model Y_Gem.Models.Member
+@model Y_GYM.Models.Member
 @{
     ViewData["Title"] = "Control Panel";
-    var sub = ViewBag.ActiveSubscription as Y_Gem.Models.Subscription;
-    var nextBooking = ViewBag.NextBooking as Y_Gem.Models.Booking;
+    var sub = ViewBag.ActiveSubscription as Y_GYM.Models.Subscription;
+    var nextBooking = ViewBag.NextBooking as Y_GYM.Models.Booking;
     int attendance = ViewBag.AttendanceThisMonth ?? 0;
 }
 
@@ -54,7 +54,7 @@
                     <h6 class="text-secondary fw-bold">Next Class</h6>
                     @if (nextBooking != null)
                     {
-                        <p class="fs-6 mb-0">@nextBooking.ClassSchedule.Classe.Name</p>
+                        <p class="fs-6 mb-0">@nextBooking.ClassSchedule.Class.Name</p>
                         <small class="text-muted">@nextBooking.ClassSchedule.StartTime.ToString("dd/MM HH:mm")</small>
                     }
                     else

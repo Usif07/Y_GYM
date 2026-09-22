@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
-using Y_Gem.Models;
+using Y_GYM.Models;
 
-namespace Y_Gem.Controllers
+namespace Y_GYM.Controllers
 {
     public class HomeController : Controller
     {

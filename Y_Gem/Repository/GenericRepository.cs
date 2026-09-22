@@ -1,9 +1,9 @@
 // Repository/GenericRepository.cs
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using Y_Gem.Data;
+using Y_GYM.Data;
 
-namespace Y_Gem.Repository
+namespace Y_GYM.Repository
 {
     public class GenericRepository<T> : IGenericRepository<T> where T : class   //?
     {

@@ -1,35 +1,43 @@
-﻿// namespace Y_Gem.Models
-// {
-//     public class Member :User
-//     {
-//         public double Weight { get; set; }
-//         public double Hight { get; set; }
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-
-
-//     }
-// }
-
-
-// Models/Member.cs
-namespace Y_Gem.Models
+namespace Y_GYM.Models
 {
-    public class Member
-    {
-        public int Id { get; set; }
+	public class Member
+	{
+		public int Id { get; set; }
 
-        public string UserId { get; set; }        // FK -> ApplicationUser.Id
-        public ApplicationUser User { get; set; }
+		[Required(ErrorMessage = "Full Name is required")]
+		public string FullName { get; set; }
 
-        public double Weight { get; set; }
-        public double Height { get; set; }
-        public string Goal { get; set; }           // lose weight / build muscle / stay fit
-        public string FitnessLevel { get; set; }
-        public string QRCode { get; set; }
+		[Required(ErrorMessage = "Phone number is required")]
+		public string Phone { get; set; }
 
-        public ICollection<Subscription> Subscriptions { get; set; }//?
-        public ICollection<Booking> Bookings { get; set; }
-        public ICollection<Progress> ProgressLogs { get; set; }
-        public ICollection<CheckIn> CheckIns { get; set; }
-    }
+		public DateTime JoinDate { get; set; } = DateTime.Now;
+
+		[Required(ErrorMessage = "Please select a membership plan")]
+		public int MembershipPlanId { get; set; }
+
+		[ForeignKey("MembershipPlanId")]
+		public MembershipPlan? Plan { get; set; }
+
+		// ================= الخصائص اللي كانت ناقصة وعاملة إيرور =================
+
+		// 1. بيانات الجسم والهدف
+		public double? Weight { get; set; }
+		public double? Height { get; set; }
+		public string? Goal { get; set; }
+		public string? FitnessLevel { get; set; }
+		public string? QRCode { get; set; }
+
+		// 2. ربط العضو بحساب الدخول (ApplicationUser)
+		public string? UserId { get; set; }
+		[ForeignKey("UserId")]
+		public ApplicationUser? User { get; set; }
+
+		// 3. ربط العضو بجدول الحضور (عشان الإيرور بتاع CheckIns)
+		public ICollection<CheckIn>? CheckIns { get; set; }
+		public ICollection<Subscription>? Subscriptions { get; set; }
+		public ICollection<Booking>? Booking { get; set; }
+	}
 }

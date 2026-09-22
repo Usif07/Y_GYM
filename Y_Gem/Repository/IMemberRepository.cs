@@ -1,7 +1,7 @@
 // Repository/IMemberRepository.cs
-using Y_Gem.Models;
+using Y_GYM.Models;
 
-namespace Y_Gem.Repository
+namespace Y_GYM.Repository
 {
     public interface IMemberRepository : IGenericRepository<Member>
     {
