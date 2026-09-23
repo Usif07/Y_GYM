@@ -1,0 +1,68 @@
+﻿@model Y_GYM.Models.Booking
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Booking</h4>
+<hr />
+
+<div>
+    <form asp-action="Create" method="post">
+
+        <div>
+            <label asp-for="MemberId"></label>
+
+            <select asp-for="MemberId" asp-items="ViewBag.Members">
+                <option value="">-- Select Member --</option>
+            </select>
+
+            <span asp-validation-for="MemberId"></span>
+        </div>
+
+        <div>
+            <label asp-for="ScheduleId"></label>
+
+            <select asp-for="ScheduleId" asp-items="ViewBag.Schedules">
+                <option value="">-- Select Schedule --</option>
+            </select>
+
+            <span asp-validation-for="ScheduleId"></span>
+        </div>
+
+        <div>
+            <label asp-for="BookingDate"></label>
+            <input asp-for="BookingDate" type="datetime-local" />
+            <span asp-validation-for="BookingDate"></span>
+        </div>
+
+        <div>
+            <label asp-for="Status"></label>
+            <input asp-for="Status" />
+            <span asp-validation-for="Status"></span>
+        </div>
+
+        <div>
+            <label asp-for="IsAttended"></label>
+            <input asp-for="IsAttended" type="checkbox" />
+            <span asp-validation-for="IsAttended"></span>
+        </div>
+
+        <div>
+            <input type="submit" value="Create" />
+        </div>
+
+    </form>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

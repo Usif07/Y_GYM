@@ -1,93 +1,103 @@
 @model Y_GYM.Models.ViewModels.RegisterMemberVM
 
 @{
-    ViewData["Title"] = "Register a New Member";
+    ViewData["Title"] = "Register New Member";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-dark">Register a New Member</h2>
+<h1>Register New Member</h1>
 
-    <form method="post" asp-controller="Staff" asp-action="RegisterMember" class="col-md-6">
+<h4>Member Information</h4>
 
-        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+<hr />
 
-        <div class="mb-3">
-            <label asp-for="FullName" class="form-label text-secondary fw-bold">Full Name</label>
-            <input asp-for="FullName" class="form-control" placeholder="Abdo Helmy Essa " />
-            <span asp-validation-for="FullName" class="text-danger"></span>
-        </div>
+<form asp-controller="Staff"
+      asp-action="RegisterMember"
+      method="post">
 
-        <div class="mb-3">
-            <label asp-for="Email" class="form-label text-secondary fw-bold">Email</label>
-            <input asp-for="Email" class="form-control" placeholder="example@mail.com" />
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
+    <div asp-validation-summary="ModelOnly"></div>
 
-        <div class="mb-3">
-            <label asp-for="Phone" class="form-label text-secondary fw-bold">Phone Number</label>
-            <input asp-for="Phone" class="form-control" placeholder="01xxxxxxxxx" />
-            <span asp-validation-for="Phone" class="text-danger"></span>
-        </div>
+    <div>
+        <label asp-for="FullName"></label>
+        <input asp-for="FullName" />
+        <span asp-validation-for="FullName"></span>
+    </div>
 
-        <div class="mb-3">
-            <label asp-for="Password" class="form-label text-secondary fw-bold">Initial Password</label>
-            <input asp-for="Password" class="form-control" type="password" />
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
+    <div>
+        <label asp-for="Email"></label>
+        <input asp-for="Email" type="email" />
+        <span asp-validation-for="Email"></span>
+    </div>
 
-        <hr class="my-4" />
+    <div>
+        <label asp-for="Phone"></label>
+        <input asp-for="Phone" type="tel" />
+        <span asp-validation-for="Phone"></span>
+    </div>
 
-        <div class="mb-3">
-            <label asp-for="Weight" class="form-label text-secondary fw-bold">Weight (kg)</label>
-            <input asp-for="Weight" class="form-control" type="number" step="0.1" />
-            <span asp-validation-for="Weight" class="text-danger"></span>
-        </div>
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" type="password" />
+        <span asp-validation-for="Password"></span>
+    </div>
 
-        <div class="mb-3">
-            <label asp-for="Height" class="form-label text-secondary fw-bold">Height (cm)</label>
-            <input asp-for="Height" class="form-control" type="number" step="0.1" />
-            <span asp-validation-for="Height" class="text-danger"></span>
-        </div>
+    <hr />
 
-        <div class="mb-3">
-            <label asp-for="Goal" class="form-label text-secondary fw-bold">Target</label>
-            <select asp-for="Goal" class="form-select">
-                <option value="">-- Select a target --</option>
-                <option value="Lose Weight">Weight Loss</option>
-                <option value="Build Muscle">Muscle Building</option>
-                <option value="Stay Fit">General Fitness</option>
-            </select>
-            <span asp-validation-for="Goal" class="text-danger"></span>
-        </div>
+    <div>
+        <label asp-for="Weight"></label>
+        <input asp-for="Weight"
+               type="number"
+               step="0.1" />
+        <span asp-validation-for="Weight"></span>
+    </div>
 
-        <div class="mb-3">
-            <label asp-for="FitnessLevel" class="form-label text-secondary fw-bold">Current Level</label>
-            <select asp-for="FitnessLevel" class="form-select">
-                <option value="">-- Select a level --</option>
-                <option value="Beginner">Beginner</option>
-                <option value="Intermediate">Fair</option>
-                <option value="Advanced">Advanced</option>
-            </select>
-            <span asp-validation-for="FitnessLevel" class="text-danger"></span>
-        </div>
+    <div>
+        <label asp-for="Height"></label>
+        <input asp-for="Height"
+               type="number"
+               step="0.1" />
+        <span asp-validation-for="Height"></span>
+    </div>
 
-        <div class="mt-4">
-            <button type="submit" class="btn btn-dark px-4" id="submitBtn">
-                <span class="spinner-border spinner-border-sm d-none" id="submitSpinner"></span>
-                Save
-            </button>
-            <a asp-action="Index" class="btn btn-outline-secondary ms-2 px-4">Back</a>
-        </div>
+    <div>
+        <label asp-for="Goal"></label>
 
-    </form>
-</div>
+        <select asp-for="Goal">
+            <option value="">-- Select Goal --</option>
+            <option value="Lose Weight">Weight Loss</option>
+            <option value="Build Muscle">Muscle Building</option>
+            <option value="Stay Fit">General Fitness</option>
+        </select>
+
+        <span asp-validation-for="Goal"></span>
+    </div>
+
+    <div>
+        <label asp-for="FitnessLevel"></label>
+
+        <select asp-for="FitnessLevel">
+            <option value="">-- Select Fitness Level --</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+        </select>
+
+        <span asp-validation-for="FitnessLevel"></span>
+    </div>
+
+    <br />
+
+    <div>
+        <input type="submit" value="Register" />
+
+        <a asp-action="Index">
+            Back
+        </a>
+    </div>
+
+</form>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-    <script>
-        document.querySelector('form').addEventListener('submit', function () {
-            document.getElementById('submitSpinner').classList.remove('d-none');
-            document.getElementById('submitBtn').setAttribute('disabled', 'disabled');
-        });
-    </script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

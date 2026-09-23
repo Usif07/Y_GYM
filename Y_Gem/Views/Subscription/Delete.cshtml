@@ -1,0 +1,156 @@
+﻿@model Y_GYM.Models.Subscription
+
+@{
+    ViewData["Title"] = "Delete Subscription";
+}
+
+<div class="gym-page">
+
+    <div class="gym-page-header">
+
+        <h1 class="text-danger">
+            <i class="fas fa-trash me-2"></i>
+            Delete Subscription
+        </h1>
+
+        <p class="text-muted mb-0">
+            Confirm that you want to permanently delete this subscription.
+        </p>
+
+    </div>
+
+
+    <div class="gym-card">
+
+        <div class="alert alert-danger">
+
+            <i class="fas fa-exclamation-triangle me-2"></i>
+
+            <strong>Warning:</strong>
+
+            This action cannot be undone.
+
+        </div>
+
+
+        <div class="row g-0">
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Subscription ID
+                </div>
+
+                <div class="gym-details-value">
+                    #@Model.Id
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Member
+                </div>
+
+                <div class="gym-details-value">
+                    @(Model.Member?.FullName ?? "Unknown Member")
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Membership Plan
+                </div>
+
+                <div class="gym-details-value">
+                    @(Model.MembershipPlan?.Name ?? "No Plan")
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Start Date
+                </div>
+
+                <div class="gym-details-value">
+                    @Model.StartDate.ToString("dd/MM/yyyy")
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    End Date
+                </div>
+
+                <div class="gym-details-value">
+                    @Model.EndDate.ToString("dd/MM/yyyy")
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Status
+                </div>
+
+                <div class="gym-details-value">
+                    @Model.Status
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <hr class="my-4" />
+
+
+        <form asp-action="Delete"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   asp-for="Id" />
+
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                <button type="submit"
+                        class="btn btn-danger">
+
+                    <i class="fas fa-trash me-2"></i>
+                    Delete Subscription
+
+                </button>
+
+
+                <a asp-action="Details"
+                   asp-route-id="@Model.Id"
+                   class="btn gym-btn-secondary">
+
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

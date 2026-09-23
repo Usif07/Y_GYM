@@ -1,0 +1,89 @@
+﻿@model Y_GYM.Models.Class
+
+@{
+    ViewData["Title"] = "Class Details";
+}
+
+<section class="gym-page">
+
+    <div class="container">
+
+        <div class="gym-page-header">
+
+            <span class="page-label">
+                FITNESS GYM
+            </span>
+
+            <h1>
+                Class Details
+            </h1>
+
+            <p>
+                View the details of this fitness class.
+            </p>
+
+        </div>
+
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8">
+
+                <div class="gym-card">
+
+                    <div class="gym-details-row">
+
+                        <div class="gym-details-label">
+                            Class Name
+                        </div>
+
+                        <div class="gym-details-value">
+                            @Model.Name
+                        </div>
+
+                    </div>
+
+
+                    <div class="gym-details-row">
+
+                        <div class="gym-details-label">
+                            Capacity
+                        </div>
+
+                        <div class="gym-details-value">
+                            @Model.Capacity members
+                        </div>
+
+                    </div>
+
+
+                    <div class="mt-4 d-flex gap-2">
+
+                        <a asp-action="Edit"
+                           asp-route-id="@Model.Id"
+                           class="primary-btn gym-btn">
+
+                            <i class="fa fa-edit me-2"></i>
+
+                            Edit
+
+                        </a>
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-light">
+
+                            Back to Classes
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

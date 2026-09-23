@@ -1,6 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Y_GYM.Models;
 using Y_GYM.Repository;
 
@@ -8,80 +7,112 @@ namespace Y_GYM.Controllers
 {
     public class MembershipPlansController : Controller
     {
-        IMembershipPlans memPlanRepo;
-        public MembershipPlansController(IMembershipPlans memPlanRepo)
+        private readonly IMembershipPlans _memPlanRepo;
+
+        public MembershipPlansController(
+            IMembershipPlans memPlanRepo)
         {
-            this.memPlanRepo = memPlanRepo;
+            _memPlanRepo = memPlanRepo;
         }
 
+        // =========================
+        // PUBLIC
+        // =========================
 
-
-
+        [AllowAnonymous]
         public IActionResult Index()
         {
-            var MembershipPlans = memPlanRepo.GetAll();
-            return View(MembershipPlans);
+            var membershipPlans =
+                _memPlanRepo.GetAll();
+
+            return View(membershipPlans);
         }
 
+        // =========================
+        // ADMIN ONLY
+        // =========================
 
-
-
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(int id)
         {
-            memPlanRepo.delete(id);
-            memPlanRepo.save();
-            return RedirectToAction("Index");
+            var plan = _memPlanRepo.GetById(id);
 
-        }
+            if (plan == null)
+            {
+                return NotFound();
+            }
 
-
-        //public IActionResult Delete(int id)
-        //{
-        //    var mp = memPlanRepo.GetById(id);   
-
-        //    if (mp != null)
-        //    {
-        //        memPlanRepo.(mp);
-        //        memPlanRepo.save();
-        //    }
-
-        //    return RedirectToAction("Index");
-        //}
-        [HttpGet]
-        public IActionResult Update(int id)
-        {
-         var plan = memPlanRepo.GetById(id);    
             return View(plan);
         }
+
         [HttpPost]
-        public IActionResult Update(MembershipPlan mp)
+        [ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public IActionResult DeleteConfirmed(int id)
         {
-            if (ModelState.IsValid)
+            var plan = _memPlanRepo.GetById(id);
+
+            if (plan != null)
             {
-                memPlanRepo.update(mp);
-                memPlanRepo.save();
-                return RedirectToAction("Index");
+                _memPlanRepo.delete(id);
+                _memPlanRepo.save();
             }
-            else { return View(mp); }
+
+            return RedirectToAction(nameof(Index));
         }
-                
-     
-        public IActionResult New()
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Update(int id)
         {
-            return View("New");
+            var plan = _memPlanRepo.GetById(id);
+
+            if (plan == null)
+            {
+                return NotFound();
+            }
+
+            return View(plan);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Update(MembershipPlan mp)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(mp);
+            }
+
+            _memPlanRepo.update(mp);
+            _memPlanRepo.save();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult New()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public IActionResult SaveNew(MembershipPlan mp)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                memPlanRepo.insert(mp);
-                memPlanRepo.save();
-                return RedirectToAction("Index");
+                return View("New", mp);
             }
-            return View("New", mp);
+
+            _memPlanRepo.insert(mp);
+            _memPlanRepo.save();
+
+            return RedirectToAction(nameof(Index));
         }
-       
     }
 }

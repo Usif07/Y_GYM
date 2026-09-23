@@ -1,0 +1,364 @@
+﻿@model IEnumerable<Y_GYM.Models.Payment>
+
+@{
+    ViewData["Title"] = "Payments Management";
+
+    var payments = Model?.ToList()
+        ?? new List<Y_GYM.Models.Payment>();
+
+    decimal totalRevenue = ViewBag.TotalRevenue is decimal revenue
+        ? revenue
+        : 0m;
+
+    int totalPayments = ViewBag.TotalPayments is int count
+        ? count
+        : payments.Count;
+}
+
+<div class="gym-page">
+
+    <div class="gym-page-header">
+
+        <div>
+            <h1>
+                <i class="fa fa-money-bill-wave"></i>
+                Payments Management
+            </h1>
+
+            <p>
+                Manage payments, revenue and payment records.
+            </p>
+        </div>
+
+        <div>
+            <a asp-action="Create"
+               class="btn gym-btn">
+
+                <i class="fa fa-plus"></i>
+                Add Payment
+
+            </a>
+        </div>
+
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show mb-4"
+             role="alert">
+
+            <i class="fa fa-check-circle me-2"></i>
+
+            @TempData["Success"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+    }
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="gym-card h-100">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <div class="text-muted small">
+                            Total Revenue
+                        </div>
+
+                        <h2 class="mt-2 mb-0">
+                            @totalRevenue.ToString("N2")
+                            <small>EGP</small>
+                        </h2>
+
+                    </div>
+
+                    <div class="gym-stat-icon">
+                        <i class="fa fa-money-bill-wave"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="gym-card h-100">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <div class="text-muted small">
+                            Total Payments
+                        </div>
+
+                        <h2 class="mt-2 mb-0">
+                            @totalPayments
+                        </h2>
+
+                    </div>
+
+                    <div class="gym-stat-icon">
+                        <i class="fa fa-receipt"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-6 col-xl-4">
+
+            <div class="gym-card h-100">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <div class="text-muted small">
+                            Average Payment
+                        </div>
+
+                        <h2 class="mt-2 mb-0">
+
+                            @(totalPayments > 0
+                                ? (totalRevenue / totalPayments).ToString("N2")
+                                : "0.00")
+
+                            <small>EGP</small>
+
+                        </h2>
+
+                    </div>
+
+                    <div class="gym-stat-icon">
+                        <i class="fa fa-chart-line"></i>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="gym-card">
+
+        <div class="mb-4">
+
+            <h3 class="mb-1">
+                Payment Records
+            </h3>
+
+            <p class="text-muted mb-0">
+                All recorded payments in FITNESS GYM.
+            </p>
+
+        </div>
+
+        @if (!payments.Any())
+        {
+            <div class="gym-empty">
+
+                <i class="fa fa-receipt fa-2x mb-3"></i>
+
+                <h4>
+                    No Payments Found
+                </h4>
+
+                <p>
+                    No payment records have been created yet.
+                </p>
+
+                <a asp-action="Create"
+                   class="btn gym-btn mt-2">
+
+                    <i class="fa fa-plus"></i>
+                    Add First Payment
+
+                </a>
+
+            </div>
+        }
+        else
+        {
+            <div class="table-responsive">
+
+                <table class="table gym-table align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>#</th>
+
+                            <th>Member</th>
+
+                            <th>Subscription</th>
+
+                            <th>Amount</th>
+
+                            <th>Payment Date</th>
+
+                            <th>Staff</th>
+
+                            <th class="text-end">
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var payment in payments)
+                        {
+                            <tr>
+
+                                <td>
+                                    <strong>
+                                        #@payment.Id
+                                    </strong>
+                                </td>
+
+                                <td>
+
+                                    @if (payment.Member != null)
+                                    {
+                                        <strong>
+                                            @payment.Member.FullName
+                                        </strong>
+
+                                        <br />
+
+                                        <small class="text-muted">
+                                            Member #@payment.Member.Id
+                                        </small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            Unknown Member
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    @if (payment.Subscription != null)
+                                    {
+                                        <strong>
+                                            Subscription #@payment.Subscription.Id
+                                        </strong>
+
+                                        <br />
+
+                                        <small class="text-muted">
+                                            @(payment.Subscription.MembershipPlan?.Name
+                                                ?? "No Plan")
+                                        </small>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            No Subscription
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    <strong>
+                                        @payment.Amount.ToString("N2")
+                                    </strong>
+
+                                    <small>
+                                        EGP
+                                    </small>
+
+                                </td>
+
+                                <td>
+
+                                    @payment.PaymentDate.ToString("dd MMM yyyy")
+
+                                    <br />
+
+                                    <small class="text-muted">
+                                        @payment.PaymentDate.ToString("hh:mm tt")
+                                    </small>
+
+                                </td>
+
+                                <td>
+
+                                    @if (payment.Staff?.User != null)
+                                    {
+                                        @payment.Staff.User.FullName
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">
+                                            —
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td class="text-end">
+
+                                    <div class="d-flex justify-content-end gap-2">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@payment.Id"
+                                           class="btn btn-sm btn-outline-primary">
+
+                                            <i class="fa fa-eye"></i>
+                                            Details
+
+                                        </a>
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Delete"
+                                               asp-route-id="@payment.Id"
+                                               class="btn btn-sm btn-outline-danger">
+
+                                                <i class="fa fa-trash"></i>
+                                                Delete
+
+                                            </a>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+
+    </div>
+
+</div>

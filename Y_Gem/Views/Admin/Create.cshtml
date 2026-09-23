@@ -1,0 +1,172 @@
+﻿
+@model Y_GYM.Models.Admin
+
+@{
+    ViewData["Title"] = "Create Admin";
+}
+
+<section class="gym-page">
+
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="gym-page-header">
+
+            <span class="page-label">
+                FITNESS GYM
+            </span>
+
+            <h1>
+                Create Admin
+            </h1>
+
+            <p>
+                Create a new administrator account for the gym management system.
+            </p>
+
+        </div>
+
+
+        <!-- Form Card -->
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8 col-md-10">
+
+                <div class="gym-card">
+
+                    <form asp-action="Create"
+                          method="post"
+                          class="gym-form">
+
+                        @Html.AntiForgeryToken()
+
+
+                        <!-- Validation Summary -->
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-4">
+                        </div>
+
+
+                        <!-- Full Name -->
+                        <div class="mb-4">
+
+                            <label asp-for="FullName"
+                                   class="form-label">
+                                Full Name
+                            </label>
+
+                            <input asp-for="FullName"
+                                   class="form-control"
+                                   placeholder="Enter full name" />
+
+                            <span asp-validation-for="FullName"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+
+                        <!-- Username -->
+                        <div class="mb-4">
+
+                            <label asp-for="UserName"
+                                   class="form-label">
+                                Username
+                            </label>
+
+                            <input asp-for="UserName"
+                                   class="form-control"
+                                   placeholder="Enter username" />
+
+                            <span asp-validation-for="UserName"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+
+                        <!-- Email -->
+                        <div class="mb-4">
+
+                            <label asp-for="Email"
+                                   class="form-label">
+                                Email Address
+                            </label>
+
+                            <input asp-for="Email"
+                                   type="email"
+                                   class="form-control"
+                                   placeholder="Enter email address" />
+
+                            <span asp-validation-for="Email"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+
+                        <!-- Phone -->
+                        <div class="mb-4">
+
+                            <label asp-for="PhoneNumber"
+                                   class="form-label">
+                                Phone Number
+                            </label>
+
+                            <input asp-for="PhoneNumber"
+                                   type="tel"
+                                   class="form-control"
+                                   placeholder="Enter phone number" />
+
+                            <span asp-validation-for="PhoneNumber"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 mt-4">
+
+                            <button type="submit"
+                                    class="primary-btn gym-btn">
+
+                                <i class="fa fa-save"></i>
+
+                                Create Admin
+
+                            </button>
+
+
+                            <a asp-controller="Admin"
+                               asp-action="Index"
+                               class="btn gym-btn-secondary">
+
+                                <i class="fa fa-arrow-left"></i>
+
+                                Back to Admins
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

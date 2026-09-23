@@ -1,7 +1,19 @@
-﻿namespace Y_GYM.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Y_GYM.Models
 {
-    public class Coach : ApplicationUser
+    public class Coach
     {
-        public string coachSpecialty { get; set; }
+        public int Id { get; set; }
+
+        [Required]
+        public string UserId { get; set; }
+
+        [ForeignKey("UserId")]
+        public ApplicationUser User { get; set; }
+
+        [Required]
+        public string CoachSpecialty { get; set; }
     }
 }

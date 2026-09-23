@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Complete Your Membership";
+}
+
+<section class="gym-page">
+
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8">
+
+                <div class="gym-page-header text-center">
+
+                    <span class="page-label">
+                        FITNESS GYM
+                    </span>
+
+                    <h1>
+                        Complete Your Membership
+                    </h1>
+
+                    <p>
+                        Your account has been created successfully.
+                        Choose a membership plan to activate your member profile.
+                    </p>
+
+                </div>
+
+                <div class="gym-card text-center">
+
+                    <div class="member-dashboard-icon mx-auto">
+
+                        <i class="fa fa-id-card"></i>
+
+                    </div>
+
+                    <h2 class="text-white fw-bold mb-3">
+                        One More Step
+                    </h2>
+
+                    <p class="text-white-50 mb-4">
+                        To access the Member Dashboard, you need to choose
+                        a membership plan.
+                    </p>
+
+                    <a asp-controller="MembershipPlans"
+                       asp-action="Index"
+                       class="btn primary-btn gym-btn btn-lg">
+
+                        <i class="fa fa-list me-2"></i>
+
+                        View Membership Plans
+
+                    </a>
+
+                    <div class="mt-4">
+
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="text-white-50">
+
+                            <i class="fa fa-arrow-left me-1"></i>
+                            Back to Home
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

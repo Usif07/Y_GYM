@@ -1,0 +1,176 @@
+﻿@model Y_GYM.Models.Subscription
+
+@{
+    ViewData["Title"] = "Renew Subscription";
+}
+
+<div class="gym-page">
+
+    <div class="gym-page-header">
+
+        <h1>
+            <i class="fas fa-sync-alt me-2"></i>
+            Renew Subscription
+        </h1>
+
+        <p class="text-muted mb-0">
+            Review the subscription before renewing it.
+        </p>
+
+    </div>
+
+
+    <div class="gym-card">
+
+        <div class="alert alert-info">
+
+            <i class="fas fa-info-circle me-2"></i>
+
+            Renewing this subscription will add the selected membership
+            plan duration to the current subscription. If the subscription
+            has already expired, the renewed subscription will start today.
+
+        </div>
+
+
+        <div class="row g-0">
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Member
+                </div>
+
+                <div class="gym-details-value">
+                    @(Model.Member?.FullName ?? "Unknown Member")
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Membership Plan
+                </div>
+
+                <div class="gym-details-value">
+                    @(Model.MembershipPlan?.Name ?? "No Plan")
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Current Start Date
+                </div>
+
+                <div class="gym-details-value">
+                    @Model.StartDate.ToString("dd/MM/yyyy")
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Current End Date
+                </div>
+
+                <div class="gym-details-value">
+                    @Model.EndDate.ToString("dd/MM/yyyy")
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Plan Duration
+                </div>
+
+                <div class="gym-details-value">
+
+                    @if (Model.MembershipPlan != null)
+                    {
+                        @Model.MembershipPlan.DurationDays
+                        @:days
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 gym-details-row">
+
+                <div class="gym-details-label">
+                    Plan Price
+                </div>
+
+                <div class="gym-details-value">
+
+                    @if (Model.MembershipPlan != null)
+                    {
+                        @Model.MembershipPlan.Price.ToString("N2")
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <hr class="my-4" />
+
+
+        <form asp-action="RenewConfirmed"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="id"
+                   value="@Model.Id" />
+
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                <button type="submit"
+                        class="btn btn-success">
+
+                    <i class="fas fa-sync-alt me-2"></i>
+                    Confirm Renewal
+
+                </button>
+
+
+                <a asp-action="Details"
+                   asp-route-id="@Model.Id"
+                   class="btn gym-btn-secondary">
+
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Cancel
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>

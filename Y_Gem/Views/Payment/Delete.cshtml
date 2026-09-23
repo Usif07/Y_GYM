@@ -1,0 +1,167 @@
+﻿@model Y_GYM.Models.Payment
+
+@{
+    ViewData["Title"] = "Delete Payment";
+}
+
+<div class="gym-page">
+
+    <div class="gym-page-header">
+
+        <div>
+
+            <h1 class="text-danger">
+                <i class="fa fa-trash"></i>
+                Delete Payment
+            </h1>
+
+            <p>
+                Review the payment before deleting it.
+            </p>
+
+        </div>
+
+        <a asp-action="Index"
+           class="btn gym-btn-secondary">
+
+            <i class="fa fa-arrow-left"></i>
+            Back to Payments
+
+        </a>
+
+    </div>
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-7">
+
+            <div class="gym-card">
+
+                <div class="alert alert-warning">
+
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+
+                    <strong>
+                        Are you sure?
+                    </strong>
+
+                    This payment will be permanently deleted.
+
+                </div>
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Payment ID
+                    </div>
+
+                    <div class="gym-details-value">
+                        #@Model.Id
+                    </div>
+
+                </div>
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Member
+                    </div>
+
+                    <div class="gym-details-value">
+                        @(Model.Member?.FullName ?? "Unknown Member")
+                    </div>
+
+                </div>
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Amount
+                    </div>
+
+                    <div class="gym-details-value">
+
+                        <strong>
+                            @Model.Amount.ToString("N2") EGP
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Payment Date
+                    </div>
+
+                    <div class="gym-details-value">
+
+                        @Model.PaymentDate.ToString(
+                            "dd/MM/yyyy HH:mm")
+
+                    </div>
+
+                </div>
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Subscription
+                    </div>
+
+                    <div class="gym-details-value">
+
+                        @if (Model.Subscription != null)
+                        {
+                            <span>
+                                #@Model.Subscription.Id
+                                -
+                                @(Model.Subscription.MembershipPlan?.Name
+                                    ?? "No Plan")
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+                                No Subscription
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+                <form asp-action="Delete"
+                      method="post"
+                      class="mt-4">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           asp-for="Id" />
+
+                    <button type="submit"
+                            class="btn btn-danger">
+
+                        <i class="fa fa-trash"></i>
+                        Delete Payment
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn gym-btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

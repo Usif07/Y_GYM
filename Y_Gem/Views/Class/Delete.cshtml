@@ -1,0 +1,116 @@
+﻿@model Y_GYM.Models.Class
+
+@{
+    ViewData["Title"] = "Delete Class";
+}
+
+<section class="gym-page">
+
+    <div class="container">
+
+        <div class="gym-page-header">
+
+            <span class="page-label">
+                FITNESS GYM
+            </span>
+
+            <h1>
+                Delete Class
+            </h1>
+
+            <p>
+                Confirm that you want to remove this class.
+            </p>
+
+        </div>
+
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8">
+
+                <div class="gym-card">
+
+                    <div class="text-center mb-4">
+
+                        <i class="fa fa-exclamation-triangle fa-3x text-danger mb-3"></i>
+
+                        <h3 class="text-white">
+                            Are you sure?
+                        </h3>
+
+                        <p class="text-white-50">
+                            This action will permanently delete the class.
+                        </p>
+
+                    </div>
+
+
+                    <div class="gym-details-row">
+
+                        <div class="gym-details-label">
+                            Class Name
+                        </div>
+
+                        <div class="gym-details-value">
+                            @Model.Name
+                        </div>
+
+                    </div>
+
+
+                    <div class="gym-details-row">
+
+                        <div class="gym-details-label">
+                            Capacity
+                        </div>
+
+                        <div class="gym-details-value">
+                            @Model.Capacity members
+                        </div>
+
+                    </div>
+
+
+                    <form asp-action="Delete"
+                          method="post"
+                          class="mt-4">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               asp-for="Id" />
+
+
+                        <div class="d-flex justify-content-center gap-2">
+
+                            <button type="submit"
+                                    class="btn btn-danger">
+
+                                <i class="fa fa-trash me-2"></i>
+
+                                Delete Class
+
+                            </button>
+
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-light">
+
+                                Cancel
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>

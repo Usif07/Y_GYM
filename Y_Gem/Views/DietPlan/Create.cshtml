@@ -1,0 +1,62 @@
+﻿@model Y_GYM.Models.DietPlan
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Diet Plan</h4>
+<hr />
+
+<div>
+    <form asp-action="Create" method="post">
+
+        <div>
+            <label asp-for="MemberId"></label>
+
+            <select asp-for="MemberId" asp-items="ViewBag.Members">
+                <option value="">-- Select Member --</option>
+            </select>
+
+            <span asp-validation-for="MemberId"></span>
+        </div>
+
+        <div>
+            <label asp-for="CoachId"></label>
+
+            <select asp-for="CoachId" asp-items="ViewBag.Coaches">
+                <option value="">-- Select Coach --</option>
+            </select>
+
+            <span asp-validation-for="CoachId"></span>
+        </div>
+
+        <div>
+            <label asp-for="PlanDetails"></label>
+            <textarea asp-for="PlanDetails"></textarea>
+            <span asp-validation-for="PlanDetails"></span>
+        </div>
+
+        <div>
+            <label asp-for="StartDate"></label>
+            <input asp-for="StartDate" type="date" />
+            <span asp-validation-for="StartDate"></span>
+        </div>
+
+        <div>
+            <input type="submit" value="Create" />
+        </div>
+
+    </form>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

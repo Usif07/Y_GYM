@@ -1,0 +1,200 @@
+﻿@model Y_GYM.Models.Payment
+
+@{
+    ViewData["Title"] = "Payment Details";
+}
+
+<div class="gym-page">
+
+    <div class="gym-page-header">
+
+        <div>
+
+            <h1>
+                <i class="fa fa-receipt"></i>
+                Payment Details
+            </h1>
+
+            <p>
+                Payment #@Model.Id
+            </p>
+
+        </div>
+
+        <a asp-action="Index"
+           class="btn gym-btn-secondary">
+
+            <i class="fa fa-arrow-left"></i>
+            Back to Payments
+
+        </a>
+
+    </div>
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="gym-card">
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Payment ID
+                    </div>
+
+                    <div class="gym-details-value">
+                        #@Model.Id
+                    </div>
+
+                </div>
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Member
+                    </div>
+
+                    <div class="gym-details-value">
+
+                        @if (Model.Member != null)
+                        {
+                            <strong>
+                                @Model.Member.FullName
+                            </strong>
+
+                            <small class="text-muted d-block">
+                                Member #@Model.Member.Id
+                            </small>
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+                                Unknown Member
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Subscription
+                    </div>
+
+                    <div class="gym-details-value">
+
+                        @if (Model.Subscription != null)
+                        {
+                            <strong>
+                                Subscription #@Model.Subscription.Id
+                            </strong>
+
+                            <small class="text-muted d-block">
+                                @(Model.Subscription.MembershipPlan?.Name
+                                    ?? "No Plan")
+                            </small>
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+                                No Subscription
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Amount
+                    </div>
+
+                    <div class="gym-details-value">
+
+                        <strong class="fs-5">
+                            @Model.Amount.ToString("N2") EGP
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Payment Date
+                    </div>
+
+                    <div class="gym-details-value">
+
+                        @Model.PaymentDate.ToString(
+                            "dd MMMM yyyy - hh:mm tt")
+
+                    </div>
+
+                </div>
+
+                <div class="gym-details-row">
+
+                    <div class="gym-details-label">
+                        Handled By
+                    </div>
+
+                    <div class="gym-details-value">
+
+                        @if (Model.Staff?.User != null)
+                        {
+                            <strong>
+                                @Model.Staff.User.FullName
+                            </strong>
+
+                            <small class="text-muted d-block">
+                                @Model.Staff.JobTitle
+                            </small>
+                        }
+                        else
+                        {
+                            <span class="text-muted">
+                                Not assigned
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <a asp-action="Delete"
+                           asp-route-id="@Model.Id"
+                           class="btn btn-danger">
+
+                            <i class="fa fa-trash"></i>
+                            Delete Payment
+
+                        </a>
+                    }
+
+                    <a asp-action="Index"
+                       class="btn gym-btn-secondary">
+
+                        Back
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

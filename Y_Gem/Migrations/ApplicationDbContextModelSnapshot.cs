@@ -167,11 +167,6 @@ namespace Y_GYM.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasMaxLength(21)
-                        .HasColumnType("nvarchar(21)");
-
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -227,10 +222,6 @@ namespace Y_GYM.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("ApplicationUser");
-
-                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("Y_GYM.Models.Booking", b =>
@@ -333,10 +324,6 @@ namespace Y_GYM.Migrations
                     b.Property<int>("CoachId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CoachId1")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
 
@@ -347,9 +334,33 @@ namespace Y_GYM.Migrations
 
                     b.HasIndex("ClassId");
 
-                    b.HasIndex("CoachId1");
+                    b.HasIndex("CoachId");
 
                     b.ToTable("ClassSchedules");
+                });
+
+            modelBuilder.Entity("Y_GYM.Models.Coach", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CoachSpecialty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Coaches");
                 });
 
             modelBuilder.Entity("Y_GYM.Models.DietPlan", b =>
@@ -363,9 +374,6 @@ namespace Y_GYM.Migrations
                     b.Property<int>("CoachId")
                         .HasColumnType("int");
 
-                    b.Property<string>("CoachId1")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<int>("MemberId")
                         .HasColumnType("int");
 
@@ -377,7 +385,7 @@ namespace Y_GYM.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CoachId1");
+                    b.HasIndex("CoachId");
 
                     b.HasIndex("MemberId");
 
@@ -408,7 +416,7 @@ namespace Y_GYM.Migrations
                     b.Property<DateTime>("JoinDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MembershipPlanId")
+                    b.Property<int?>("MembershipPlanId")
                         .HasColumnType("int");
 
                     b.Property<string>("Phone")
@@ -467,6 +475,7 @@ namespace Y_GYM.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<decimal>("Amount")
+                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<int>("MemberId")
@@ -577,24 +586,6 @@ namespace Y_GYM.Migrations
                     b.ToTable("Subscriptions");
                 });
 
-            modelBuilder.Entity("Y_GYM.Models.Admin", b =>
-                {
-                    b.HasBaseType("Y_GYM.Models.ApplicationUser");
-
-                    b.HasDiscriminator().HasValue("Admin");
-                });
-
-            modelBuilder.Entity("Y_GYM.Models.Coach", b =>
-                {
-                    b.HasBaseType("Y_GYM.Models.ApplicationUser");
-
-                    b.Property<string>("coachSpecialty")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasDiscriminator().HasValue("Coach");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -694,7 +685,7 @@ namespace Y_GYM.Migrations
 
                     b.HasOne("Y_GYM.Models.Coach", "Coach")
                         .WithMany()
-                        .HasForeignKey("CoachId1")
+                        .HasForeignKey("CoachId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -703,11 +694,24 @@ namespace Y_GYM.Migrations
                     b.Navigation("Coach");
                 });
 
+            modelBuilder.Entity("Y_GYM.Models.Coach", b =>
+                {
+                    b.HasOne("Y_GYM.Models.ApplicationUser", "User")
+                        .WithOne()
+                        .HasForeignKey("Y_GYM.Models.Coach", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Y_GYM.Models.DietPlan", b =>
                 {
                     b.HasOne("Y_GYM.Models.Coach", "Coach")
                         .WithMany()
-                        .HasForeignKey("CoachId1");
+                        .HasForeignKey("CoachId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("Y_GYM.Models.Member", "Member")
                         .WithMany()
@@ -724,9 +728,7 @@ namespace Y_GYM.Migrations
                 {
                     b.HasOne("Y_GYM.Models.MembershipPlan", "Plan")
                         .WithMany()
-                        .HasForeignKey("MembershipPlanId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MembershipPlanId");
 
                     b.HasOne("Y_GYM.Models.ApplicationUser", "User")
                         .WithOne()

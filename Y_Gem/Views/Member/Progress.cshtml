@@ -1,63 +1,242 @@
 @model IEnumerable<Y_GYM.Models.Progress>
+
 @{
     ViewData["Title"] = "My Progress";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-dark">Track My Progress</h2>
+<section class="gym-page">
 
-    <div class="row">
-        <div class="col-md-5 mb-4">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    <h6 class="text-secondary fw-bold mb-3">Record a New Weight</h6>
-                    <form method="post" asp-action="AddProgress">
-                        <div class="mb-3">
-                            <label class="form-label">Weight (kg)</label>
-                            <input type="number" name="weight" step="0.1" class="form-control" required />
-                        </div>
-                        <button type="submit" class="btn btn-dark">Save</button>
-                    </form>
-                </div>
+    <div class="container">
+
+        <div class="gym-page-header">
+
+            <span class="page-label">
+                MEMBER AREA
+            </span>
+
+            <h1>
+                My Progress
+            </h1>
+
+            <p>
+                Record your weight and keep track of your fitness progress.
+            </p>
+
+        </div>
+
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success mb-4">
+                <i class="fa fa-check-circle me-2"></i>
+                @TempData["Success"]
             </div>
-        </div>
+        }
 
-        <div class="col-md-7">
-            @if (!Model.Any())
-            {
-                <div class="alert alert-light border text-center py-5">
-                    <p class="mb-0 text-muted">No records yet — Start by entering your current weight</p>
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+                <i class="fa fa-exclamation-circle me-2"></i>
+                @TempData["Error"]
+            </div>
+        }
+
+
+        <div class="row g-4">
+
+            <!-- Add Progress -->
+            <div class="col-lg-4">
+
+                <div class="member-page-card h-100">
+
+                    <div class="member-dashboard-icon">
+                        <i class="fa fa-plus"></i>
+                    </div>
+
+                    <h3 class="text-white fw-bold mb-2">
+                        Record New Weight
+                    </h3>
+
+                    <p class="text-white-50 mb-4">
+                        Add your latest weight measurement to your progress history.
+                    </p>
+
+                    <form asp-action="AddProgress"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div class="mb-4">
+
+                            <label for="weight"
+                                   class="form-label">
+                                Weight
+                            </label>
+
+                            <div class="input-group">
+
+                                <input type="number"
+                                       id="weight"
+                                       name="weight"
+                                       class="form-control"
+                                       step="0.1"
+                                       min="0"
+                                       placeholder="Enter your weight"
+                                       required />
+
+                                <span class="input-group-text">
+                                    kg
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <button type="submit"
+                                class="btn primary-btn gym-btn w-100">
+
+                            <i class="fa fa-save me-2"></i>
+                            Record Weight
+
+                        </button>
+
+                    </form>
+
                 </div>
-            }
-            else
-            {
-                <canvas id="progressChart" height="200"></canvas>
-            }
-        </div>
-    </div>
-</div>
 
-@section Scripts {
-    @if (Model.Any())
-    {
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
-        <script>
-            const ctx = document.getElementById('progressChart');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: [@Html.Raw(string.Join(",", Model.Select(p => $"'{p.RecordDate:dd/MM}'")))],
-                    datasets: [{
-                        label: 'Weight (kg)',
-                        data: [@string.Join(",", Model.Select(p => p.Weight))],
-                        borderColor: '#212529',
-                        backgroundColor: 'rgba(33,37,41,0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: { responsive: true }
-            });
-        </script>
-    }
-}
+            </div>
+
+
+            <!-- History -->
+            <div class="col-lg-8">
+
+                <div class="member-page-card h-100">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <div>
+
+                            <h3 class="text-white fw-bold mb-1">
+                                Progress History
+                            </h3>
+
+                            <p class="text-white-50 mb-0">
+                                Your recorded weight measurements.
+                            </p>
+
+                        </div>
+
+                        <div class="member-dashboard-icon mb-0">
+
+                            <i class="fa fa-line-chart"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (Model != null && Model.Any())
+                    {
+                        <div class="member-table-wrapper">
+
+                            <table class="table member-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Weight
+                                        </th>
+
+                                        <th>
+                                            Record Date
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+
+                                            <td>
+
+                                                <strong>
+                                                    @item.Weight kg
+                                                </strong>
+
+                                            </td>
+
+                                            <td>
+                                                @item.RecordDate
+                                                .ToString("dd MMM yyyy - HH:mm")
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="member-empty">
+
+                            <i class="fa fa-line-chart"></i>
+
+                            <h5 class="text-white">
+                                No Progress Records
+                            </h5>
+
+                            <p class="mb-0">
+                                Add your first weight measurement to start tracking your progress.
+                            </p>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="d-flex flex-wrap gap-2 mt-4">
+
+            <a asp-action="Index"
+               class="btn btn-outline-light">
+
+                <i class="fa fa-dashboard me-2"></i>
+                Dashboard
+
+            </a>
+
+            <a asp-action="Schedule"
+               class="btn primary-btn gym-btn">
+
+                <i class="fa fa-calendar me-2"></i>
+                View Schedule
+
+            </a>
+
+            <a asp-action="MyBookings"
+               class="btn btn-outline-light">
+
+                <i class="fa fa-ticket me-2"></i>
+                My Bookings
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>

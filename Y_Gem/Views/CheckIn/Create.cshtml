@@ -1,0 +1,137 @@
+﻿@model Y_GYM.Models.CheckIn
+
+@{
+    ViewData["Title"] = "Create Check In";
+}
+
+<div class="gym-page">
+
+    <div class="gym-page-header">
+        <div>
+            <h1>Check In</h1>
+            <p>Register a member attendance and validate their subscription.</p>
+        </div>
+
+        <a asp-action="Index"
+           class="btn gym-btn-secondary">
+            Back to Check Ins
+        </a>
+    </div>
+
+    <div class="gym-card">
+
+        <form asp-action="Create"
+              method="post"
+              class="gym-form">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-3">
+            </div>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+
+                    <label asp-for="MemberId"
+                           class="form-label">
+                        Member
+                    </label>
+
+                    <select asp-for="MemberId"
+                            asp-items="ViewBag.Members"
+                            class="form-select">
+
+                        <option value="">
+                            -- Select Member --
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="MemberId"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label asp-for="StaffId"
+                           class="form-label">
+                        Staff
+                    </label>
+
+                    <select asp-for="StaffId"
+                            asp-items="ViewBag.Staff"
+                            class="form-select">
+
+                        <option value="">
+                            -- Select Staff --
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="StaffId"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label asp-for="CheckInTime"
+                           class="form-label">
+                        Check In Time
+                    </label>
+
+                    <input asp-for="CheckInTime"
+                           type="datetime-local"
+                           class="form-control" />
+
+                    <span asp-validation-for="CheckInTime"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="mt-4 p-3 rounded border bg-light">
+
+                <div class="fw-bold mb-2">
+                    Subscription Validation
+                </div>
+
+                <div class="text-muted">
+                    The system will automatically check the member's latest
+                    subscription and determine whether the check-in is
+                    Allowed or Rejected.
+                </div>
+
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+
+                <button type="submit"
+                        class="btn gym-btn">
+                    <i class="bi bi-check-circle me-1"></i>
+                    Check In
+                </button>
+
+                <a asp-action="Index"
+                   class="btn gym-btn-secondary">
+                    Cancel
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

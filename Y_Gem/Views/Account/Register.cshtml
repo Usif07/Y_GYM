@@ -1,0 +1,222 @@
+﻿@model Y_GYM.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Create Account";
+
+    var planName = ViewData["PlanName"]?.ToString();
+    var planPrice = ViewData["PlanPrice"];
+    var planDuration = ViewData["PlanDuration"];
+}
+
+<section class="gym-page">
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-xl-9 col-lg-10">
+
+                <div class="gym-page-header text-center">
+                    <span class="page-label">
+                        FITNESS GYM
+                    </span>
+
+                    <h1>Create Your Account</h1>
+
+                    <p>
+                        Complete your registration and start your fitness journey.
+                    </p>
+                </div>
+
+                @if (!string.IsNullOrEmpty(planName))
+                {
+                    <div class="gym-selected-plan mb-4">
+
+                        <div class="gym-selected-plan-icon">
+                            <i class="fa fa-dumbbell"></i>
+                        </div>
+
+                        <div class="gym-selected-plan-info">
+                            <span>SELECTED MEMBERSHIP</span>
+
+                            <h3>
+                                @planName
+                            </h3>
+
+                            <p>
+                                @Convert.ToDouble(planPrice).ToString("0.00") EGP
+                                <span class="mx-2">•</span>
+                                @planDuration days
+                            </p>
+                        </div>
+
+                        <a asp-controller="MembershipPlans"
+                           asp-action="Index"
+                           class="btn btn-outline-light">
+                            Change Plan
+                        </a>
+
+                    </div>
+                }
+
+                <div class="gym-card">
+
+                    <div class="gym-form">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger"
+                             role="alert">
+                        </div>
+
+                        <form asp-controller="Account"
+                              asp-action="Register"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <input asp-for="MembershipPlanId"
+                                   type="hidden" />
+
+                            <div class="row g-4">
+
+                                <div class="col-md-6">
+
+                                    <label asp-for="FullName"
+                                           class="form-label">
+                                    </label>
+
+                                    <input asp-for="FullName"
+                                           class="form-control"
+                                           placeholder="Enter your full name" />
+
+                                    <span asp-validation-for="FullName"
+                                          class="text-danger">
+                                    </span>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <label asp-for="UserName"
+                                           class="form-label">
+                                    </label>
+
+                                    <input asp-for="UserName"
+                                           class="form-control"
+                                           placeholder="Choose a username" />
+
+                                    <span asp-validation-for="UserName"
+                                          class="text-danger">
+                                    </span>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <label asp-for="Email"
+                                           class="form-label">
+                                    </label>
+
+                                    <input asp-for="Email"
+                                           class="form-control"
+                                           placeholder="Enter your email" />
+
+                                    <span asp-validation-for="Email"
+                                          class="text-danger">
+                                    </span>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <label asp-for="Phone"
+                                           class="form-label">
+                                    </label>
+
+                                    <input asp-for="Phone"
+                                           class="form-control"
+                                           placeholder="Enter your phone number" />
+
+                                    <span asp-validation-for="Phone"
+                                          class="text-danger">
+                                    </span>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <label asp-for="Password"
+                                           class="form-label">
+                                    </label>
+
+                                    <input asp-for="Password"
+                                           class="form-control"
+                                           placeholder="Create a password" />
+
+                                    <span asp-validation-for="Password"
+                                          class="text-danger">
+                                    </span>
+
+                                </div>
+
+                                <div class="col-md-6">
+
+                                    <label asp-for="ConfirmPassword"
+                                           class="form-label">
+                                    </label>
+
+                                    <input asp-for="ConfirmPassword"
+                                           class="form-control"
+                                           placeholder="Confirm your password" />
+
+                                    <span asp-validation-for="ConfirmPassword"
+                                          class="text-danger">
+                                    </span>
+
+                                </div>
+
+                                <div class="col-12">
+
+                                    <button type="submit"
+                                            class="primary-btn gym-btn w-100">
+                                        <i class="fa fa-user-plus me-2"></i>
+                                        Create Account
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+                <div class="text-center mt-4">
+
+                    <p class="text-white-50 mb-2">
+                        Already have an account?
+                    </p>
+
+                    <a asp-controller="Account"
+                       asp-action="Login"
+                       class="btn btn-outline-light">
+                        <i class="fa fa-sign-in me-2"></i>
+                        Sign In
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+}

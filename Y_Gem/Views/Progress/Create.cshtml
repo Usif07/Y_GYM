@@ -1,0 +1,50 @@
+﻿@model Y_GYM.Models.Progress
+
+@{
+    ViewData["Title"] = "Create Progress";
+}
+
+<h1>Create Progress</h1>
+
+<h4>Progress</h4>
+<hr />
+
+<div>
+    <form asp-action="Create" method="post">
+
+        <div>
+            <label asp-for="MemberId"></label>
+            <select asp-for="MemberId" asp-items="ViewBag.Members">
+                <option value="">-- Select Member --</option>
+            </select>
+            <span asp-validation-for="MemberId"></span>
+        </div>
+
+        <div>
+            <label asp-for="Weight"></label>
+            <input asp-for="Weight" type="number" step="0.1" />
+            <span asp-validation-for="Weight"></span>
+        </div>
+
+        <div>
+            <label asp-for="RecordDate"></label>
+            <input asp-for="RecordDate" type="date" />
+            <span asp-validation-for="RecordDate"></span>
+        </div>
+
+        <div>
+            <input type="submit" value="Create" />
+        </div>
+
+    </form>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

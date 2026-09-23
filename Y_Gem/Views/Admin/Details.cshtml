@@ -1,0 +1,29 @@
+﻿
+@model Y_GYM.Models.Admin
+
+@{
+    ViewData["Title"] = "Admin Details";
+}
+
+<h1>Admin Details</h1>
+
+<hr />
+
+<dl>
+    <dt>Full Name</dt>
+    <dd>@Model.FullName</dd>
+
+    <dt>User Name</dt>
+    <dd>@Model.UserName</dd>
+
+    <dt>Email</dt>
+    <dd>@Model.Email</dd>
+
+    <dt>Phone Number</dt>
+    <dd>@Model.PhoneNumber</dd>
+</dl>
+
+<p>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</p>

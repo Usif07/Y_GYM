@@ -1,0 +1,216 @@
+﻿@model Y_GYM.Models.Payment
+
+@{
+    ViewData["Title"] = "Add Payment";
+}
+
+<div class="gym-page">
+
+    <div class="gym-page-header">
+
+        <div>
+
+            <h1>
+                <i class="fa fa-plus-circle"></i>
+                Add Payment
+            </h1>
+
+            <p>
+                Record a new payment for a gym member.
+            </p>
+
+        </div>
+
+        <a asp-action="Index"
+           class="btn gym-btn-secondary">
+
+            <i class="fa fa-arrow-left"></i>
+            Back to Payments
+
+        </a>
+
+    </div>
+
+    <div class="row justify-content-center">
+
+        <div class="col-lg-8">
+
+            <div class="gym-card">
+
+                <form asp-action="Create"
+                      method="post"
+                      class="gym-form">
+
+                    @Html.AntiForgeryToken()
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="alert alert-danger">
+                    </div>
+
+                    <!-- Member -->
+
+                    <div class="mb-4">
+
+                        <label asp-for="MemberId"
+                               class="form-label">
+                            Member
+                        </label>
+
+                        <select asp-for="MemberId"
+                                asp-items="ViewBag.Members"
+                                class="form-select">
+
+                            <option value="">
+                                -- Select Member --
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="MemberId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- Subscription -->
+
+                    <div class="mb-4">
+
+                        <label asp-for="SubscriptionId"
+                               class="form-label">
+                            Subscription
+                        </label>
+
+                        <select asp-for="SubscriptionId"
+                                asp-items="ViewBag.Subscriptions"
+                                class="form-select">
+
+                            <option value="">
+                                -- No Subscription --
+                            </option>
+
+                        </select>
+
+                        <div class="form-text">
+                            Select the subscription related to this payment.
+                        </div>
+
+                        <span asp-validation-for="SubscriptionId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- Amount -->
+
+                    <div class="mb-4">
+
+                        <label asp-for="Amount"
+                               class="form-label">
+                            Amount
+                        </label>
+
+                        <div class="input-group">
+
+                            <input asp-for="Amount"
+                                   class="form-control"
+                                   type="number"
+                                   min="1"
+                                   step="0.01"
+                                   placeholder="Enter payment amount" />
+
+                            <span class="input-group-text">
+                                EGP
+                            </span>
+
+                        </div>
+
+                        <span asp-validation-for="Amount"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- Payment Date -->
+
+                    <div class="mb-4">
+
+                        <label asp-for="PaymentDate"
+                               class="form-label">
+                            Payment Date
+                        </label>
+
+                        <input asp-for="PaymentDate"
+                               class="form-control"
+                               type="datetime-local" />
+
+                        <span asp-validation-for="PaymentDate"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- Staff -->
+
+                    <div class="mb-4">
+
+                        <label asp-for="StaffId"
+                               class="form-label">
+                            Staff
+                        </label>
+
+                        <select asp-for="StaffId"
+                                asp-items="ViewBag.Staff"
+                                class="form-select">
+
+                            <option value="">
+                                -- Select Staff --
+                            </option>
+
+                        </select>
+
+                        <div class="form-text">
+                            Staff member who handled this payment.
+                        </div>
+
+                        <span asp-validation-for="StaffId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- Buttons -->
+
+                    <div class="d-flex gap-2 pt-2">
+
+                        <button type="submit"
+                                class="btn gym-btn">
+
+                            <i class="fa fa-save"></i>
+                            Save Payment
+
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn gym-btn-secondary">
+
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,246 @@
+﻿@{
+    ViewData["Title"] = "Login";
+
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<section class="gym-page">
+    <div class="container">
+
+        <div class="row justify-content-center">
+
+            <div class="col-xl-7 col-lg-8 col-md-10">
+
+                <!-- Page Header -->
+                <div class="gym-page-header text-center">
+
+                    <span class="page-label">
+                        FITNESS GYM
+                    </span>
+
+                    <h1>
+                        Welcome Back
+                    </h1>
+
+                    <p>
+                        Sign in to your account and continue your fitness journey.
+                    </p>
+
+                </div>
+
+                <!-- Login Card -->
+                <div class="gym-card shadow-lg">
+
+                    <div class="row g-0">
+
+                        <!-- Left Side -->
+                        <div class="col-lg-5 d-none d-lg-flex">
+
+                            <div class="gym-login-intro w-100">
+
+                                <div class="gym-login-intro-icon">
+                                    <i class="fa fa-dumbbell"></i>
+                                </div>
+
+                                <span>
+                                    FITNESS GYM
+                                </span>
+
+                                <h2>
+                                    Train.<br />
+                                    Improve.<br />
+                                    Achieve.
+                                </h2>
+
+                                <p>
+                                    Access your membership, bookings,
+                                    progress and more from your account.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Right Side -->
+                        <div class="col-lg-7">
+
+                            <div class="p-4 p-md-5">
+
+                                <div class="text-center mb-4">
+
+                                    <div class="gym-login-icon mb-3">
+                                        <i class="fa fa-sign-in"></i>
+                                    </div>
+
+                                    <h2 class="h3 fw-bold text-white mb-2">
+                                        Sign In
+                                    </h2>
+
+                                    <p class="text-white-50 mb-0">
+                                        Enter your account details below.
+                                    </p>
+
+                                </div>
+
+                                <form asp-controller="Account"
+                                      asp-action="Login"
+                                      method="post">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <input type="hidden"
+                                           name="returnUrl"
+                                           value="@returnUrl" />
+
+                                    <div asp-validation-summary="ModelOnly"
+                                         class="alert alert-danger"
+                                         role="alert">
+                                    </div>
+
+                                    <!-- Username -->
+                                    <div class="mb-4">
+
+                                        <label for="username"
+                                               class="form-label">
+                                            Username
+                                        </label>
+
+                                        <div class="input-group gym-login-input">
+
+                                            <span class="input-group-text">
+                                                <i class="fa fa-user"></i>
+                                            </span>
+
+                                            <input type="text"
+                                                   id="username"
+                                                   name="username"
+                                                   class="form-control"
+                                                   placeholder="Enter your username"
+                                                   autocomplete="username"
+                                                   required />
+
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Password -->
+                                    <div class="mb-4">
+
+                                        <label for="password"
+                                               class="form-label">
+                                            Password
+                                        </label>
+
+                                        <div class="input-group gym-login-input">
+
+                                            <span class="input-group-text">
+                                                <i class="fa fa-lock"></i>
+                                            </span>
+
+                                            <input type="password"
+                                                   id="password"
+                                                   name="password"
+                                                   class="form-control"
+                                                   placeholder="Enter your password"
+                                                   autocomplete="current-password"
+                                                   required />
+
+                                        </div>
+
+                                    </div>
+
+                                    <!-- Submit -->
+                                    <div class="d-grid">
+
+                                        <button type="submit"
+                                                class="primary-btn gym-btn btn-lg">
+
+                                            <i class="fa fa-sign-in me-2"></i>
+
+                                            Sign In
+
+                                        </button>
+
+                                    </div>
+
+                                </form>
+
+                                <div class="gym-auth-divider">
+                                    <span>OR</span>
+                                </div>
+
+                                <!-- Register -->
+                                <div class="text-center">
+
+                                    <p class="text-white-50 mb-3">
+                                        First time at FITNESS GYM?
+                                    </p>
+
+                                    <a asp-controller="Account"
+                                       asp-action="Register"
+                                       class="btn gym-login-register-btn w-100">
+
+                                        <i class="fa fa-user-plus me-2"></i>
+
+                                        Create New Account
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Quick Links -->
+                <div class="text-center mt-4">
+
+                    <div class="d-flex flex-wrap justify-content-center gap-2">
+
+                        <a asp-controller="Home"
+                           asp-action="Index"
+                           class="btn btn-outline-light btn-sm">
+
+                            <i class="fa fa-home me-1"></i>
+                            Home
+
+                        </a>
+
+                        <a asp-controller="MembershipPlans"
+                           asp-action="Index"
+                           class="btn btn-outline-light btn-sm">
+
+                            <i class="fa fa-list me-1"></i>
+                            Membership Plans
+
+                        </a>
+
+                        <a asp-controller="Class"
+                           asp-action="Index"
+                           class="btn btn-outline-light btn-sm">
+
+                            <i class="fa fa-calendar me-1"></i>
+                            Classes
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

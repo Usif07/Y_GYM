@@ -1,0 +1,62 @@
+﻿@model Y_GYM.Models.ClassSchedule
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Class Schedule</h4>
+<hr />
+
+<div>
+    <form asp-action="Edit" method="post">
+
+        <input type="hidden" asp-for="Id" />
+
+        <div>
+            <label asp-for="ClassId"></label>
+            <input asp-for="ClassId" />
+            <span asp-validation-for="ClassId"></span>
+        </div>
+
+        <div>
+            <label asp-for="CoachId"></label>
+            <input asp-for="CoachId" />
+            <span asp-validation-for="CoachId"></span>
+        </div>
+
+        <div>
+            <label asp-for="AvailablePlaces"></label>
+            <input asp-for="AvailablePlaces" />
+            <span asp-validation-for="AvailablePlaces"></span>
+        </div>
+
+        <div>
+            <label asp-for="StartTime"></label>
+            <input asp-for="StartTime" type="datetime-local" />
+            <span asp-validation-for="StartTime"></span>
+        </div>
+
+        <div>
+            <label asp-for="EndTime"></label>
+            <input asp-for="EndTime" type="datetime-local" />
+            <span asp-validation-for="EndTime"></span>
+        </div>
+
+        <div>
+            <input type="submit" value="Save" />
+        </div>
+
+    </form>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

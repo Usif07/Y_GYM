@@ -1,29 +1,155 @@
-﻿@model Y_GYM.Models.MembershipPlan
+﻿
+@model Y_GYM.Models.MembershipPlan
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-dark">Add New Plan</h2>
+@{
+    ViewData["Title"] = "Create Membership Plan";
+}
 
-    <form method="post" asp-controller="MembershipPlans" asp-action="SaveNew" class="col-md-6">
+<section class="gym-page">
 
-        <div class="mb-3">
-            <label asp-for="Name" class="form-label text-secondary fw-bold">Plan Name</label>
-            <input asp-for="Name" class="form-control" />
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="gym-page-header">
+
+            <span class="page-label">
+                FITNESS GYM
+            </span>
+
+            <h1>
+                Create Membership Plan
+            </h1>
+
+            <p>
+                Add a new membership plan with its price and duration.
+            </p>
+
         </div>
 
-        <div class="mb-3">
-            <label asp-for="Price" class="form-label text-secondary fw-bold">Plan Price</label>
-            <input asp-for="Price" class="form-control" />
+
+        <!-- Form -->
+        <div class="row justify-content-center">
+
+            <div class="col-lg-8 col-md-10">
+
+                <div class="gym-card">
+
+                    <form asp-action="SaveNew"
+                          method="post"
+                          class="gym-form">
+
+                        @Html.AntiForgeryToken()
+
+                        <!-- Validation Summary -->
+                        <div asp-validation-summary="ModelOnly"
+                             class="text-danger mb-4">
+                        </div>
+
+
+                        <!-- Plan Name -->
+                        <div class="mb-4">
+
+                            <label asp-for="Name"
+                                   class="form-label">
+                                Plan Name
+                            </label>
+
+                            <input asp-for="Name"
+                                   class="form-control"
+                                   placeholder="Enter plan name" />
+
+                            <span asp-validation-for="Name"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+
+                        <!-- Price -->
+                        <div class="mb-4">
+
+                            <label asp-for="Price"
+                                   class="form-label">
+                                Price (EGP)
+                            </label>
+
+                            <input asp-for="Price"
+                                   type="number"
+                                   step="0.01"
+                                   min="0"
+                                   class="form-control"
+                                   placeholder="Enter plan price" />
+
+                            <span asp-validation-for="Price"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+
+                        <!-- Duration -->
+                        <div class="mb-4">
+
+                            <label asp-for="DurationDays"
+                                   class="form-label">
+                                Duration (Days)
+                            </label>
+
+                            <input asp-for="DurationDays"
+                                   type="number"
+                                   min="1"
+                                   class="form-control"
+                                   placeholder="Enter duration in days" />
+
+                            <span asp-validation-for="DurationDays"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+
+                        <!-- Buttons -->
+                        <div class="d-flex gap-2 mt-4">
+
+                            <button type="submit"
+                                    class="primary-btn gym-btn">
+
+                                <i class="fa fa-save"></i>
+
+                                Create Plan
+
+                            </button>
+
+
+                            <a asp-action="Index"
+                               class="btn gym-btn-secondary">
+
+                                <i class="fa fa-arrow-left"></i>
+
+                                Back to Plans
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="mb-3">
-            <label asp-for="DurationDays" class="form-label text-secondary fw-bold">Duration</label>
-            <input asp-for="DurationDays" class="form-control" />
-        </div>
+    </div>
 
-        <div class="mt-4">
-            <button type="submit" class="btn btn-dark px-4">Save Plan</button>
-            <a asp-action="Index" class="btn btn-outline-secondary ms-2 px-4">Back</a>
-        </div>
+</section>
 
-    </form>
-</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync(
+            "_ValidationScriptsPartial");
+    }
+
+}

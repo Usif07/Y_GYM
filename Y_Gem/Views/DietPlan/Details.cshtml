@@ -1,0 +1,49 @@
+﻿@model Y_GYM.Models.DietPlan
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Diet Plan</h4>
+    <hr />
+
+    <dl>
+
+        <dt>
+            Member ID
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MemberId)
+        </dd>
+
+        <dt>
+            Coach ID
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CoachId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PlanDetails)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PlanDetails)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

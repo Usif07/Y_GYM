@@ -1,74 +1,641 @@
 @model Y_GYM.Models.Member
+
 @{
-    ViewData["Title"] = "Control Panel";
-    var sub = ViewBag.ActiveSubscription as Y_GYM.Models.Subscription;
-    var nextBooking = ViewBag.NextBooking as Y_GYM.Models.Booking;
-    int attendance = ViewBag.AttendanceThisMonth ?? 0;
+    ViewData["Title"] = "Member Dashboard";
+
+    var activeSubscription =
+        ViewBag.ActiveSubscription as Y_GYM.Models.Subscription;
+
+    var nextBooking =
+        ViewBag.NextBooking as Y_GYM.Models.Booking;
+
+    var attendanceThisMonth =
+        ViewBag.AttendanceThisMonth;
+
+    var hasActiveSubscription =
+        activeSubscription != null;
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-dark">Hello، @Model.User.FullName</h2>
+<section class="gym-page">
 
-    <div class="row g-3">
-        <div class="col-md-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body text-center">
-                    <h6 class="text-secondary fw-bold">Subscription Status</h6>
-                    @if (sub != null)
+    <div class="container">
+
+        <!-- Header -->
+        <div class="gym-page-header">
+
+            <span class="page-label">
+                MEMBER AREA
+            </span>
+
+            <h1>
+                Member Dashboard
+            </h1>
+
+            <p>
+                Manage your membership, classes, bookings and fitness progress.
+            </p>
+
+        </div>
+
+
+        <!-- Welcome -->
+        <div class="member-welcome mb-4">
+
+            <span class="member-welcome-label">
+                WELCOME BACK
+            </span>
+
+            <h2>
+                @Model.FullName
+            </h2>
+
+            <p>
+                Stay consistent, keep training and track your progress.
+            </p>
+
+        </div>
+
+
+        <!-- Overview Cards -->
+        <div class="row g-4 mb-5">
+
+            <!-- Membership -->
+            <div class="col-xl-3 col-md-6">
+
+                <div class="member-dashboard-card">
+
+                    <div class="member-dashboard-icon">
+                        <i class="fa fa-id-card"></i>
+                    </div>
+
+                    <div class="dashboard-label">
+                        Membership
+                    </div>
+
+                    <div class="dashboard-value">
+
+                        @if (hasActiveSubscription)
+                        {
+                            @activeSubscription!.MembershipPlan?.Name
+                        }
+                        else
+                        {
+                            <span>No Active Plan</span>
+                        }
+
+                    </div>
+
+                    <div class="dashboard-subtitle">
+
+                        @if (hasActiveSubscription)
+                        {
+                            @activeSubscription!.Status
+                        }
+                        else
+                        {
+                            <span>Membership required</span>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Expiry -->
+            <div class="col-xl-3 col-md-6">
+
+                <div class="member-dashboard-card">
+
+                    <div class="member-dashboard-icon">
+                        <i class="fa fa-calendar-check-o"></i>
+                    </div>
+
+                    <div class="dashboard-label">
+                        Membership End
+                    </div>
+
+                    <div class="dashboard-value">
+
+                        @if (hasActiveSubscription)
+                        {
+                            @activeSubscription!.EndDate.ToString("dd MMM yyyy")
+                        }
+                        else
+                        {
+                            <span>---</span>
+                        }
+
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        Subscription expiry date
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Attendance -->
+            <div class="col-xl-3 col-md-6">
+
+                <div class="member-dashboard-card">
+
+                    <div class="member-dashboard-icon">
+                        <i class="fa fa-line-chart"></i>
+                    </div>
+
+                    <div class="dashboard-label">
+                        Attendance
+                    </div>
+
+                    <div class="dashboard-value">
+                        @attendanceThisMonth
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        Check-ins this month
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Next Class -->
+            <div class="col-xl-3 col-md-6">
+
+                <div class="member-dashboard-card">
+
+                    <div class="member-dashboard-icon">
+                        <i class="fa fa-clock-o"></i>
+                    </div>
+
+                    <div class="dashboard-label">
+                        Next Class
+                    </div>
+
+                    <div class="dashboard-value">
+
+                        @if (nextBooking != null)
+                        {
+                            @nextBooking.ClassSchedule?.Class?.Name
+                        }
+                        else
+                        {
+                            <span>None</span>
+                        }
+
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        Upcoming booking
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="row g-4">
+
+            <!-- Personal Information -->
+            <div class="col-lg-6">
+
+                <div class="member-page-card h-100">
+
+                    <h3 class="member-section-title">
+                        <i class="fa fa-user me-2"
+                           style="color:#f36100;"></i>
+
+                        My Information
+                    </h3>
+
+                    <div class="member-info-list">
+
+                        <div class="member-info-row">
+
+                            <span class="member-info-label">
+                                Full Name
+                            </span>
+
+                            <span class="member-info-value">
+                                @Model.FullName
+                            </span>
+
+                        </div>
+
+                        <div class="member-info-row">
+
+                            <span class="member-info-label">
+                                Phone
+                            </span>
+
+                            <span class="member-info-value">
+                                @Model.Phone
+                            </span>
+
+                        </div>
+
+                        <div class="member-info-row">
+
+                            <span class="member-info-label">
+                                Join Date
+                            </span>
+
+                            <span class="member-info-value">
+                                @Model.JoinDate.ToString("dd MMM yyyy")
+                            </span>
+
+                        </div>
+
+                        <div class="member-info-row">
+
+                            <span class="member-info-label">
+                                Weight
+                            </span>
+
+                            <span class="member-info-value">
+                                @(Model.Weight?.ToString() ?? "Not set")
+                            </span>
+
+                        </div>
+
+                        <div class="member-info-row">
+
+                            <span class="member-info-label">
+                                Height
+                            </span>
+
+                            <span class="member-info-value">
+                                @(Model.Height?.ToString() ?? "Not set")
+                            </span>
+
+                        </div>
+
+                        <div class="member-info-row">
+
+                            <span class="member-info-label">
+                                Goal
+                            </span>
+
+                            <span class="member-info-value">
+                                @(Model.Goal ?? "Not set")
+                            </span>
+
+                        </div>
+
+                        <div class="member-info-row">
+
+                            <span class="member-info-label">
+                                Fitness Level
+                            </span>
+
+                            <span class="member-info-value">
+                                @(Model.FitnessLevel ?? "Not set")
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Membership -->
+            <div class="col-lg-6">
+
+                <div class="member-page-card h-100">
+
+                    <h3 class="member-section-title">
+
+                        <i class="fa fa-credit-card me-2"
+                           style="color:#f36100;"></i>
+
+                        My Membership
+
+                    </h3>
+
+                    @if (activeSubscription != null)
                     {
-                        <p class="fs-4 text-success mb-0">@sub.MembershipPlan.Name</p>
-                        <small class="text-muted">Remaining @((sub.EndDate - DateTime.Now).Days) Day</small>
+                        <div class="member-info-list">
+
+                            <div class="member-info-row">
+
+                                <span class="member-info-label">
+                                    Plan
+                                </span>
+
+                                <span class="member-info-value">
+                                    @activeSubscription.MembershipPlan?.Name
+                                </span>
+
+                            </div>
+
+                            <div class="member-info-row">
+
+                                <span class="member-info-label">
+                                    Start Date
+                                </span>
+
+                                <span class="member-info-value">
+                                    @activeSubscription.StartDate.ToString("dd MMM yyyy")
+                                </span>
+
+                            </div>
+
+                            <div class="member-info-row">
+
+                                <span class="member-info-label">
+                                    End Date
+                                </span>
+
+                                <span class="member-info-value">
+                                    @activeSubscription.EndDate.ToString("dd MMM yyyy")
+                                </span>
+
+                            </div>
+
+                            <div class="member-info-row">
+
+                                <span class="member-info-label">
+                                    Status
+                                </span>
+
+                                <span class="member-info-value">
+
+                                    <span class="member-status">
+                                        <i class="fa fa-check-circle"></i>
+                                        @activeSubscription.Status
+                                    </span>
+
+                                </span>
+
+                            </div>
+
+                        </div>
                     }
                     else
                     {
-                        <p class="fs-5 text-danger mb-0">There is no active subscription</p>
-                        <a asp-action="Plans" asp-controller="Home" class="btn btn-sm btn-dark mt-2">Subscribe Now</a>
+                        <div class="member-empty">
+
+                            <i class="fa fa-id-card-o"></i>
+
+                            <p class="mb-3">
+                                You don't have an active subscription yet.
+                            </p>
+
+                            <a asp-controller="MembershipPlans"
+                               asp-action="Index"
+                               class="btn primary-btn gym-btn">
+
+                                <i class="fa fa-list me-2"></i>
+                                View Membership Plans
+
+                            </a>
+
+                        </div>
                     }
-                </div>
-            </div>
-        </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body text-center">
-                    <h6 class="text-secondary fw-bold">Attendance This Month</h6>
-                    <p class="fs-3 mb-0">@attendance</p>
-                    <small class="text-muted">Once</small>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body text-center">
-                    <h6 class="text-secondary fw-bold">Current Weight</h6>
-                    <p class="fs-3 mb-0">@Model.Weight</p>
-                    <small class="text-muted">Kg</small>
-                </div>
             </div>
-        </div>
 
-        <div class="col-md-3">
-            <div class="card shadow-sm h-100">
-                <div class="card-body text-center">
-                    <h6 class="text-secondary fw-bold">Next Class</h6>
+
+            <!-- Next Booking -->
+            <div class="col-lg-6">
+
+                <div class="member-page-card h-100">
+
+                    <h3 class="member-section-title">
+
+                        <i class="fa fa-calendar me-2"
+                           style="color:#f36100;"></i>
+
+                        Next Booking
+
+                    </h3>
+
                     @if (nextBooking != null)
                     {
-                        <p class="fs-6 mb-0">@nextBooking.ClassSchedule.Class.Name</p>
-                        <small class="text-muted">@nextBooking.ClassSchedule.StartTime.ToString("dd/MM HH:mm")</small>
+                        <div class="member-info-list">
+
+                            <div class="member-info-row">
+
+                                <span class="member-info-label">
+                                    Class
+                                </span>
+
+                                <span class="member-info-value">
+                                    @nextBooking.ClassSchedule?.Class?.Name
+                                </span>
+
+                            </div>
+
+                            <div class="member-info-row">
+
+                                <span class="member-info-label">
+                                    Coach
+                                </span>
+
+                                <span class="member-info-value">
+                                    @nextBooking.ClassSchedule?.Coach?.User?.FullName
+                                </span>
+
+                            </div>
+
+                            <div class="member-info-row">
+
+                                <span class="member-info-label">
+                                    Start
+                                </span>
+
+                                <span class="member-info-value">
+                                    @nextBooking.ClassSchedule?.StartTime.ToString("dd MMM yyyy - HH:mm")
+                                </span>
+
+                            </div>
+
+                            <div class="member-info-row">
+
+                                <span class="member-info-label">
+                                    Status
+                                </span>
+
+                                <span class="member-info-value">
+                                    @nextBooking.Status
+                                </span>
+
+                            </div>
+
+                        </div>
                     }
                     else
                     {
-                        <p class="text-muted mb-0">No bookings</p>
+                        <div class="member-empty">
+
+                            <i class="fa fa-calendar-o"></i>
+
+                            <p class="mb-3">
+                                You don't have any upcoming bookings.
+                            </p>
+
+                            <a asp-action="Schedule"
+                               class="btn btn-outline-light">
+
+                                <i class="fa fa-calendar me-2"></i>
+                                Browse Schedule
+
+                            </a>
+
+                        </div>
                     }
+
                 </div>
+
             </div>
+
+
+            <!-- Attendance -->
+            <div class="col-lg-6">
+
+                <div class="member-page-card h-100">
+
+                    <h3 class="member-section-title">
+
+                        <i class="fa fa-bar-chart me-2"
+                           style="color:#f36100;"></i>
+
+                        Attendance
+
+                    </h3>
+
+                    <div class="text-center py-4">
+
+                        <div style="
+                            color:#f36100;
+                            font-size:52px;
+                            font-weight:800;">
+                            @attendanceThisMonth
+                        </div>
+
+                        <p class="text-white-50 mb-4">
+                            Check-ins this month
+                        </p>
+
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+
+                            <a asp-action="Schedule"
+                               class="btn primary-btn gym-btn">
+
+                                <i class="fa fa-calendar me-2"></i>
+                                Book a Class
+
+                            </a>
+
+                            <a asp-action="Progress"
+                               class="btn btn-outline-light gym-btn">
+
+                                <i class="fa fa-line-chart me-2"></i>
+                                My Progress
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
+
+
+        <!-- Quick Actions -->
+        <div class="mt-5">
+
+            <h3 class="member-section-title">
+                Quick Actions
+            </h3>
+
+            <div class="row g-3">
+
+                <div class="col-lg-3 col-md-6">
+
+                    <a asp-action="Schedule"
+                       class="member-action-card">
+
+                        <i class="fa fa-calendar"></i>
+
+                        <div>
+                            <strong>Class Schedule</strong>
+                            <span>Browse available classes</span>
+                        </div>
+
+                    </a>
+
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+
+                    <a asp-action="MyBookings"
+                       class="member-action-card">
+
+                        <i class="fa fa-ticket"></i>
+
+                        <div>
+                            <strong>My Bookings</strong>
+                            <span>View and manage bookings</span>
+                        </div>
+
+                    </a>
+
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+
+                    <a asp-action="Progress"
+                       class="member-action-card">
+
+                        <i class="fa fa-line-chart"></i>
+
+                        <div>
+                            <strong>My Progress</strong>
+                            <span>Track your weight progress</span>
+                        </div>
+
+                    </a>
+
+                </div>
+
+                <div class="col-lg-3 col-md-6">
+
+                    <a asp-controller="MembershipPlans"
+                       asp-action="Index"
+                       class="member-action-card">
+
+                        <i class="fa fa-id-card"></i>
+
+                        <div>
+                            <strong>Membership Plans</strong>
+                            <span>Explore available plans</span>
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="mt-4">
-        <a asp-action="Schedule" class="btn btn-dark px-4">View the class schedule</a>
-        <a asp-action="MyBookings" class="btn btn-outline-secondary px-4 ms-2">My bookings</a>
-        <a asp-action="Progress" class="btn btn-outline-secondary px-4 ms-2">My Progress</a>
-    </div>
-</div>
+</section>

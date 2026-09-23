@@ -1,92 +1,222 @@
 @model IEnumerable<Y_GYM.Models.Booking>
+
 @{
-    ViewData["Title"] = "My bookings";
-    var now = DateTime.Now;
-    var upcoming = Model.Where(b => b.ClassSchedule.StartTime > now && b.Status == "Confirmed");
-    var past = Model.Where(b => b.ClassSchedule.StartTime <= now || b.Status != "Confirmed");
+    ViewData["Title"] = "My Bookings";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-dark">My bookings</h2>
+<section class="gym-page">
 
-    <h5 class="text-secondary fw-bold mb-3">Next</h5>
-    @if (!upcoming.Any())
-    {
-        <div class="alert alert-light border text-center py-4 mb-4">
-            <p class="mb-0 text-muted">There are no upcoming bookings — <a asp-action="Schedule">Book a session now</a></p>
+    <div class="container">
+
+        <div class="gym-page-header">
+
+            <span class="page-label">
+                MEMBER AREA
+            </span>
+
+            <h1>
+                My Bookings
+            </h1>
+
+            <p>
+                View and manage your upcoming fitness classes.
+            </p>
+
         </div>
-    }
-    else
-    {
-        <div class="row g-3 mb-4">
-            @foreach (var b in upcoming)
+
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success mb-4">
+                <i class="fa fa-check-circle me-2"></i>
+                @TempData["Success"]
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+                <i class="fa fa-exclamation-circle me-2"></i>
+                @TempData["Error"]
+            </div>
+        }
+
+
+        <div class="member-page-card">
+
+            @if (Model != null && Model.Any())
             {
-                <div class="col-md-4">
-                    <div class="card shadow-sm h-100">
-                        <div class="card-body">
-                            <h6 class="fw-bold">@b.ClassSchedule.Class.Name</h6>
-                            <p class="text-muted mb-1">@b.ClassSchedule.StartTime.ToString("ddd dd/MM - HH:mm")</p>
-                            <form method="post" asp-action="CancelBooking">
-                                <input type="hidden" name="bookingId" value="@b.Id" />
-                                <button type="submit" class="btn btn-sm btn-outline-danger"
-                                        onclick="return confirm('Are you sure you want to cancel your booking?');">
-                                    Cancel Booking
-                                </button>
-                            </form>
-                        </div>
-                    </div>
+                <div class="member-table-wrapper">
+
+                    <table class="table member-table align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Class</th>
+                                <th>Coach</th>
+                                <th>Start Time</th>
+                                <th>Booking Date</th>
+                                <th>Status</th>
+                                <th>Attendance</th>
+                                <th class="text-end">Action</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+                                            @item.ClassSchedule?.Class?.Name
+                                        </strong>
+
+                                    </td>
+
+                                    <td>
+                                        @item.ClassSchedule?.Coach?.User?.FullName
+                                    </td>
+
+                                    <td>
+                                        @item.ClassSchedule?.StartTime
+                                        .ToString("dd MMM yyyy HH:mm")
+                                    </td>
+
+                                    <td>
+                                        @item.BookingDate
+                                        .ToString("dd MMM yyyy HH:mm")
+                                    </td>
+
+                                    <td>
+
+                                        @if (item.Status == "Confirmed")
+                                        {
+                                            <span class="member-status">
+                                                <i class="fa fa-check-circle"></i>
+                                                Confirmed
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @item.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td>
+
+                                        @if (item.IsAttended)
+                                        {
+                                            <span class="text-success">
+                                                <i class="fa fa-check me-1"></i>
+                                                Attended
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-white-50">
+                                                Not attended
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                    <td class="text-end">
+
+                                        @if (item.Status == "Confirmed")
+                                        {
+                                            <form asp-action="CancelBooking"
+                                                  asp-route-bookingId="@item.Id"
+                                                  method="post"
+                                                  class="d-inline">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger">
+
+                                                    <i class="fa fa-times me-1"></i>
+                                                    Cancel
+
+                                                </button>
+
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-white-50">
+                                                No action
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
                 </div>
             }
-        </div>
-    }
+            else
+            {
+                <div class="member-empty">
 
-    <h5 class="text-secondary fw-bold mb-3">Previous</h5>
-    @if (!past.Any())
-    {
-        <p class="text-muted">There is no record of previous bookings</p>
-    }
-    else
-    {
-        <div class="table-responsive">
-            <table class="table">
-                <thead class="table-light">
-                    <tr>
-                        <th>Class</th>
-                        <th>The Date</th>
-                        <th>State</th>
-                        <th>Attendance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var b in past)
-                    {
-                        <tr>
-                            <td>@b.ClassSchedule.Class.Name</td>
-                            <td>@b.ClassSchedule.StartTime.ToString("dd/MM/yyyy")</td>
-                            <td>
-                                @if (b.Status == "Cancelled")
-                                {
-                                    <span class="badge bg-secondary">Canceled</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-light text-dark border">Expired</span>
-                                }
-                            </td>
-                            <td>
-                                @if (b.IsAttended)
-                                {
-                                    <span class="text-success">✓ Attended</span>
-                                }
-                                else
-                                {
-                                    <span class="text-muted">—</span>
-                                }
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
+                    <i class="fa fa-calendar-o"></i>
+
+                    <h4 class="text-white mb-2">
+                        No Bookings Yet
+                    </h4>
+
+                    <p class="mb-4">
+                        You haven't booked any classes yet.
+                    </p>
+
+                    <a asp-action="Schedule"
+                       class="btn primary-btn gym-btn">
+
+                        <i class="fa fa-calendar me-2"></i>
+                        Browse Class Schedule
+
+                    </a>
+
+                </div>
+            }
+
         </div>
-    }
-</div>
+
+
+        <div class="d-flex flex-wrap gap-2 mt-4">
+
+            <a asp-action="Index"
+               class="btn btn-outline-light">
+
+                <i class="fa fa-dashboard me-2"></i>
+                Dashboard
+
+            </a>
+
+            <a asp-action="Schedule"
+               class="btn primary-btn gym-btn">
+
+                <i class="fa fa-calendar me-2"></i>
+                View Schedule
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>

@@ -1,0 +1,139 @@
+﻿@model Y_GYM.Models.Coach
+
+@{
+    ViewData["Title"] = "Create Coach";
+}
+
+<div class="container py-4">
+
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+
+            <div class="gym-page-header mb-4">
+                <h1 class="mb-1">Create Coach</h1>
+                <p class="text-muted mb-0">
+                    Create a new coach profile and account information.
+                </p>
+            </div>
+
+            <div class="card gym-card border-0 shadow-sm">
+
+                <div class="card-body p-4">
+
+                    <form asp-action="Create" method="post">
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger"
+                             role="alert">
+                        </div>
+
+                        <h5 class="mb-3">
+                            Coach Account
+                        </h5>
+
+                        <div class="mb-3">
+                            <label asp-for="User.FullName"
+                                   class="form-label">
+                                Full Name
+                            </label>
+
+                            <input asp-for="User.FullName"
+                                   class="form-control"
+                                   placeholder="Enter coach full name" />
+
+                            <span asp-validation-for="User.FullName"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="User.UserName"
+                                   class="form-label">
+                                Username
+                            </label>
+
+                            <input asp-for="User.UserName"
+                                   class="form-control"
+                                   placeholder="Enter username" />
+
+                            <span asp-validation-for="User.UserName"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="User.Email"
+                                   class="form-label">
+                                Email
+                            </label>
+
+                            <input asp-for="User.Email"
+                                   type="email"
+                                   class="form-control"
+                                   placeholder="Enter email address" />
+
+                            <span asp-validation-for="User.Email"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="User.PhoneNumber"
+                                   class="form-label">
+                                Phone Number
+                            </label>
+
+                            <input asp-for="User.PhoneNumber"
+                                   class="form-control"
+                                   placeholder="Enter phone number" />
+
+                            <span asp-validation-for="User.PhoneNumber"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="CoachSpecialty"
+                                   class="form-label">
+                                Coach Specialty
+                            </label>
+
+                            <input asp-for="CoachSpecialty"
+                                   class="form-control"
+                                   placeholder="e.g. Strength Training" />
+
+                            <span asp-validation-for="CoachSpecialty"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2">
+
+                            <button type="submit"
+                                    class="btn gym-btn">
+                                Create Coach
+                            </button>
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-secondary">
+                                Back to Coaches
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

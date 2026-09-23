@@ -1,0 +1,278 @@
+﻿@model IEnumerable<Y_GYM.Models.Subscription>
+
+@{
+    ViewData["Title"] = "Subscriptions";
+
+    var totalSubscriptions = (int)(ViewBag.TotalSubscriptions ?? 0);
+    var activeSubscriptions = (int)(ViewBag.ActiveSubscriptions ?? 0);
+    var expiredSubscriptions = (int)(ViewBag.ExpiredSubscriptions ?? 0);
+    var pendingSubscriptions = (int)(ViewBag.PendingSubscriptions ?? 0);
+
+    string GetStatusClass(string status)
+    {
+        return status switch
+        {
+            "Active" => "bg-success",
+            "Expired" => "bg-danger",
+            "Pending" => "bg-warning text-dark",
+            _ => "bg-secondary"
+        };
+    }
+}
+
+<div class="gym-page">
+
+    <div class="gym-page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
+
+        <div>
+            <h1 class="mb-1">
+                <i class="fas fa-id-card me-2"></i>
+                Subscriptions
+            </h1>
+
+            <p class="text-muted mb-0">
+                Manage member subscriptions and membership periods.
+            </p>
+        </div>
+
+        <a asp-action="Create" class="btn gym-btn">
+            <i class="fas fa-plus me-2"></i>
+            New Subscription
+        </a>
+
+    </div>
+
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["Success"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
+
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @TempData["Error"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
+
+
+    <!-- Statistics -->
+
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-6 col-xl-3">
+            <div class="gym-card h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">Total</small>
+                        <h3 class="mb-0">@totalSubscriptions</h3>
+                    </div>
+
+                    <i class="fas fa-layer-group fa-2x text-primary"></i>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="gym-card h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">Active</small>
+                        <h3 class="mb-0">@activeSubscriptions</h3>
+                    </div>
+
+                    <i class="fas fa-check-circle fa-2x text-success"></i>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="gym-card h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">Pending</small>
+                        <h3 class="mb-0">@pendingSubscriptions</h3>
+                    </div>
+
+                    <i class="fas fa-clock fa-2x text-warning"></i>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-md-6 col-xl-3">
+            <div class="gym-card h-100">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <small class="text-muted">Expired</small>
+                        <h3 class="mb-0">@expiredSubscriptions</h3>
+                    </div>
+
+                    <i class="fas fa-times-circle fa-2x text-danger"></i>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Subscriptions Table -->
+
+    <div class="gym-card">
+
+        <div class="table-responsive">
+
+            <table class="table gym-table align-middle">
+
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Member</th>
+                        <th>Plan</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    <strong>#@item.Id</strong>
+                                </td>
+
+
+                                <td>
+                                    <strong>
+                                        @(item.Member?.FullName ?? "Unknown Member")
+                                    </strong>
+                                </td>
+
+
+                                <td>
+                                    @(item.MembershipPlan?.Name ?? "No Plan")
+                                </td>
+
+
+                                <td>
+                                    @item.StartDate.ToString("dd/MM/yyyy")
+                                </td>
+
+
+                                <td>
+                                    @item.EndDate.ToString("dd/MM/yyyy")
+                                </td>
+
+
+                                <td>
+                                    <span class="badge @GetStatusClass(item.Status)">
+                                        @item.Status
+                                    </span>
+                                </td>
+
+
+                                <td class="text-end">
+
+                                    <div class="btn-group">
+
+                                        <a asp-action="Details"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+
+
+                                        <a asp-action="Edit"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-secondary"
+                                           title="Edit">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+
+
+                                        <a asp-action="Renew"
+                                           asp-route-id="@item.Id"
+                                           class="btn btn-sm btn-outline-success"
+                                           title="Renew">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </a>
+
+
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.Id"
+                                               class="btn btn-sm btn-outline-danger"
+                                               title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        }
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">
+
+                                <div class="gym-empty py-5 text-center">
+
+                                    <i class="fas fa-id-card fa-3x mb-3 text-muted"></i>
+
+                                    <h4>No subscriptions found</h4>
+
+                                    <p class="text-muted">
+                                        Create the first subscription to get started.
+                                    </p>
+
+                                    <a asp-action="Create"
+                                       class="btn gym-btn">
+                                        <i class="fas fa-plus me-2"></i>
+                                        Create Subscription
+                                    </a>
+
+                                </div>
+
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>

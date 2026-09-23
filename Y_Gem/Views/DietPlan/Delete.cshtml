@@ -1,0 +1,56 @@
+﻿@model Y_GYM.Models.DietPlan
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3>Are you sure you want to delete this?</h3>
+
+<div>
+    <h4>Diet Plan</h4>
+    <hr />
+
+    <dl>
+
+        <dt>
+            Member ID
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.MemberId)
+        </dd>
+
+        <dt>
+            Coach ID
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.CoachId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.PlanDetails)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.PlanDetails)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+
+    </dl>
+
+    <form asp-action="Delete" method="post">
+
+        <input type="hidden" asp-for="Id" />
+
+        <input type="submit" value="Delete" />
+
+        <a asp-action="Index">Back to List</a>
+
+    </form>
+</div>

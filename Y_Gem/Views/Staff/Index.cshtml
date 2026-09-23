@@ -1,31 +1,102 @@
+
 @model Y_GYM.Models.Staff
+
 @{
-    ViewData["Title"] = "Employee Control Panel";
+    ViewData["Title"] = "Staff Dashboard";
 }
 
-<div class="container mt-4">
-    <h2 class="mb-4 text-dark">Hello، @Model.User.FullName</h2>
+<h1>Staff Dashboard</h1>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-4">
-            <a asp-action="RegisterMember" class="text-decoration-none">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body text-center py-4">
-                        <h6 class="fw-bold text-dark">Register a New Member</h6>
-                    </div>
-                </div>
-            </a>
-        </div>
-        <div class="col-md-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h6 class="fw-bold mb-3">Log In (Check-in)</h6>
-                    <form method="post" asp-action="CheckIn">
-                        <input type="text" name="qrCode" class="form-control mb-2" placeholder="Scan or enter the member code" required />
-                        <button type="submit" class="btn btn-dark w-100">Check</button>
-                    </form>
-                </div>
-            </div>
-        </div>
+<hr />
+
+<h4>Staff Information</h4>
+
+<dl>
+
+    <dt>
+        @Html.DisplayNameFor(model => model.Id)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.Id)
+    </dd>
+
+
+    <dt>
+        @Html.DisplayNameFor(model => model.JobTitle)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.JobTitle)
+    </dd>
+
+
+    <dt>
+        @Html.DisplayNameFor(model => model.ShiftTime)
+    </dt>
+    <dd>
+        @Html.DisplayFor(model => model.ShiftTime)
+    </dd>
+
+
+    <dt>
+        User
+    </dt>
+    <dd>
+        @Model.User?.FullName
+    </dd>
+
+
+    <dt>
+        Email
+    </dt>
+    <dd>
+        @Model.User?.Email
+    </dd>
+
+
+    <dt>
+        Phone
+    </dt>
+    <dd>
+        @Model.User?.PhoneNumber
+    </dd>
+
+</dl>
+
+<hr />
+
+<h4>Staff Operations</h4>
+
+<p>
+    <a asp-action="RegisterMember">
+        Register New Member
+    </a>
+</p>
+
+
+<h4>Check In Member</h4>
+
+<form asp-action="CheckIn" method="post">
+
+    <div>
+        <label for="qrCode">QR Code</label>
+
+        <input type="text"
+               id="qrCode"
+               name="qrCode" />
+
     </div>
-</div>
+
+    <div>
+        <input type="submit"
+               value="Check In" />
+    </div>
+
+</form>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

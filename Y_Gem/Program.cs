@@ -1,133 +1,258 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using Y_GYM.Data;
 using Y_GYM.Models;
 using Y_GYM.Repository;
+using static Y_GYM.Repository.CheckInRepository;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
+// ============================================================
+// Localization
+// ============================================================
+
+builder.Services.AddLocalization(options =>
+{
+    options.ResourcesPath = "Resources";
+});
+
+
+// ============================================================
+// Database
+// ============================================================
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+// ============================================================
+// Identity
+// ============================================================
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;
-    options.SignIn.RequireConfirmedAccount = false;
-})
-    .AddEntityFrameworkStores<ApplicationDbContext>()
-    .AddDefaultTokenProviders();
 
+    options.SignIn.RequireConfirmedAccount = false;
+
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
+
+// ============================================================
+// Authentication Cookie Configuration
+// ============================================================
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login";
+    options.AccessDeniedPath = "/Account/AccessDenied";
+
+    options.SlidingExpiration = true;
+
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+});
+
+
+// ============================================================
+// Repositories
+// ============================================================
+
+// Members
 builder.Services.AddScoped<IMemberRepository, MemberRepository>();
+
+// Staff
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
+
+// Coaches / Trainers
 builder.Services.AddScoped<ICoachRepository, CoachRepository>();
-builder.Services.AddScoped<IBookingRepository, BookingRepository>();
-builder.Services.AddScoped<ICheckInRepository, CheckInRepository>();
+
+// Classes
 builder.Services.AddScoped<IClassRepository, ClassRepository>();
+
+// Class Schedules
 builder.Services.AddScoped<IClassScheduleRepository, ClassScheduleRepository>();
+
+// Bookings
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+
+// Check-ins
+builder.Services.AddScoped<ICheckInRepository, CheckInRepository>();
+
+// Diet Plans
 builder.Services.AddScoped<IDietPlanRepository, DietPlanRepository>();
+
+// Payments
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+
+// Progress
 builder.Services.AddScoped<IProgressRepository, ProgressRepository>();
+
+// Subscriptions
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
-builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+
+// Membership Plans
+builder.Services.AddScoped<IMembershipPlans, MembershipPlans>();
+
+// Application Users
 builder.Services.AddScoped<IApplicationUserRepository, ApplicationUserRepository>();
 
-builder.Services.AddControllersWithViews();
+// Admin
+// Kept temporarily for the current project structure.
+// Admin management will later use ApplicationUser + IdentityRole.
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
+
+
+// ============================================================
+// MVC + Localization
+// ============================================================
+
+builder.Services
+    .AddControllersWithViews()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
+
+
+// ============================================================
+// Build Application
+// ============================================================
 
 var app = builder.Build();
 
-// Seed roles + admin account
+
+// ============================================================
+// Supported Languages
+// ============================================================
+
+var supportedCultures = new[]
+{
+    new CultureInfo("en"),
+    new CultureInfo("ar")
+};
+
+var localizationOptions = new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en"),
+
+    SupportedCultures = supportedCultures,
+
+    SupportedUICultures = supportedCultures
+};
+
+
+// ============================================================
+// Database Seeder
+// ============================================================
+//
+// DatabaseSeeder is now responsible for:
+// 
+// - Database migration
+// - Roles
+// - Default Admin
+// - Test Staff
+// - Test Members
+// - Membership Plans
+// - Subscriptions
+// - Payments
+// - Check-Ins
+//
+// The Seeder is designed to avoid duplicating the test data
+// every time the application starts.
+// ============================================================
+
 using (var scope = app.Services.CreateScope())
 {
-    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-    string[] roles = { "Admin", "Staff", "Trainer", "Member" };
-    foreach (var role in roles)
-    {
-        if (!await roleManager.RoleExistsAsync(role))
-            await roleManager.CreateAsync(new IdentityRole(role));
-    }
+    var services = scope.ServiceProvider;
 
+    var context =
+        services.GetRequiredService<ApplicationDbContext>();
 
-    // var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    // var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    var userManager =
+        services.GetRequiredService<UserManager<ApplicationUser>>();
 
-    // var staffEmail = "staff@gym.com";
-    // var existingStaffUser = await userManager.FindByEmailAsync(staffEmail);
+    var roleManager =
+        services.GetRequiredService<RoleManager<IdentityRole>>();
 
-    // if (existingStaffUser == null)
-    // {
-    //     var staffUser = new ApplicationUser
-    //     {
-    //         UserName = staffEmail,
-    //         Email = staffEmail,
-    //         FullName = "Receptionist (Probationary)",
-    //         EmailConfirmed = true
-    //     };
-
-    //     var result = await userManager.CreateAsync(staffUser, "Staff@123");
-    //     if (result.Succeeded)
-    //     {
-    //         await userManager.AddToRoleAsync(staffUser, "Staff");
-
-    //         context.Staff.Add(new Staff
-    //         {
-    //             UserId = staffUser.Id,
-    //             JobTitle = "Receptionist",
-    //             ShiftTime = "9AM-5PM"
-    //         });
-    //         await context.SaveChangesAsync();
-    //     }
-
-
-
-    // }
-
-
-    // var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    // var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-
-    // var coachEmail = "coach@gym.com";
-    // if (await userManager.FindByEmailAsync(coachEmail) == null)
-    // {
-    //     var coach = new Coach
-    //     {
-    //         UserName = coachEmail,
-    //         Email = coachEmail,
-    //         FullName = "كابتن أحمد",
-    //         EmailConfirmed = true,
-    //         coachSpecialty = "Yoga & Zumba"
-    //     };
-
-    //     var result = await userManager.CreateAsync(coach, "Coach@123");
-    //     if (!result.Succeeded)
-    //     {
-    //         foreach (var e in result.Errors) Console.WriteLine(e.Description);
-    //     }
-
-    // }
-
-
+    await DatabaseSeeder.SeedAsync(
+        context,
+        userManager,
+        roleManager);
 }
-// Configure the HTTP request pipeline.
+
+
+// ============================================================
+// HTTP Request Pipeline
+// ============================================================
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+
     app.UseHsts();
 }
 
+
+// ============================================================
+// HTTPS
+// ============================================================
+
 app.UseHttpsRedirection();
+
+
+// ============================================================
+// Localization Middleware
+// ============================================================
+
+app.UseRequestLocalization(localizationOptions);
+
+
+// ============================================================
+// Routing
+// ============================================================
+
 app.UseRouting();
+
+
+// ============================================================
+// Authentication
+// ============================================================
+
 app.UseAuthentication();
+
+
+// ============================================================
+// Authorization
+// ============================================================
+
 app.UseAuthorization();
 
+
+// ============================================================
+// Static Files
+// ============================================================
+
 app.MapStaticAssets();
+
+
+// ============================================================
+// Default MVC Route
+// ============================================================
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+
+// ============================================================
+// Run Application
+// ============================================================
 
 app.Run();

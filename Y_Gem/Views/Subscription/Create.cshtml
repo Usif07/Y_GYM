@@ -1,0 +1,172 @@
+﻿@model Y_GYM.Models.Subscription
+
+@{
+    ViewData["Title"] = "Create Subscription";
+}
+
+<div class="gym-page">
+
+    <div class="gym-page-header">
+
+        <h1>
+            <i class="fas fa-plus-circle me-2"></i>
+            Create Subscription
+        </h1>
+
+        <p class="text-muted mb-0">
+            Create a new membership subscription for a member.
+        </p>
+
+    </div>
+
+
+    <div class="gym-card">
+
+        <form asp-action="Create"
+              method="post"
+              class="gym-form">
+
+            @Html.AntiForgeryToken()
+
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger mb-4">
+            </div>
+
+
+            <div class="row g-4">
+
+                <!-- Member -->
+
+                <div class="col-md-6">
+
+                    <label asp-for="MemberId"
+                           class="form-label">
+                        Member
+                    </label>
+
+                    <select asp-for="MemberId"
+                            asp-items="ViewBag.Members"
+                            class="form-select">
+
+                        <option value="">
+                            -- Select Member --
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="MemberId"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <!-- Plan -->
+
+                <div class="col-md-6">
+
+                    <label asp-for="PlanId"
+                           class="form-label">
+                        Membership Plan
+                    </label>
+
+                    <select asp-for="PlanId"
+                            asp-items="ViewBag.Plans"
+                            class="form-select">
+
+                        <option value="">
+                            -- Select Membership Plan --
+                        </option>
+
+                    </select>
+
+                    <span asp-validation-for="PlanId"
+                          class="text-danger">
+                    </span>
+
+                    <small class="text-muted">
+                        The end date will be calculated automatically
+                        from the selected plan duration.
+                    </small>
+
+                </div>
+
+
+                <!-- Start Date -->
+
+                <div class="col-md-6">
+
+                    <label asp-for="StartDate"
+                           class="form-label">
+                        Start Date
+                    </label>
+
+                    <input asp-for="StartDate"
+                           type="date"
+                           class="form-control" />
+
+                    <span asp-validation-for="StartDate"
+                          class="text-danger">
+                    </span>
+
+                </div>
+
+
+                <!-- End Date -->
+
+                <div class="col-md-6">
+
+                    <label class="form-label">
+                        End Date
+                    </label>
+
+                    <input type="text"
+                           class="form-control"
+                           value="Automatically calculated"
+                           readonly />
+
+                    <small class="text-muted">
+                        Calculated automatically from the membership plan.
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <hr class="my-4" />
+
+
+            <div class="d-flex gap-2 flex-wrap">
+
+                <button type="submit"
+                        class="btn gym-btn">
+
+                    <i class="fas fa-save me-2"></i>
+                    Create Subscription
+
+                </button>
+
+
+                <a asp-action="Index"
+                   class="btn gym-btn-secondary">
+
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Back to Subscriptions
+
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

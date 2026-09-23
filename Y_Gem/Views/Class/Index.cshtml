@@ -1,0 +1,182 @@
+﻿@model IEnumerable<Y_GYM.Models.Class>
+
+@{
+    ViewData["Title"] = "Classes";
+}
+
+<section class="gym-page">
+
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="gym-page-header">
+
+            <span class="page-label">
+                FITNESS GYM
+            </span>
+
+            <h1>
+                Gym Classes
+            </h1>
+
+            <p>
+                Manage fitness classes, capacity, and training categories.
+            </p>
+
+        </div>
+
+
+        <!-- Actions -->
+        <div class="row mb-4">
+
+            <div class="col-12">
+
+                <a asp-action="Create"
+                   class="primary-btn gym-btn">
+
+                    <i class="fa fa-plus me-2"></i>
+
+                    Create New Class
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- Classes Table -->
+        <div class="row">
+
+            <div class="col-12">
+
+                <div class="gym-card">
+
+                    <div class="table-responsive">
+
+                        <table class="table gym-table align-middle">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Class Name
+                                    </th>
+
+                                    <th>
+                                        Capacity
+                                    </th>
+
+                                    <th class="text-end">
+                                        Actions
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody>
+
+                                @if (Model != null && Model.Any())
+                                {
+                                    foreach (var item in Model)
+                                    {
+                                        <tr>
+
+                                            <td>
+                                                <strong>
+                                                    @item.Name
+                                                </strong>
+                                            </td>
+
+                                            <td>
+
+                                                <span>
+                                                    @item.Capacity
+                                                </span>
+
+                                                <small class="text-muted">
+                                                    members
+                                                </small>
+
+                                            </td>
+
+                                            <td class="text-end">
+
+                                                <a asp-action="Details"
+                                                   asp-route-id="@item.Id"
+                                                   class="btn btn-sm btn-outline-light me-1">
+
+                                                    <i class="fa fa-eye"></i>
+                                                    Details
+
+                                                </a>
+
+                                                <a asp-action="Edit"
+                                                   asp-route-id="@item.Id"
+                                                   class="btn btn-sm btn-outline-light me-1">
+
+                                                    <i class="fa fa-edit"></i>
+                                                    Edit
+
+                                                </a>
+
+                                                <a asp-action="Delete"
+                                                   asp-route-id="@item.Id"
+                                                   class="btn btn-sm btn-outline-danger">
+
+                                                    <i class="fa fa-trash"></i>
+                                                    Delete
+
+                                                </a>
+
+                                            </td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+
+                                        <td colspan="3">
+
+                                            <div class="gym-empty">
+
+                                                <i class="fa fa-info-circle fa-2x mb-3"></i>
+
+                                                <p>
+                                                    No classes found.
+                                                </p>
+
+                                                <a asp-action="Create"
+                                                   class="primary-btn gym-btn">
+
+                                                    Create First Class
+
+                                                </a>
+
+                                            </div>
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
