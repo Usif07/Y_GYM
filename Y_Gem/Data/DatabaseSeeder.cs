@@ -128,6 +128,64 @@ namespace Y_GYM.Data
             }
 
             // ==========================================
+            // TRAINER USER
+            // ==========================================
+
+            var coachUser =
+                await userManager.FindByNameAsync("coach1");
+
+            if (coachUser == null)
+            {
+                coachUser = new ApplicationUser
+                {
+                    UserName = "coach1",
+                    Email = "coach1@fitnessgym.local",
+                    FullName = "Hassan Trainer",
+                    EmailConfirmed = true
+                };
+
+                var result = await userManager.CreateAsync(
+                    coachUser,
+                    "Trainer123!");
+
+                if (!result.Succeeded)
+                {
+                    throw new Exception(
+                        "Could not create trainer user.");
+                }
+            }
+
+            if (!await userManager.IsInRoleAsync(
+                    coachUser,
+                    "Trainer"))
+            {
+                await userManager.AddToRoleAsync(
+                    coachUser,
+                    "Trainer");
+            }
+
+            // ==========================================
+            // COACH PROFILE
+            // ==========================================
+
+            var coach = await context.Coaches
+                .FirstOrDefaultAsync(
+                    c => c.UserId == coachUser.Id);
+
+            if (coach == null)
+            {
+                coach = new Coach
+                {
+                    UserId = coachUser.Id,
+                    CoachSpecialty = "Strength Training"
+                };
+
+                context.Coaches.Add(coach);
+
+                await context.SaveChangesAsync();
+            }
+
+            // ==========================================
             // MEMBERSHIP PLANS
             // ==========================================
 
@@ -430,6 +488,53 @@ namespace Y_GYM.Data
 
                 await context.SaveChangesAsync();
             }
+
+            // ==========================================
+            // CLASSES
+            // ==========================================
+
+            var yogaClass = await CreateClassIfMissing(
+                context,
+                "Yoga",
+                15);
+
+            var cardioClass = await CreateClassIfMissing(
+                context,
+                "Cardio",
+                20);
+
+            var strengthClass = await CreateClassIfMissing(
+                context,
+                "Strength",
+                12);
+
+            // ==========================================
+            // CLASS SCHEDULES
+            // ==========================================
+
+            await CreateScheduleIfMissing(
+                context,
+                yogaClass,
+                coach,
+                DateTime.Today.AddDays(1).AddHours(10),
+                DateTime.Today.AddDays(1).AddHours(11),
+                yogaClass.Capacity);
+
+            await CreateScheduleIfMissing(
+                context,
+                cardioClass,
+                coach,
+                DateTime.Today.AddDays(2).AddHours(18),
+                DateTime.Today.AddDays(2).AddHours(19),
+                cardioClass.Capacity);
+
+            await CreateScheduleIfMissing(
+                context,
+                strengthClass,
+                coach,
+                DateTime.Today.AddDays(3).AddHours(19),
+                DateTime.Today.AddDays(3).AddHours(20),
+                strengthClass.Capacity);
         }
 
         // ==========================================
@@ -458,6 +563,57 @@ namespace Y_GYM.Data
                     StartDate = startDate,
                     EndDate = endDate,
                     Status = status
+                });
+
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task<Class> CreateClassIfMissing(
+            ApplicationDbContext context,
+            string name,
+            int capacity)
+        {
+            var gymClass = await context.Classes
+                .FirstOrDefaultAsync(c => c.Name == name);
+
+            if (gymClass == null)
+            {
+                gymClass = new Class
+                {
+                    Name = name,
+                    Capacity = capacity
+                };
+
+                context.Classes.Add(gymClass);
+                await context.SaveChangesAsync();
+            }
+
+            return gymClass;
+        }
+
+        private static async Task CreateScheduleIfMissing(
+            ApplicationDbContext context,
+            Class gymClass,
+            Coach coach,
+            DateTime startTime,
+            DateTime endTime,
+            int availablePlaces)
+        {
+            var exists = await context.ClassSchedules
+                .AnyAsync(s =>
+                    s.ClassId == gymClass.Id &&
+                    s.StartTime == startTime);
+
+            if (!exists)
+            {
+                context.ClassSchedules.Add(new ClassSchedule
+                {
+                    ClassId = gymClass.Id,
+                    CoachId = coach.Id,
+                    StartTime = startTime,
+                    EndTime = endTime,
+                    AvailablePlaces = availablePlaces
                 });
 
                 await context.SaveChangesAsync();

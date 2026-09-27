@@ -3,6 +3,8 @@
 @{
     ViewData["Title"] = "Create Account";
 
+    var returnUrl = ViewData["ReturnUrl"] as string;
+
     var planName = ViewData["PlanName"]?.ToString();
     var planPrice = ViewData["PlanPrice"];
     var planDuration = ViewData["PlanDuration"];
@@ -16,16 +18,21 @@
             <div class="col-xl-9 col-lg-10">
 
                 <div class="gym-page-header text-center">
+
                     <span class="page-label">
                         FITNESS GYM
                     </span>
 
-                    <h1>Create Your Account</h1>
+                    <h1>
+                        Create Your Account
+                    </h1>
 
                     <p>
                         Complete your registration and start your fitness journey.
                     </p>
+
                 </div>
+
 
                 @if (!string.IsNullOrEmpty(planName))
                 {
@@ -36,7 +43,10 @@
                         </div>
 
                         <div class="gym-selected-plan-info">
-                            <span>SELECTED MEMBERSHIP</span>
+
+                            <span>
+                                SELECTED MEMBERSHIP
+                            </span>
 
                             <h3>
                                 @planName
@@ -47,16 +57,20 @@
                                 <span class="mx-2">•</span>
                                 @planDuration days
                             </p>
+
                         </div>
 
                         <a asp-controller="MembershipPlans"
                            asp-action="Index"
                            class="btn btn-outline-light">
+
                             Change Plan
+
                         </a>
 
                     </div>
                 }
+
 
                 <div class="gym-card">
 
@@ -67,17 +81,28 @@
                              role="alert">
                         </div>
 
+
                         <form asp-controller="Account"
                               asp-action="Register"
                               method="post">
 
                             @Html.AntiForgeryToken()
 
+
+                            <!-- Keep selected membership -->
                             <input asp-for="MembershipPlanId"
                                    type="hidden" />
 
+
+                            <!-- Keep checkout return URL -->
+                            <input type="hidden"
+                                   name="returnUrl"
+                                   value="@returnUrl" />
+
+
                             <div class="row g-4">
 
+                                <!-- Full Name -->
                                 <div class="col-md-6">
 
                                     <label asp-for="FullName"
@@ -94,6 +119,8 @@
 
                                 </div>
 
+
+                                <!-- Username -->
                                 <div class="col-md-6">
 
                                     <label asp-for="UserName"
@@ -110,6 +137,8 @@
 
                                 </div>
 
+
+                                <!-- Email -->
                                 <div class="col-md-6">
 
                                     <label asp-for="Email"
@@ -126,6 +155,8 @@
 
                                 </div>
 
+
+                                <!-- Phone -->
                                 <div class="col-md-6">
 
                                     <label asp-for="Phone"
@@ -142,6 +173,8 @@
 
                                 </div>
 
+
+                                <!-- Password -->
                                 <div class="col-md-6">
 
                                     <label asp-for="Password"
@@ -158,6 +191,8 @@
 
                                 </div>
 
+
+                                <!-- Confirm Password -->
                                 <div class="col-md-6">
 
                                     <label asp-for="ConfirmPassword"
@@ -174,12 +209,17 @@
 
                                 </div>
 
+
+                                <!-- Submit -->
                                 <div class="col-12">
 
                                     <button type="submit"
                                             class="primary-btn gym-btn w-100">
+
                                         <i class="fa fa-user-plus me-2"></i>
+
                                         Create Account
+
                                     </button>
 
                                 </div>
@@ -192,6 +232,8 @@
 
                 </div>
 
+
+                <!-- Login -->
                 <div class="text-center mt-4">
 
                     <p class="text-white-50 mb-2">
@@ -200,9 +242,13 @@
 
                     <a asp-controller="Account"
                        asp-action="Login"
+                       asp-route-returnUrl="@returnUrl"
                        class="btn btn-outline-light">
+
                         <i class="fa fa-sign-in me-2"></i>
+
                         Sign In
+
                     </a>
 
                 </div>

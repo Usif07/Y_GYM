@@ -78,13 +78,16 @@
                                     according to this membership plan.
                                 </p>
 
-                                <a asp-controller="Account"
-                                   asp-action="Register"
-                                   asp-route-planId="@item.Id"
-                                   class="primary-btn gym-plan-btn">
-                                    Choose This Plan
-                                    <i class="fa fa-arrow-right ms-2"></i>
-                                </a>
+                               <a asp-controller="MembershipPlans"
+                                 asp-action="Choose"
+                                 asp-route-planId="@item.Id"
+                                 class="primary-btn gym-plan-btn">
+
+                                 Choose This Plan
+
+                                 <i class="fa fa-arrow-right ms-2"></i>
+
+                                </a>        
 
                                 @if (User.IsInRole("Admin"))
                                 {

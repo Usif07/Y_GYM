@@ -1,0 +1,238 @@
+﻿@using Y_GYM.Models
+
+@{
+    ViewData["Title"] = "Checkout";
+
+    var plan = ViewBag.Plan as MembershipPlan;
+    var member = ViewBag.Member as Member;
+}
+
+<section class="gym-page">
+    <div class="container">
+
+        <!-- Page Header -->
+        <div class="gym-page-header">
+            <span class="page-label">FITNESS GYM</span>
+
+            <h1>Checkout</h1>
+
+            <p>
+                Review your membership plan and confirm your subscription.
+            </p>
+        </div>
+
+
+        @if (plan == null)
+        {
+            <div class="alert alert-danger">
+                <i class="fa fa-exclamation-circle me-2"></i>
+                Membership plan was not found.
+            </div>
+        }
+        else
+        {
+            <div class="row g-4">
+
+                <!-- Membership Plan -->
+                <div class="col-lg-7">
+
+                    <div class="gym-card h-100">
+
+                        <div class="d-flex align-items-center mb-4">
+
+                            <div class="gym-plan-icon me-3">
+                                <i class="fa fa-dumbbell"></i>
+                            </div>
+
+                            <div>
+                                <span class="gym-plan-label">
+                                    SELECTED PLAN
+                                </span>
+
+                                <h3 class="mb-0">
+                                    @plan.Name
+                                </h3>
+                            </div>
+
+                        </div>
+
+
+                        <div class="gym-plan-price mb-4">
+                            @plan.Price.ToString("0.00")
+                            <span>EGP</span>
+                        </div>
+
+
+                        <div class="gym-plan-duration mb-4">
+                            <i class="fa fa-calendar me-2"></i>
+
+                            @plan.DurationDays days
+                        </div>
+
+
+                        <div class="gym-plan-divider"></div>
+
+
+                        <h5 class="mb-3">
+                            Membership Summary
+                        </h5>
+
+
+                        <div class="row g-3">
+
+                            <div class="col-md-6">
+
+                                <div class="p-3 border rounded">
+
+                                    <small class="text-muted d-block">
+                                        Plan
+                                    </small>
+
+                                    <strong>
+                                        @plan.Name
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-md-6">
+
+                                <div class="p-3 border rounded">
+
+                                    <small class="text-muted d-block">
+                                        Duration
+                                    </small>
+
+                                    <strong>
+                                        @plan.DurationDays days
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="col-12">
+
+                                <div class="p-3 border rounded">
+
+                                    <small class="text-muted d-block">
+                                        Total Amount
+                                    </small>
+
+                                    <strong class="fs-4">
+                                        @plan.Price.ToString("0.00") EGP
+                                    </strong>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Member Information -->
+                <div class="col-lg-5">
+
+                    <div class="gym-card h-100">
+
+                        <span class="gym-plan-label">
+                            MEMBER
+                        </span>
+
+                        <h3 class="mb-4">
+                            Your Information
+                        </h3>
+
+
+                        @if (member != null)
+                        {
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Full Name
+                                </label>
+
+                                <input type="text"
+                                       class="form-control"
+                                       value="@member.FullName"
+                                       readonly />
+
+                            </div>
+
+
+                            <div class="mb-4">
+
+                                <label class="form-label">
+                                    Phone
+                                </label>
+
+                                <input type="text"
+                                       class="form-control"
+                                       value="@member.Phone"
+                                       readonly />
+
+                            </div>
+                        }
+
+
+                        <div class="alert alert-info">
+
+                            <i class="fa fa-info-circle me-2"></i>
+
+                            Your membership will be activated after
+                            confirming the payment.
+
+                        </div>
+
+
+                        <form asp-action="ConfirmCheckout"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="planId"
+                                   value="@plan.Id" />
+
+
+                            <button type="submit"
+                                    class="primary-btn gym-btn w-100">
+
+                                <i class="fa fa-check me-2"></i>
+
+                                Confirm & Pay
+
+                            </button>
+
+                        </form>
+
+
+                        <div class="text-center mt-3">
+
+                            <a asp-action="Index"
+                               class="text-decoration-none">
+
+                                <i class="fa fa-arrow-left me-2"></i>
+
+                                Back to Membership Plans
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+</section>

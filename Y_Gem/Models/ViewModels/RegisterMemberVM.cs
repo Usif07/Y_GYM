@@ -4,32 +4,79 @@ namespace Y_GYM.Models.ViewModels
 {
     public class RegisterMemberVM
     {
-        [Required(ErrorMessage = "Name is required")]
-        public string FullName { get; set; }
+        // =========================================================
+        // ACCOUNT INFORMATION
+        // =========================================================
 
-        [Required(ErrorMessage = "Email is required")]
-        [EmailAddress(ErrorMessage = "The email address is invalid")]
-        public string Email { get; set; }
+        [Required(ErrorMessage = "Full name is required.")]
+        [Display(Name = "Full Name")]
+        public string FullName { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Phone number required")]
-        [Phone(ErrorMessage = "The phone number is incorrect")]
-        public string Phone { get; set; }
 
-        [Required(ErrorMessage = "Password Required")]
-        [MinLength(6, ErrorMessage = "Password must be at least 6 characters long")]
+        [Required(ErrorMessage = "Username is required.")]
+        [Display(Name = "Username")]
+        [StringLength(
+            50,
+            MinimumLength = 3,
+            ErrorMessage = "Username must be between 3 and 50 characters.")]
+        public string UserName { get; set; } = string.Empty;
+
+
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Please enter a valid email address.")]
+        [Display(Name = "Email")]
+        public string Email { get; set; } = string.Empty;
+
+
+        [Required(ErrorMessage = "Phone number is required.")]
+        [Phone(ErrorMessage = "Please enter a valid phone number.")]
+        [Display(Name = "Phone Number")]
+        public string Phone { get; set; } = string.Empty;
+
+
+        [Required(ErrorMessage = "Password is required.")]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        [MinLength(
+            6,
+            ErrorMessage = "Password must be at least 6 characters.")]
+        [Display(Name = "Password")]
+        public string Password { get; set; } = string.Empty;
 
-        [Range(30, 300, ErrorMessage = "The weight doesn't make sense")]
-        public double Weight { get; set; }
 
-        [Range(100, 250, ErrorMessage = "The height doesn't make sense")]
-        public double Height { get; set; }
+        [Required(ErrorMessage = "Please confirm the password.")]
+        [DataType(DataType.Password)]
+        [Compare(
+            "Password",
+            ErrorMessage = "Passwords do not match.")]
+        [Display(Name = "Confirm Password")]
+        public string ConfirmPassword { get; set; } = string.Empty;
 
-        [Required]
-        public string Goal { get; set; }
 
-        [Required]
-        public string FitnessLevel { get; set; }
+        // =========================================================
+        // FITNESS INFORMATION
+        // =========================================================
+
+        [Display(Name = "Weight")]
+        [Range(
+            1,
+            500,
+            ErrorMessage = "Please enter a valid weight.")]
+        public double? Weight { get; set; }
+
+
+        [Display(Name = "Height")]
+        [Range(
+            1,
+            300,
+            ErrorMessage = "Please enter a valid height.")]
+        public double? Height { get; set; }
+
+
+        [Display(Name = "Goal")]
+        public string? Goal { get; set; }
+
+
+        [Display(Name = "Fitness Level")]
+        public string? FitnessLevel { get; set; }
     }
 }

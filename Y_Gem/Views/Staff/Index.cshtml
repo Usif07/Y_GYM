@@ -1,102 +1,614 @@
-
-@model Y_GYM.Models.Staff
+@model Y_GYM.Models.ViewModels.StaffDashboardVM
 
 @{
     ViewData["Title"] = "Staff Dashboard";
+
+    var dashboardName =
+        Model.IsAdmin
+            ? "Administrator"
+            : Model.Staff?.User?.FullName ?? "Staff Member";
+
+    var dashboardRole =
+        Model.IsAdmin
+            ? "Administrator Access"
+            : Model.Staff?.JobTitle ?? "Staff";
+
+    var dashboardShift =
+        Model.IsAdmin
+            ? "Full operational access"
+            : Model.Staff?.ShiftTime ?? "—";
 }
 
-<h1>Staff Dashboard</h1>
+<section class="gym-page">
 
-<hr />
+    <div class="container">
 
-<h4>Staff Information</h4>
+        <!-- HEADER -->
 
-<dl>
+        <div class="gym-page-header">
 
-    <dt>
-        @Html.DisplayNameFor(model => model.Id)
-    </dt>
-    <dd>
-        @Html.DisplayFor(model => model.Id)
-    </dd>
+            <span class="page-label">
+                STAFF AREA
+            </span>
 
+            <h1>
+                Staff Dashboard
+            </h1>
 
-    <dt>
-        @Html.DisplayNameFor(model => model.JobTitle)
-    </dt>
-    <dd>
-        @Html.DisplayFor(model => model.JobTitle)
-    </dd>
+            <p>
+                Manage members, subscriptions, payments and daily gym operations.
+            </p>
 
-
-    <dt>
-        @Html.DisplayNameFor(model => model.ShiftTime)
-    </dt>
-    <dd>
-        @Html.DisplayFor(model => model.ShiftTime)
-    </dd>
+        </div>
 
 
-    <dt>
-        User
-    </dt>
-    <dd>
-        @Model.User?.FullName
-    </dd>
+        <!-- ALERTS -->
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success mb-4">
+
+                <i class="fa fa-check-circle me-2"></i>
+
+                @TempData["Success"]
+
+            </div>
+        }
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+
+                <i class="fa fa-exclamation-circle me-2"></i>
+
+                @TempData["Error"]
+
+            </div>
+        }
 
 
-    <dt>
-        Email
-    </dt>
-    <dd>
-        @Model.User?.Email
-    </dd>
+        <!-- ADMIN BACK TO ADMIN DASHBOARD -->
+
+        @if (Model.IsAdmin)
+        {
+            <div class="mb-4">
+
+                <a asp-controller="Admin"
+                   asp-action="Index"
+                   class="btn btn-outline-light">
+
+                    <i class="fa fa-arrow-left me-2"></i>
+
+                    Back to Admin Dashboard
+
+                </a>
+
+            </div>
+        }
 
 
-    <dt>
-        Phone
-    </dt>
-    <dd>
-        @Model.User?.PhoneNumber
-    </dd>
+        <!-- WELCOME -->
 
-</dl>
+        <div class="member-welcome mb-4">
 
-<hr />
+            <div>
 
-<h4>Staff Operations</h4>
+                <span class="dashboard-label">
 
-<p>
-    <a asp-action="RegisterMember">
-        Register New Member
-    </a>
-</p>
+                    @(Model.IsAdmin
+                        ? "ADMINISTRATOR ACCESS"
+                        : "STAFF MEMBER")
+
+                </span>
+
+                <h2 class="text-white fw-bold mb-2">
+
+                    @dashboardName
+
+                </h2>
+
+                <p class="text-white-50 mb-1">
+
+                    @dashboardRole
+
+                </p>
+
+                <small class="text-white-50">
+
+                    @dashboardShift
+
+                </small>
+
+            </div>
+
+            <div class="member-dashboard-icon">
+
+                <i class="fa @(Model.IsAdmin ? "fa-shield" : "fa-user-circle")"></i>
+
+            </div>
+
+        </div>
 
 
-<h4>Check In Member</h4>
+        <!-- STATISTICS -->
 
-<form asp-action="CheckIn" method="post">
+        <div class="row g-4 mb-4">
 
-    <div>
-        <label for="qrCode">QR Code</label>
+            <!-- Total Members -->
 
-        <input type="text"
-               id="qrCode"
-               name="qrCode" />
+            <div class="col-md-6 col-xl-3">
+
+                <div class="member-dashboard-card h-100">
+
+                    <div class="member-dashboard-icon">
+
+                        <i class="fa fa-users"></i>
+
+                    </div>
+
+                    <span class="dashboard-label">
+                        TOTAL MEMBERS
+                    </span>
+
+                    <div class="dashboard-value">
+                        @Model.TotalMembers
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        Registered members
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Active Members -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="member-dashboard-card h-100">
+
+                    <div class="member-dashboard-icon">
+
+                        <i class="fa fa-user-check"></i>
+
+                    </div>
+
+                    <span class="dashboard-label">
+                        ACTIVE MEMBERS
+                    </span>
+
+                    <div class="dashboard-value">
+                        @Model.ActiveMembers
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        Currently active
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Check-ins -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="member-dashboard-card h-100">
+
+                    <div class="member-dashboard-icon">
+
+                        <i class="fa fa-sign-in"></i>
+
+                    </div>
+
+                    <span class="dashboard-label">
+                        TODAY CHECK-INS
+                    </span>
+
+                    <div class="dashboard-value">
+                        @Model.TodayCheckIns
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        Allowed visits today
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Payments -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="member-dashboard-card h-100">
+
+                    <div class="member-dashboard-icon">
+
+                        <i class="fa fa-money"></i>
+
+                    </div>
+
+                    <span class="dashboard-label">
+                        TODAY PAYMENTS
+                    </span>
+
+                    <div class="dashboard-value">
+
+                        @Model.TodayPayments.ToString("0.00")
+
+                        <span class="dashboard-unit">
+                            EGP
+                        </span>
+
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        Payments received today
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- QUICK ACTIONS -->
+
+        <div class="mb-3">
+
+            <h3 class="member-section-title">
+                Staff Operations
+            </h3>
+
+            <p class="text-white-50">
+                Access the main daily gym operations from here.
+            </p>
+
+        </div>
+
+
+        <div class="row g-4 mb-4">
+
+            <!-- Register Member -->
+
+            <div class="col-md-4">
+
+                <a asp-action="RegisterMember"
+                   class="member-action-card text-decoration-none">
+
+                    <div class="member-dashboard-icon">
+
+                        <i class="fa fa-user-plus"></i>
+
+                    </div>
+
+                    <h5>
+                        Register Member
+                    </h5>
+
+                    <p>
+                        Create a new member account and fitness profile.
+                    </p>
+
+                    <span>
+                        Register Member
+                        <i class="fa fa-arrow-right ms-1"></i>
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- Check In -->
+
+            <div class="col-md-4">
+
+                <a asp-action="CheckIn"
+                   class="member-action-card text-decoration-none">
+
+                    <div class="member-dashboard-icon">
+
+                        <i class="fa fa-sign-in"></i>
+
+                    </div>
+
+                    <h5>
+                        Member Check-In
+                    </h5>
+
+                    <p>
+                        Check membership status and record attendance.
+                    </p>
+
+                    <span>
+                        Check In
+                        <i class="fa fa-arrow-right ms-1"></i>
+                    </span>
+
+                </a>
+
+            </div>
+
+
+            <!-- Payment -->
+
+            <div class="col-md-4">
+
+                <a asp-action="RegisterPayment"
+                   class="member-action-card text-decoration-none">
+
+                    <div class="member-dashboard-icon">
+
+                        <i class="fa fa-credit-card"></i>
+
+                    </div>
+
+                    <h5>
+                        Register Payment
+                    </h5>
+
+                    <p>
+                        Create memberships and record payments.
+                    </p>
+
+                    <span>
+                        Register Payment
+                        <i class="fa fa-arrow-right ms-1"></i>
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- RECENT ACTIVITY -->
+
+        <div class="row g-4">
+
+            <!-- Recent Check-ins -->
+
+            <div class="col-lg-7">
+
+                <div class="member-page-card h-100">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <div>
+
+                            <h3 class="member-section-title mb-1">
+                                Recent Check-Ins
+                            </h3>
+
+                            <p class="text-white-50 mb-0">
+
+                                @(Model.IsAdmin
+                                    ? "Latest gym attendance activity."
+                                    : "Latest attendance activity handled by you.")
+
+                            </p>
+
+                        </div>
+
+                        <div class="member-dashboard-icon mb-0">
+
+                            <i class="fa fa-history"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (Model.RecentCheckIns.Any())
+                    {
+                        <div class="member-table-wrapper">
+
+                            <table class="table member-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Member</th>
+
+                                        <th>Time</th>
+
+                                        <th>Status</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (var checkIn in Model.RecentCheckIns)
+                                    {
+                                        <tr>
+
+                                            <td>
+
+                                                <strong>
+                                                    @checkIn.Member?.FullName
+                                                </strong>
+
+                                            </td>
+
+                                            <td>
+
+                                                @checkIn.CheckInTime.ToString("dd MMM - HH:mm")
+
+                                            </td>
+
+                                            <td>
+
+                                                @if (checkIn.Status == "Allowed")
+                                                {
+                                                    <span class="badge bg-success">
+                                                        Allowed
+                                                    </span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge bg-danger">
+                                                        Rejected
+                                                    </span>
+                                                }
+
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="member-empty">
+
+                            <i class="fa fa-sign-in"></i>
+
+                            <h5 class="text-white">
+                                No Check-Ins Yet
+                            </h5>
+
+                            <p class="mb-0">
+                                Recent attendance activity will appear here.
+                            </p>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- Recent Payments -->
+
+            <div class="col-lg-5">
+
+                <div class="member-page-card h-100">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <div>
+
+                            <h3 class="member-section-title mb-1">
+                                Recent Payments
+                            </h3>
+
+                            <p class="text-white-50 mb-0">
+
+                                @(Model.IsAdmin
+                                    ? "Latest recorded payments."
+                                    : "Latest payments handled by you.")
+
+                            </p>
+
+                        </div>
+
+                        <div class="member-dashboard-icon mb-0">
+
+                            <i class="fa fa-money"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (Model.RecentPayments.Any())
+                    {
+                        <div class="member-table-wrapper">
+
+                            <table class="table member-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>Member</th>
+
+                                        <th>Amount</th>
+
+                                    </tr>
+
+                                </thead>
+
+                                <tbody>
+
+                                    @foreach (var payment in Model.RecentPayments)
+                                    {
+                                        <tr>
+
+                                            <td>
+
+                                                <strong>
+                                                    @payment.Member?.FullName
+                                                </strong>
+
+                                                <small class="d-block text-white-50">
+
+                                                    @payment.PaymentDate.ToString("dd MMM HH:mm")
+
+                                                </small>
+
+                                            </td>
+
+                                            <td>
+
+                                                <strong>
+
+                                                    @payment.Amount.ToString("0.00")
+                                                    EGP
+
+                                                </strong>
+
+                                            </td>
+
+                                        </tr>
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="member-empty">
+
+                            <i class="fa fa-money"></i>
+
+                            <h5 class="text-white">
+                                No Payments Yet
+                            </h5>
+
+                            <p class="mb-0">
+                                Recent payments will appear here.
+                            </p>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
-    <div>
-        <input type="submit"
-               value="Check In" />
-    </div>
-
-</form>
-
-@section Scripts {
-
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-
-}
+</section>

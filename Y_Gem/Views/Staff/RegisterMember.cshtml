@@ -4,100 +4,428 @@
     ViewData["Title"] = "Register New Member";
 }
 
-<h1>Register New Member</h1>
+<section class="gym-page">
 
-<h4>Member Information</h4>
+    <div class="container">
 
-<hr />
+        <div class="gym-page-header">
 
-<form asp-controller="Staff"
-      asp-action="RegisterMember"
-      method="post">
+            <span class="page-label">
+                STAFF AREA
+            </span>
 
-    <div asp-validation-summary="ModelOnly"></div>
+            <h1>
+                Register New Member
+            </h1>
 
-    <div>
-        <label asp-for="FullName"></label>
-        <input asp-for="FullName" />
-        <span asp-validation-for="FullName"></span>
+            <p>
+                Create a member account and fitness profile.
+            </p>
+
+        </div>
+
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success mb-4">
+
+                <i class="fa fa-check-circle me-2"></i>
+
+                @TempData["Success"]
+
+                @if (TempData["MemberUsername"] != null)
+                {
+                    <div class="mt-2">
+
+                        <strong>
+                            Username:
+                        </strong>
+
+                        @TempData["MemberUsername"]
+
+                    </div>
+                }
+
+            </div>
+        }
+
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+
+                <i class="fa fa-exclamation-circle me-2"></i>
+
+                @TempData["Error"]
+
+            </div>
+        }
+
+
+        <div class="row justify-content-center">
+
+            <div class="col-xl-9">
+
+                <div class="member-page-card">
+
+                    <form asp-controller="Staff"
+                          asp-action="RegisterMember"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger">
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- ACCOUNT INFORMATION -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <h3 class="member-section-title mb-1">
+                                Account Information
+                            </h3>
+
+                            <p class="text-white-50">
+                                These details will be used by the member to log in.
+                            </p>
+
+                        </div>
+
+
+                        <div class="row g-4">
+
+
+                            <!-- Full Name -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="FullName"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="FullName"
+                                       class="form-control"
+                                       placeholder="Enter full name" />
+
+                                <span asp-validation-for="FullName"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- Username -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="UserName"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="UserName"
+                                       class="form-control"
+                                       autocomplete="off"
+                                       placeholder="e.g. ahmed123" />
+
+                                <span asp-validation-for="UserName"
+                                      class="text-danger">
+                                </span>
+
+                                <small class="text-white-50">
+                                    The member will use this username to log in.
+                                </small>
+
+                            </div>
+
+
+                            <!-- Email -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="Email"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Email"
+                                       type="email"
+                                       class="form-control"
+                                       placeholder="member@example.com" />
+
+                                <span asp-validation-for="Email"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- Phone -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="Phone"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Phone"
+                                       type="tel"
+                                       class="form-control"
+                                       placeholder="Enter phone number" />
+
+                                <span asp-validation-for="Phone"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- Password -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="Password"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="Password"
+                                       type="password"
+                                       class="form-control"
+                                       autocomplete="new-password"
+                                       placeholder="Create password" />
+
+                                <span asp-validation-for="Password"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- Confirm Password -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="ConfirmPassword"
+                                       class="form-label">
+                                </label>
+
+                                <input asp-for="ConfirmPassword"
+                                       type="password"
+                                       class="form-control"
+                                       autocomplete="new-password"
+                                       placeholder="Confirm password" />
+
+                                <span asp-validation-for="ConfirmPassword"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <hr class="my-5" />
+
+
+                        <!-- ================================================= -->
+                        <!-- FITNESS INFORMATION -->
+                        <!-- ================================================= -->
+
+                        <div class="mb-4">
+
+                            <h3 class="member-section-title mb-1">
+                                Fitness Information
+                            </h3>
+
+                            <p class="text-white-50">
+                                Add the member's initial fitness information.
+                            </p>
+
+                        </div>
+
+
+                        <div class="row g-4">
+
+
+                            <!-- Weight -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="Weight"
+                                       class="form-label">
+                                </label>
+
+                                <div class="input-group">
+
+                                    <input asp-for="Weight"
+                                           type="number"
+                                           step="0.1"
+                                           min="1"
+                                           class="form-control"
+                                           placeholder="Enter weight" />
+
+                                    <span class="input-group-text">
+                                        kg
+                                    </span>
+
+                                </div>
+
+                                <span asp-validation-for="Weight"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- Height -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="Height"
+                                       class="form-label">
+                                </label>
+
+                                <div class="input-group">
+
+                                    <input asp-for="Height"
+                                           type="number"
+                                           step="0.1"
+                                           min="1"
+                                           class="form-control"
+                                           placeholder="Enter height" />
+
+                                    <span class="input-group-text">
+                                        cm
+                                    </span>
+
+                                </div>
+
+                                <span asp-validation-for="Height"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- Goal -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="Goal"
+                                       class="form-label">
+                                </label>
+
+                                <select asp-for="Goal"
+                                        class="form-select">
+
+                                    <option value="">
+                                        -- Select Goal --
+                                    </option>
+
+                                    <option value="Lose Weight">
+                                        Weight Loss
+                                    </option>
+
+                                    <option value="Build Muscle">
+                                        Muscle Building
+                                    </option>
+
+                                    <option value="Stay Fit">
+                                        General Fitness
+                                    </option>
+
+                                </select>
+
+                                <span asp-validation-for="Goal"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+
+                            <!-- Fitness Level -->
+
+                            <div class="col-md-6">
+
+                                <label asp-for="FitnessLevel"
+                                       class="form-label">
+                                </label>
+
+                                <select asp-for="FitnessLevel"
+                                        class="form-select">
+
+                                    <option value="">
+                                        -- Select Fitness Level --
+                                    </option>
+
+                                    <option value="Beginner">
+                                        Beginner
+                                    </option>
+
+                                    <option value="Intermediate">
+                                        Intermediate
+                                    </option>
+
+                                    <option value="Advanced">
+                                        Advanced
+                                    </option>
+
+                                </select>
+
+                                <span asp-validation-for="FitnessLevel"
+                                      class="text-danger">
+                                </span>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ================================================= -->
+                        <!-- ACTIONS -->
+                        <!-- ================================================= -->
+
+                        <div class="d-flex flex-wrap gap-2 mt-5">
+
+                            <button type="submit"
+                                    class="btn primary-btn gym-btn">
+
+                                <i class="fa fa-user-plus me-2"></i>
+
+                                Register Member
+
+                            </button>
+
+
+                            <a asp-action="Index"
+                               class="btn btn-outline-light">
+
+                                <i class="fa fa-arrow-left me-2"></i>
+
+                                Back to Dashboard
+
+                            </a>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <div>
-        <label asp-for="Email"></label>
-        <input asp-for="Email" type="email" />
-        <span asp-validation-for="Email"></span>
-    </div>
+</section>
 
-    <div>
-        <label asp-for="Phone"></label>
-        <input asp-for="Phone" type="tel" />
-        <span asp-validation-for="Phone"></span>
-    </div>
-
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" />
-        <span asp-validation-for="Password"></span>
-    </div>
-
-    <hr />
-
-    <div>
-        <label asp-for="Weight"></label>
-        <input asp-for="Weight"
-               type="number"
-               step="0.1" />
-        <span asp-validation-for="Weight"></span>
-    </div>
-
-    <div>
-        <label asp-for="Height"></label>
-        <input asp-for="Height"
-               type="number"
-               step="0.1" />
-        <span asp-validation-for="Height"></span>
-    </div>
-
-    <div>
-        <label asp-for="Goal"></label>
-
-        <select asp-for="Goal">
-            <option value="">-- Select Goal --</option>
-            <option value="Lose Weight">Weight Loss</option>
-            <option value="Build Muscle">Muscle Building</option>
-            <option value="Stay Fit">General Fitness</option>
-        </select>
-
-        <span asp-validation-for="Goal"></span>
-    </div>
-
-    <div>
-        <label asp-for="FitnessLevel"></label>
-
-        <select asp-for="FitnessLevel">
-            <option value="">-- Select Fitness Level --</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-        </select>
-
-        <span asp-validation-for="FitnessLevel"></span>
-    </div>
-
-    <br />
-
-    <div>
-        <input type="submit" value="Register" />
-
-        <a asp-action="Index">
-            Back
-        </a>
-    </div>
-
-</form>
 
 @section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
+
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+
 }

@@ -2,11 +2,24 @@
 
 @{
     ViewData["Title"] = "My Progress";
+
+    var progressRecords = Model?
+        .OrderBy(x => x.RecordDate)
+        .ToList()
+        ?? new List<Y_GYM.Models.Progress>();
+
+    double? latestWeight = ViewBag.LatestWeight;
+    double? firstWeight = ViewBag.FirstWeight;
+    double? weightDifference = ViewBag.WeightDifference;
+
+    int totalRecords = ViewBag.TotalRecords ?? 0;
 }
 
 <section class="gym-page">
 
     <div class="container">
+
+        <!-- PAGE HEADER -->
 
         <div class="gym-page-header">
 
@@ -19,11 +32,13 @@
             </h1>
 
             <p>
-                Record your weight and keep track of your fitness progress.
+                Track your weight and monitor your fitness journey over time.
             </p>
 
         </div>
 
+
+        <!-- ALERTS -->
 
         @if (TempData["Success"] != null)
         {
@@ -42,24 +57,249 @@
         }
 
 
+        <!-- SUMMARY -->
+
+        <div class="row g-4 mb-4">
+
+            <!-- Current Weight -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="member-page-card h-100">
+
+                    <div class="member-dashboard-icon">
+                        <i class="fa fa-balance-scale"></i>
+                    </div>
+
+                    <span class="dashboard-label">
+                        CURRENT WEIGHT
+                    </span>
+
+                    <div class="dashboard-value">
+
+                        @if (latestWeight.HasValue)
+                        {
+                            @latestWeight.Value.ToString("0.0")
+                            <span class="dashboard-unit">
+                                kg
+                            </span>
+                        }
+                        else
+                        {
+                            <span>—</span>
+                        }
+
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        Latest recorded weight
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Starting Weight -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="member-page-card h-100">
+
+                    <div class="member-dashboard-icon">
+                        <i class="fa fa-flag-o"></i>
+                    </div>
+
+                    <span class="dashboard-label">
+                        STARTING WEIGHT
+                    </span>
+
+                    <div class="dashboard-value">
+
+                        @if (firstWeight.HasValue)
+                        {
+                            @firstWeight.Value.ToString("0.0")
+                            <span class="dashboard-unit">
+                                kg
+                            </span>
+                        }
+                        else
+                        {
+                            <span>—</span>
+                        }
+
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        First recorded weight
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Change -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="member-page-card h-100">
+
+                    <div class="member-dashboard-icon">
+                        <i class="fa fa-exchange"></i>
+                    </div>
+
+                    <span class="dashboard-label">
+                        CHANGE
+                    </span>
+
+                    <div class="dashboard-value">
+
+                        @if (weightDifference.HasValue)
+                        {
+                            if (weightDifference.Value > 0)
+                            {
+                                <span>
+                                    +@weightDifference.Value.ToString("0.0")
+                                </span>
+                            }
+                            else
+                            {
+                                @weightDifference.Value.ToString("0.0")
+                            }
+
+                            <span class="dashboard-unit">
+                                kg
+                            </span>
+                        }
+                        else
+                        {
+                            <span>—</span>
+                        }
+
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        Since first record
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Records -->
+
+            <div class="col-md-6 col-xl-3">
+
+                <div class="member-page-card h-100">
+
+                    <div class="member-dashboard-icon">
+                        <i class="fa fa-list-ol"></i>
+                    </div>
+
+                    <span class="dashboard-label">
+                        RECORDS
+                    </span>
+
+                    <div class="dashboard-value">
+                        @totalRecords
+                    </div>
+
+                    <div class="dashboard-subtitle">
+                        Weight measurements
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- GRAPH + ADD WEIGHT -->
+
         <div class="row g-4">
 
-            <!-- Add Progress -->
+            <!-- GRAPH -->
+
+            <div class="col-lg-8">
+
+                <div class="member-page-card h-100">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <div>
+
+                            <h3 class="text-white fw-bold mb-1">
+                                Weight Progress
+                            </h3>
+
+                            <p class="text-white-50 mb-0">
+                                Your weight changes over time.
+                            </p>
+
+                        </div>
+
+                        <div class="member-dashboard-icon mb-0">
+
+                            <i class="fa fa-line-chart"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    @if (progressRecords.Any())
+                    {
+                        <div style="height: 350px; position: relative;">
+
+                            <canvas id="weightProgressChart"></canvas>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="member-empty py-5">
+
+                            <i class="fa fa-line-chart"></i>
+
+                            <h5 class="text-white">
+                                No Progress Data Yet
+                            </h5>
+
+                            <p class="mb-0">
+                                Record your first weight to start seeing your progress graph.
+                            </p>
+
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- ADD WEIGHT -->
+
             <div class="col-lg-4">
 
                 <div class="member-page-card h-100">
 
                     <div class="member-dashboard-icon">
+
                         <i class="fa fa-plus"></i>
+
                     </div>
 
                     <h3 class="text-white fw-bold mb-2">
-                        Record New Weight
+                        Record Weight
                     </h3>
 
                     <p class="text-white-50 mb-4">
-                        Add your latest weight measurement to your progress history.
+                        Add your latest weight measurement.
                     </p>
+
 
                     <form asp-action="AddProgress"
                           method="post">
@@ -80,8 +320,9 @@
                                        name="weight"
                                        class="form-control"
                                        step="0.1"
-                                       min="0"
-                                       placeholder="Enter your weight"
+                                       min="1"
+                                       max="500"
+                                       placeholder="Enter weight"
                                        required />
 
                                 <span class="input-group-text">
@@ -92,115 +333,31 @@
 
                         </div>
 
+
                         <button type="submit"
                                 class="btn primary-btn gym-btn w-100">
 
                             <i class="fa fa-save me-2"></i>
+
                             Record Weight
 
                         </button>
 
                     </form>
 
-                </div>
 
-            </div>
+                    <div class="mt-4 pt-4 border-top">
 
+                        <small class="text-white-50">
+                            Tip
+                        </small>
 
-            <!-- History -->
-            <div class="col-lg-8">
-
-                <div class="member-page-card h-100">
-
-                    <div class="d-flex justify-content-between align-items-center mb-4">
-
-                        <div>
-
-                            <h3 class="text-white fw-bold mb-1">
-                                Progress History
-                            </h3>
-
-                            <p class="text-white-50 mb-0">
-                                Your recorded weight measurements.
-                            </p>
-
-                        </div>
-
-                        <div class="member-dashboard-icon mb-0">
-
-                            <i class="fa fa-line-chart"></i>
-
-                        </div>
+                        <p class="text-white-50 small mb-0 mt-1">
+                            Try to record your weight under similar conditions
+                            each time for more consistent tracking.
+                        </p>
 
                     </div>
-
-
-                    @if (Model != null && Model.Any())
-                    {
-                        <div class="member-table-wrapper">
-
-                            <table class="table member-table">
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th>
-                                            Weight
-                                        </th>
-
-                                        <th>
-                                            Record Date
-                                        </th>
-
-                                    </tr>
-
-                                </thead>
-
-                                <tbody>
-
-                                    @foreach (var item in Model)
-                                    {
-                                        <tr>
-
-                                            <td>
-
-                                                <strong>
-                                                    @item.Weight kg
-                                                </strong>
-
-                                            </td>
-
-                                            <td>
-                                                @item.RecordDate
-                                                .ToString("dd MMM yyyy - HH:mm")
-                                            </td>
-
-                                        </tr>
-                                    }
-
-                                </tbody>
-
-                            </table>
-
-                        </div>
-                    }
-                    else
-                    {
-                        <div class="member-empty">
-
-                            <i class="fa fa-line-chart"></i>
-
-                            <h5 class="text-white">
-                                No Progress Records
-                            </h5>
-
-                            <p class="mb-0">
-                                Add your first weight measurement to start tracking your progress.
-                            </p>
-
-                        </div>
-                    }
 
                 </div>
 
@@ -208,6 +365,118 @@
 
         </div>
 
+
+        <!-- HISTORY -->
+
+        <div class="member-page-card mt-4">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+
+                    <h3 class="text-white fw-bold mb-1">
+                        Progress History
+                    </h3>
+
+                    <p class="text-white-50 mb-0">
+                        All your recorded measurements.
+                    </p>
+
+                </div>
+
+                <div class="member-dashboard-icon mb-0">
+
+                    <i class="fa fa-history"></i>
+
+                </div>
+
+            </div>
+
+
+            @if (progressRecords.Any())
+            {
+                <div class="member-table-wrapper">
+
+                    <table class="table member-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    #
+                                </th>
+
+                                <th>
+                                    Weight
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @{
+                                int counter = 1;
+                            }
+
+                            @foreach (var item in progressRecords.AsEnumerable().Reverse())
+                            {
+                                <tr>
+
+                                    <td>
+                                        @counter
+                                    </td>
+
+                                    <td>
+
+                                        <strong>
+                                            @item.Weight.ToString("0.0") kg
+                                        </strong>
+
+                                    </td>
+
+                                    <td>
+                                        @item.RecordDate.ToString("dd MMM yyyy - HH:mm")
+                                    </td>
+
+                                </tr>
+
+                                counter++;
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <div class="member-empty">
+
+                    <i class="fa fa-line-chart"></i>
+
+                    <h5 class="text-white">
+                        No Progress Records
+                    </h5>
+
+                    <p class="mb-0">
+                        Add your first weight measurement to start tracking your progress.
+                    </p>
+
+                </div>
+            }
+
+        </div>
+
+
+        <!-- NAVIGATION -->
 
         <div class="d-flex flex-wrap gap-2 mt-4">
 
@@ -219,6 +488,7 @@
 
             </a>
 
+
             <a asp-action="Schedule"
                class="btn primary-btn gym-btn">
 
@@ -226,6 +496,7 @@
                 View Schedule
 
             </a>
+
 
             <a asp-action="MyBookings"
                class="btn btn-outline-light">
@@ -240,3 +511,140 @@
     </div>
 
 </section>
+
+
+@if (progressRecords.Any())
+{
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+
+        const progressLabels = [
+            @foreach (var item in progressRecords)
+            {
+                <text>
+                    '@item.RecordDate.ToString("dd MMM yyyy")',
+                </text>
+            }
+        ];
+
+        const progressWeights = [
+            @foreach (var item in progressRecords)
+            {
+                <text>
+                    @item.Weight.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                </text>
+            }
+        ];
+
+        const chartCanvas =
+            document.getElementById('weightProgressChart');
+
+        if (chartCanvas) {
+
+            new Chart(chartCanvas, {
+
+                type: 'line',
+
+                data: {
+
+                    labels: progressLabels,
+
+                    datasets: [
+
+                        {
+                            label: 'Weight (kg)',
+
+                            data: progressWeights,
+
+                            borderWidth: 3,
+
+                            tension: 0.35,
+
+                            fill: false,
+
+                            pointRadius: 4,
+
+                            pointHoverRadius: 6
+                        }
+
+                    ]
+
+                },
+
+                options: {
+
+                    responsive: true,
+
+                    maintainAspectRatio: false,
+
+                    interaction: {
+
+                        intersect: false,
+
+                        mode: 'index'
+
+                    },
+
+                    plugins: {
+
+                        legend: {
+
+                            display: false
+
+                        },
+
+                        tooltip: {
+
+                            callbacks: {
+
+                                label: function(context) {
+
+                                    return context.parsed.y + ' kg';
+
+                                }
+
+                            }
+
+                        }
+
+                    },
+
+                    scales: {
+
+                        y: {
+
+                            beginAtZero: false,
+
+                            title: {
+
+                                display: true,
+
+                                text: 'Weight (kg)'
+
+                            }
+
+                        },
+
+                        x: {
+
+                            title: {
+
+                                display: true,
+
+                                text: 'Date'
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+            });
+
+        }
+
+    </script>
+}

@@ -27,7 +27,7 @@ namespace Y_GYM.Controllers
         }
 
         // =========================================================
-        // GET: /Member
+        // MEMBER DASHBOARD
         // =========================================================
 
         public async Task<IActionResult> Index()
@@ -58,9 +58,51 @@ namespace Y_GYM.Controllers
                 .OrderBy(b => b.ClassSchedule.StartTime)
                 .FirstOrDefaultAsync();
 
+            // =====================================================
+            // REMAINING SUBSCRIPTION DAYS
+            // =====================================================
+
+            int remainingDays = 0;
+
+            if (activeSubscription != null)
+            {
+                remainingDays = Math.Max(
+                    0,
+                    (activeSubscription.EndDate.Date - DateTime.Today).Days);
+            }
+
+            // =====================================================
+            // MEMBERSHIP VISITS
+            // =====================================================
+
+            int? remainingVisits = null;
+            int? totalVisits = null;
+            int? usedVisits = null;
+
+            if (activeSubscription != null)
+            {
+                totalVisits = activeSubscription.TotalVisits;
+                remainingVisits = Math.Max(
+                    0,
+                    activeSubscription.RemainingVisits);
+
+                usedVisits = Math.Max(
+                    0,
+                    totalVisits.Value - remainingVisits.Value);
+            }
+
+            // =====================================================
+            // VIEW DATA
+            // =====================================================
+
             ViewBag.ActiveSubscription = activeSubscription;
             ViewBag.AttendanceThisMonth = attendanceThisMonth;
             ViewBag.NextBooking = nextBooking;
+            ViewBag.RemainingDays = remainingDays;
+
+            ViewBag.TotalVisits = totalVisits;
+            ViewBag.RemainingVisits = remainingVisits;
+            ViewBag.UsedVisits = usedVisits;
 
             return View(member);
         }
@@ -299,8 +341,25 @@ namespace Y_GYM.Controllers
 
             var logs = await _context.ProgressLogs
                 .Where(p => p.MemberId == member.Id)
-                .OrderByDescending(p => p.RecordDate)
+                .OrderBy(p => p.RecordDate)
                 .ToListAsync();
+
+            var latestWeight = logs.LastOrDefault()?.Weight;
+
+            var firstWeight = logs.FirstOrDefault()?.Weight;
+
+            double? weightDifference = null;
+
+            if (firstWeight.HasValue && latestWeight.HasValue)
+            {
+                weightDifference =
+                    latestWeight.Value - firstWeight.Value;
+            }
+
+            ViewBag.LatestWeight = latestWeight;
+            ViewBag.FirstWeight = firstWeight;
+            ViewBag.WeightDifference = weightDifference;
+            ViewBag.TotalRecords = logs.Count;
 
             return View(logs);
         }
@@ -320,7 +379,7 @@ namespace Y_GYM.Controllers
                 return RedirectToAction(nameof(CompleteProfile));
             }
 
-            if (weight <= 0)
+            if (weight <= 0 || weight > 500)
             {
                 TempData["Error"] =
                     "Please enter a valid weight.";
@@ -335,8 +394,6 @@ namespace Y_GYM.Controllers
                     Weight = weight,
                     RecordDate = DateTime.Now
                 });
-
-            await _context.SaveChangesAsync();
 
             member.Weight = weight;
 

@@ -1,0 +1,720 @@
+﻿@using Y_GYM.Models
+
+@{
+    ViewData["Title"] = "Trainer Dashboard";
+
+    var coach = ViewBag.Coach as Coach;
+
+    var schedules = ViewBag.Schedules as List<ClassSchedule>
+                    ?? new List<ClassSchedule>();
+
+    var todaySchedules = schedules
+        .Where(s => s.StartTime.Date == DateTime.Today)
+        .OrderBy(s => s.StartTime)
+        .ToList();
+
+    var classCount = schedules
+        .Select(s => s.ClassId)
+        .Distinct()
+        .Count();
+}
+
+<div class="gym-page">
+
+    <div class="container">
+
+        <!-- ========================================= -->
+        <!-- PAGE HEADER -->
+        <!-- ========================================= -->
+
+        <div class="gym-page-header">
+
+            <span class="page-label">
+                TRAINER AREA
+            </span>
+
+            <h1>
+                Trainer Dashboard
+            </h1>
+
+            <p>
+                Welcome back, @(coach?.User?.FullName ?? "Trainer").
+                Here is your training overview.
+            </p>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- STATISTICS -->
+        <!-- ========================================= -->
+
+        <div class="row g-4 mb-5">
+
+            <!-- My Classes -->
+
+            <div class="col-lg-4 col-md-6">
+
+                <div class="admin-stat-card">
+
+                    <div class="admin-stat-icon">
+
+                        <i class="fa fa-calendar"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span class="admin-stat-label">
+                            MY CLASSES
+                        </span>
+
+                        <h3>
+                            @classCount
+                        </h3>
+
+                        <span class="admin-stat-description">
+                            Assigned classes
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Today's Sessions -->
+
+            <div class="col-lg-4 col-md-6">
+
+                <div class="admin-stat-card">
+
+                    <div class="admin-stat-icon">
+
+                        <i class="fa fa-clock-o"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span class="admin-stat-label">
+                            TODAY'S SESSIONS
+                        </span>
+
+                        <h3>
+                            @todaySchedules.Count
+                        </h3>
+
+                        <span class="admin-stat-description">
+                            Sessions scheduled today
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Specialty -->
+
+            <div class="col-lg-4 col-md-12">
+
+                <div class="admin-stat-card">
+
+                    <div class="admin-stat-icon">
+
+                        <i class="fa fa-user"></i>
+
+                    </div>
+
+                    <div>
+
+                        <span class="admin-stat-label">
+                            SPECIALTY
+                        </span>
+
+                        <h3 style="font-size: 20px;">
+                            @(coach?.CoachSpecialty ?? "-")
+                        </h3>
+
+                        <span class="admin-stat-description">
+                            Trainer specialization
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- TODAY + PROFILE -->
+        <!-- ========================================= -->
+
+        <div class="row g-4 mb-5">
+
+
+            <!-- Today's Schedule -->
+
+            <div class="col-lg-8">
+
+                <div class="admin-dashboard-card h-100">
+
+                    <div class="admin-card-heading">
+
+                        <div>
+
+                            <span>
+                                TODAY
+                            </span>
+
+                            <h3>
+                                Today's Schedule
+                            </h3>
+
+                        </div>
+
+                        <i class="fa fa-calendar-check-o"></i>
+
+                    </div>
+
+
+                    @if (todaySchedules.Any())
+                    {
+
+                        <div class="member-table-wrapper">
+
+                            <table class="table member-table">
+
+                                <thead>
+
+                                    <tr>
+
+                                        <th>
+                                            Class
+                                        </th>
+
+                                        <th>
+                                            Time
+                                        </th>
+
+                                        <th>
+                                            Available
+                                        </th>
+
+                                    </tr>
+
+                                </thead>
+
+
+                                <tbody>
+
+                                    @foreach (var schedule in todaySchedules)
+                                    {
+
+                                        <tr>
+
+                                            <td>
+
+                                                <strong>
+                                                    @(schedule.Class?.Name ?? "-")
+                                                </strong>
+
+                                                <br />
+
+                                                <small>
+                                                    Capacity:
+                                                    @(schedule.Class?.Capacity ?? 0)
+                                                </small>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <strong>
+
+                                                    @schedule.StartTime.ToString("hh:mm tt")
+
+                                                    -
+
+                                                    @schedule.EndTime.ToString("hh:mm tt")
+
+                                                </strong>
+
+                                            </td>
+
+
+                                            <td>
+
+                                                <span class="trainer-available-badge">
+
+                                                    @schedule.AvailablePlaces
+
+                                                    <span>
+                                                        places
+                                                    </span>
+
+                                                </span>
+
+                                            </td>
+
+                                        </tr>
+
+                                    }
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    }
+                    else
+                    {
+
+                        <div class="trainer-empty">
+
+                            <i class="fa fa-calendar-times-o"></i>
+
+                            <h4>
+                                No sessions today
+                            </h4>
+
+                            <p>
+                                You don't have any sessions scheduled for today.
+                            </p>
+
+                        </div>
+
+                    }
+
+                </div>
+
+            </div>
+
+
+            <!-- My Profile -->
+
+            <div class="col-lg-4">
+
+                <div class="admin-dashboard-card h-100">
+
+                    <div class="admin-card-heading">
+
+                        <div>
+
+                            <span>
+                                ACCOUNT
+                            </span>
+
+                            <h3>
+                                My Profile
+                            </h3>
+
+                        </div>
+
+                        <i class="fa fa-user-circle"></i>
+
+                    </div>
+
+
+                    <div class="trainer-profile-list">
+
+
+                        <!-- Full Name -->
+
+                        <div class="trainer-profile-row">
+
+                            <span>
+                                Full Name
+                            </span>
+
+                            <strong>
+                                @(coach?.User?.FullName ?? "-")
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Username -->
+
+                        <div class="trainer-profile-row">
+
+                            <span>
+                                Username
+                            </span>
+
+                            <strong>
+                                @(coach?.User?.UserName ?? "-")
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Email -->
+
+                        <div class="trainer-profile-row">
+
+                            <span>
+                                Email
+                            </span>
+
+                            <strong class="text-break">
+                                @(coach?.User?.Email ?? "-")
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Phone -->
+
+                        <div class="trainer-profile-row">
+
+                            <span>
+                                Phone
+                            </span>
+
+                            <strong>
+                                @(coach?.User?.PhoneNumber ?? "-")
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Specialty -->
+
+                        <div class="trainer-profile-row">
+
+                            <span>
+                                Specialty
+                            </span>
+
+                            <strong>
+                                @(coach?.CoachSpecialty ?? "-")
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ========================================= -->
+        <!-- MY CLASSES -->
+        <!-- ========================================= -->
+
+        <div class="admin-dashboard-card">
+
+            <div class="admin-section-heading">
+
+                <div>
+
+                    <span>
+                        TRAINING
+                    </span>
+
+                    <h3>
+                        My Classes
+                    </h3>
+
+                </div>
+
+                <i class="fa fa-list-alt"
+                   style="color:#f36100;font-size:24px;">
+                </i>
+
+            </div>
+
+
+            @if (schedules.Any())
+            {
+
+                <div class="member-table-wrapper">
+
+                    <table class="table member-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Class
+                                </th>
+
+                                <th>
+                                    Capacity
+                                </th>
+
+                                <th>
+                                    Available
+                                </th>
+
+                                <th>
+                                    Date
+                                </th>
+
+                                <th>
+                                    Time
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @foreach (var schedule in schedules)
+                            {
+
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+                                            @(schedule.Class?.Name ?? "-")
+                                        </strong>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @(schedule.Class?.Capacity ?? 0)
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="trainer-available-badge">
+
+                                            @schedule.AvailablePlaces
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @schedule.StartTime.ToString("dd MMM yyyy")
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @schedule.StartTime.ToString("hh:mm tt")
+
+                                        -
+
+                                        @schedule.EndTime.ToString("hh:mm tt")
+
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            }
+            else
+            {
+
+                <div class="trainer-empty">
+
+                    <i class="fa fa-list-alt"></i>
+
+                    <h4>
+                        No classes assigned
+                    </h4>
+
+                    <p>
+                        You don't have any classes assigned yet.
+                    </p>
+
+                </div>
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- TRAINER DASHBOARD STYLES -->
+<!-- ========================================= -->
+
+<style>
+
+    /* =========================================
+           AVAILABLE PLACES
+           ========================================= */
+
+    .trainer-available-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px 11px;
+        border-radius: 20px;
+        background: rgba(243, 97, 0, 0.12);
+        border: 1px solid rgba(243, 97, 0, 0.25);
+        color: #f36100;
+        font-size: 12px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+
+        .trainer-available-badge span {
+            color: #999;
+            font-weight: 500;
+        }
+
+
+    /* =========================================
+           PROFILE
+           ========================================= */
+
+    .trainer-profile-list {
+        margin: 0;
+    }
+
+
+    .trainer-profile-row {
+        padding: 15px 0;
+        border-bottom: 1px solid #333;
+    }
+
+
+        .trainer-profile-row:first-child {
+            padding-top: 0;
+        }
+
+
+        .trainer-profile-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+
+        .trainer-profile-row > span {
+            display: block;
+            margin-bottom: 5px;
+            color: #888;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+
+        .trainer-profile-row > strong {
+            display: block;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+
+    /* =========================================
+           EMPTY STATE
+           ========================================= */
+
+    .trainer-empty {
+        padding: 45px 20px;
+        text-align: center;
+        border: 1px dashed #444;
+        border-radius: 8px;
+        background: #1b1b1b;
+    }
+
+
+        .trainer-empty i {
+            display: block;
+            margin-bottom: 15px;
+            color: #f36100;
+            font-size: 32px;
+        }
+
+
+        .trainer-empty h4 {
+            margin-bottom: 7px;
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+
+        .trainer-empty p {
+            margin: 0;
+            color: #777;
+            font-size: 13px;
+        }
+
+
+    /* =========================================
+           TABLE
+           ========================================= */
+
+    .member-table strong {
+        color: #fff;
+        font-weight: 600;
+    }
+
+
+    .member-table small {
+        color: #777 !important;
+    }
+
+
+    /* =========================================
+           RESPONSIVE
+           ========================================= */
+
+    @@media (max-width: 767.98px) {
+
+        .admin-stat-card {
+            padding: 20px;
+        }
+
+
+        .admin-stat-icon {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+        }
+
+
+        .admin-stat-card h3 {
+            font-size: 23px;
+        }
+
+
+        .trainer-profile-row > strong {
+            font-size: 13px;
+        }
+    }
+
+</style>

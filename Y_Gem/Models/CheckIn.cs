@@ -14,16 +14,20 @@ namespace Y_GYM.Models
         [ForeignKey(nameof(MemberId))]
         public Member? Member { get; set; }
 
-        [Required(ErrorMessage = "Please select a staff member")]
+
+        // Optional because an Administrator
+        // can also perform a check-in operation.
         [Display(Name = "Staff")]
-        public int StaffId { get; set; }
+        public int? StaffId { get; set; }
 
         [ForeignKey(nameof(StaffId))]
         public Staff? Staff { get; set; }
 
+
         [Required]
         [Display(Name = "Check In Time")]
         public DateTime CheckInTime { get; set; } = DateTime.Now;
+
 
         [Required]
         [Display(Name = "Status")]

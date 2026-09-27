@@ -20,7 +20,7 @@
             </h1>
 
             <p>
-                Monitor your gym operations, members, subscriptions and activity.
+                Manage gym administration, users, staff and system configuration.
             </p>
 
         </div>
@@ -79,7 +79,7 @@
                         </h3>
 
                         <span class="admin-stat-description">
-                            Active trainers
+                            Registered trainers
                         </span>
 
                     </div>
@@ -190,6 +190,7 @@
                        class="btn btn-outline-light btn-sm">
 
                         Manage Subscriptions
+
                         <i class="fa fa-arrow-right ms-2"></i>
 
                     </a>
@@ -225,7 +226,10 @@
                     <div class="admin-big-number">
 
                         @Model.TotalRevenue.ToString("N2")
-                        <small>EGP</small>
+
+                        <small>
+                            EGP
+                        </small>
 
                     </div>
 
@@ -238,6 +242,7 @@
                        class="btn btn-outline-light btn-sm">
 
                         Manage Payments
+
                         <i class="fa fa-arrow-right ms-2"></i>
 
                     </a>
@@ -283,6 +288,7 @@
                        class="btn btn-outline-light btn-sm">
 
                         Manage Classes
+
                         <i class="fa fa-arrow-right ms-2"></i>
 
                     </a>
@@ -294,7 +300,7 @@
         </div>
 
 
-        <!-- Operations -->
+        <!-- Staff Access -->
         <div class="admin-dashboard-card mb-4">
 
             <div class="admin-section-heading">
@@ -302,76 +308,47 @@
                 <div>
 
                     <span>
-                        OPERATIONS
+                        STAFF MANAGEMENT
                     </span>
 
                     <h3>
-                        Gym Activity Overview
+                        Staff Operations
                     </h3>
 
                 </div>
 
+                <i class="fa fa-cogs"></i>
+
             </div>
+
 
             <div class="row g-4">
 
-                <div class="col-xl-3 col-md-6">
+                <div class="col-lg-8">
 
-                    <div class="admin-operation-item">
+                    <p class="text-white-50 mb-0">
 
-                        <i class="fa fa-calendar-check-o"></i>
+                        Open the Staff Dashboard to manage members,
+                        registrations, payments and daily gym operations.
 
-                        <div>
-                            <span>Schedules</span>
-                            <strong>@Model.TotalSchedules</strong>
-                        </div>
-
-                    </div>
+                    </p>
 
                 </div>
 
-                <div class="col-xl-3 col-md-6">
 
-                    <div class="admin-operation-item">
+                <div class="col-lg-4 d-flex align-items-center justify-content-lg-end">
 
-                        <i class="fa fa-ticket"></i>
+                    <a asp-controller="Staff"
+                       asp-action="Index"
+                       class="btn primary-btn gym-btn">
 
-                        <div>
-                            <span>Bookings</span>
-                            <strong>@Model.TotalBookings</strong>
-                        </div>
+                        <i class="fa fa-tachometer me-2"></i>
 
-                    </div>
+                        Open Staff Dashboard
 
-                </div>
+                        <i class="fa fa-arrow-right ms-2"></i>
 
-                <div class="col-xl-3 col-md-6">
-
-                    <div class="admin-operation-item">
-
-                        <i class="fa fa-sign-in"></i>
-
-                        <div>
-                            <span>Check-ins</span>
-                            <strong>@Model.TotalCheckIns</strong>
-                        </div>
-
-                    </div>
-
-                </div>
-
-                <div class="col-xl-3 col-md-6">
-
-                    <div class="admin-operation-item">
-
-                        <i class="fa fa-credit-card"></i>
-
-                        <div>
-                            <span>Payments</span>
-                            <strong>@Model.TotalPayments</strong>
-                        </div>
-
-                    </div>
+                    </a>
 
                 </div>
 
@@ -388,19 +365,21 @@
                 <div>
 
                     <span>
-                        MANAGEMENT
+                        ADMINISTRATION
                     </span>
 
                     <h3>
-                        Quick Management
+                        System Management
                     </h3>
 
                 </div>
 
             </div>
 
+
             <div class="row g-3">
 
+                <!-- Membership Plans -->
                 <div class="col-lg-3 col-md-6">
 
                     <a asp-controller="MembershipPlans"
@@ -410,14 +389,23 @@
                         <i class="fa fa-list"></i>
 
                         <div>
-                            <strong>Membership Plans</strong>
-                            <span>@Model.TotalMembershipPlans plans</span>
+
+                            <strong>
+                                Membership Plans
+                            </strong>
+
+                            <span>
+                                @Model.TotalMembershipPlans plans
+                            </span>
+
                         </div>
 
                     </a>
 
                 </div>
 
+
+                <!-- Classes -->
                 <div class="col-lg-3 col-md-6">
 
                     <a asp-controller="Class"
@@ -427,14 +415,23 @@
                         <i class="fa fa-calendar"></i>
 
                         <div>
-                            <strong>Classes</strong>
-                            <span>@Model.TotalClasses classes</span>
+
+                            <strong>
+                                Classes
+                            </strong>
+
+                            <span>
+                                @Model.TotalClasses classes
+                            </span>
+
                         </div>
 
                     </a>
 
                 </div>
 
+
+                <!-- Users -->
                 <div class="col-lg-3 col-md-6">
 
                     <a asp-controller="Admin"
@@ -444,14 +441,23 @@
                         <i class="fa fa-users"></i>
 
                         <div>
-                            <strong>Users</strong>
-                            <span>@Model.TotalUsers accounts</span>
+
+                            <strong>
+                                Users
+                            </strong>
+
+                            <span>
+                                @Model.TotalUsers accounts
+                            </span>
+
                         </div>
 
                     </a>
 
                 </div>
 
+
+                <!-- Add Administrator -->
                 <div class="col-lg-3 col-md-6">
 
                     <a asp-controller="Admin"
@@ -461,8 +467,15 @@
                         <i class="fa fa-user-plus"></i>
 
                         <div>
-                            <strong>Add Administrator</strong>
-                            <span>Create admin account</span>
+
+                            <strong>
+                                Add Administrator
+                            </strong>
+
+                            <span>
+                                Create admin account
+                            </span>
+
                         </div>
 
                     </a>

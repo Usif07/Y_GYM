@@ -88,6 +88,7 @@
 
                                     @Html.AntiForgeryToken()
 
+                                    <!-- Keep the selected plan -->
                                     <input type="hidden"
                                            name="returnUrl"
                                            value="@returnUrl" />
@@ -178,6 +179,7 @@
 
                                     <a asp-controller="Account"
                                        asp-action="Register"
+                                       asp-route-returnUrl="@returnUrl"
                                        class="btn gym-login-register-btn w-100">
 
                                         <i class="fa fa-user-plus me-2"></i>

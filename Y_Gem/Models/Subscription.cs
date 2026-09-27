@@ -33,5 +33,21 @@ namespace Y_GYM.Models
         [Required]
         [Display(Name = "Status")]
         public string Status { get; set; } = "Pending";
+
+
+        // =========================================================
+        // VISIT LIMIT
+        // =========================================================
+
+        [Required]
+        [Range(1, 1000)]
+        [Display(Name = "Total Visits")]
+        public int TotalVisits { get; set; }
+
+
+        [Required]
+        [Range(0, 1000)]
+        [Display(Name = "Remaining Visits")]
+        public int RemainingVisits { get; set; }
     }
 }

@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Y_GYM.Models;
 using Y_GYM.Repository;
 
 namespace Y_GYM.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CoachController : Controller
     {
         private readonly ICoachRepository _coachRepo;
@@ -19,6 +20,11 @@ namespace Y_GYM.Controllers
             _userManager = userManager;
         }
 
+
+        // =========================================================
+        // ADMIN - MANAGE TRAINERS
+        // =========================================================
+
         // GET: Coach
         public IActionResult Index()
         {
@@ -26,6 +32,7 @@ namespace Y_GYM.Controllers
 
             return View(coaches);
         }
+
 
         // GET: Coach/Details/5
         public IActionResult Details(int id)
@@ -40,11 +47,13 @@ namespace Y_GYM.Controllers
             return View(coach);
         }
 
+
         // GET: Coach/Create
         public IActionResult Create()
         {
             return View();
         }
+
 
         // POST: Coach/Create
         [HttpPost]
@@ -62,6 +71,7 @@ namespace Y_GYM.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         // GET: Coach/Edit/5
         public IActionResult Edit(int id)
         {
@@ -74,6 +84,7 @@ namespace Y_GYM.Controllers
 
             return View(coach);
         }
+
 
         // POST: Coach/Edit
         [HttpPost]
@@ -91,6 +102,7 @@ namespace Y_GYM.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+
         // GET: Coach/Delete/5
         public IActionResult Delete(int id)
         {
@@ -103,6 +115,7 @@ namespace Y_GYM.Controllers
 
             return View(coach);
         }
+
 
         // POST: Coach/Delete
         [HttpPost, ActionName("Delete")]

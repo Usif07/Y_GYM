@@ -1,5 +1,4 @@
-﻿
-@model Y_GYM.Models.MembershipPlan
+﻿@model Y_GYM.Models.MembershipPlan
 
 @{
     ViewData["Title"] = "Create Membership Plan";
@@ -21,7 +20,7 @@
             </h1>
 
             <p>
-                Add a new membership plan with its price and duration.
+                Add a new membership plan with its price, duration, and visit limit.
             </p>
 
         </div>
@@ -104,6 +103,32 @@
                             <span asp-validation-for="DurationDays"
                                   class="text-danger">
                             </span>
+
+                        </div>
+
+
+                        <!-- Total Visits -->
+                        <div class="mb-4">
+
+                            <label asp-for="TotalVisits"
+                                   class="form-label">
+                                Total Visits
+                            </label>
+
+                            <input asp-for="TotalVisits"
+                                   type="number"
+                                   min="1"
+                                   max="1000"
+                                   class="form-control"
+                                   placeholder="Enter total number of visits" />
+
+                            <span asp-validation-for="TotalVisits"
+                                  class="text-danger">
+                            </span>
+
+                            <small class="text-muted">
+                                Number of gym visits allowed with this membership plan.
+                            </small>
 
                         </div>
 

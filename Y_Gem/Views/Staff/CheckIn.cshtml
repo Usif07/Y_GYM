@@ -1,0 +1,192 @@
+﻿@model Y_GYM.Models.ViewModels.CheckInVM
+
+@{
+    ViewData["Title"] = "Member Check-In";
+}
+
+<section class="gym-page">
+
+    <div class="container">
+
+        <div class="gym-page-header">
+
+            <span class="page-label">
+                STAFF AREA
+            </span>
+
+            <h1>
+                Member Check-In
+            </h1>
+
+            <p>
+                Enter the member's phone number to verify membership and record attendance.
+            </p>
+
+        </div>
+
+
+        @if (TempData["Success"] != null)
+        {
+            <div class="alert alert-success mb-4">
+
+                <i class="fa fa-check-circle me-2"></i>
+
+                @TempData["Success"]
+
+            </div>
+        }
+
+
+        @if (TempData["Error"] != null)
+        {
+            <div class="alert alert-danger mb-4">
+
+                <i class="fa fa-exclamation-circle me-2"></i>
+
+                @TempData["Error"]
+
+            </div>
+        }
+
+
+        <div class="row justify-content-center">
+
+            <div class="col-lg-7">
+
+                <div class="member-page-card">
+
+                    <div class="text-center mb-4">
+
+                        <div class="member-dashboard-icon mx-auto mb-3">
+
+                            <i class="fa fa-sign-in"></i>
+
+                        </div>
+
+                        <h3 class="text-white fw-bold">
+                            Check In Member
+                        </h3>
+
+                        <p class="text-white-50 mb-0">
+                            Enter the member phone number to continue.
+                        </p>
+
+                    </div>
+
+
+                    <form asp-action="CheckIn"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="ModelOnly"
+                             class="alert alert-danger">
+                        </div>
+
+
+                        <div class="mb-4">
+
+                            <label asp-for="Phone"
+                                   class="form-label">
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text">
+                                    <i class="fa fa-phone"></i>
+                                </span>
+
+                                <input asp-for="Phone"
+                                       type="tel"
+                                       class="form-control"
+                                       placeholder="Enter member phone number"
+                                       autocomplete="off" />
+
+                            </div>
+
+                            <span asp-validation-for="Phone"
+                                  class="text-danger">
+                            </span>
+
+                        </div>
+
+
+                        <button type="submit"
+                                class="btn primary-btn gym-btn w-100">
+
+                            <i class="fa fa-check me-2"></i>
+
+                            Verify & Check In
+
+                        </button>
+
+                    </form>
+
+
+                    <div class="mt-4 pt-4 border-top">
+
+                        <div class="d-flex gap-3">
+
+                            <i class="fa fa-info-circle text-white-50 mt-1"></i>
+
+                            <p class="text-white-50 small mb-0">
+                                The system will automatically check whether the member
+                                has an active membership before allowing the check-in.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="d-flex flex-wrap gap-2 mt-4">
+
+            <a asp-action="Index"
+               class="btn btn-outline-light">
+
+                <i class="fa fa-dashboard me-2"></i>
+
+                Dashboard
+
+            </a>
+
+
+            <a asp-action="RegisterPayment"
+               class="btn primary-btn gym-btn">
+
+                <i class="fa fa-credit-card me-2"></i>
+
+                Register Payment
+
+            </a>
+
+
+            <a asp-action="RegisterMember"
+               class="btn btn-outline-light">
+
+                <i class="fa fa-user-plus me-2"></i>
+
+                Register Member
+
+            </a>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+}

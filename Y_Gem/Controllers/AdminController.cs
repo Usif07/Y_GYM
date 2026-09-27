@@ -26,9 +26,10 @@ namespace Y_GYM.Controllers
         // ADMIN DASHBOARD
         // =========================================================
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var now = DateTime.Now;
+            var today = DateTime.Today;
 
             var model = new AdminDashboardViewModel
             {
@@ -51,8 +52,10 @@ namespace Y_GYM.Controllers
                     await _context.Subscriptions.CountAsync(),
 
                 ActiveSubscriptions =
-                    await _context.Subscriptions
-                        .CountAsync(s => s.EndDate >= now),
+                    await _context.Subscriptions.CountAsync(s =>
+                        s.Status == "Active" &&
+                        s.StartDate <= today &&
+                        s.EndDate >= today),
 
                 TotalPayments =
                     await _context.Payments.CountAsync(),
@@ -63,22 +66,7 @@ namespace Y_GYM.Controllers
                         .SumAsync() ?? 0,
 
                 TotalClasses =
-                    await _context.Classes.CountAsync(),
-
-                TotalSchedules =
-                    await _context.ClassSchedules.CountAsync(),
-
-                TotalBookings =
-                    await _context.Bookings.CountAsync(),
-
-                TotalCheckIns =
-                    await _context.CheckIns.CountAsync(),
-
-                TotalDietPlans =
-                    await _context.DietPlans.CountAsync(),
-
-                TotalProgressRecords =
-                    await _context.ProgressLogs.CountAsync()
+                    await _context.Classes.CountAsync()
             };
 
             return View(model);
@@ -88,6 +76,7 @@ namespace Y_GYM.Controllers
         // ADMIN USERS
         // =========================================================
 
+        [HttpGet]
         public async Task<IActionResult> Users()
         {
             var users = await _userManager.Users
@@ -101,6 +90,7 @@ namespace Y_GYM.Controllers
         // DETAILS
         // =========================================================
 
+        [HttpGet]
         public async Task<IActionResult> Details(string id)
         {
             if (string.IsNullOrWhiteSpace(id))
