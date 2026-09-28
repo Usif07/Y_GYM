@@ -5,6 +5,7 @@ using System.Globalization;
 using Y_GYM.Data;
 using Y_GYM.Models;
 using Y_GYM.Repository;
+using Y_GYM.Services.Chatbot;
 using static Y_GYM.Repository.CheckInRepository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -119,6 +120,19 @@ builder.Services
     .AddViewLocalization()
     .AddDataAnnotationsLocalization();
 
+// ============================================================
+// Chatbot
+// ============================================================
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddScoped<
+    IChatbotContextService,
+    ChatbotContextService>();
+
+builder.Services.AddHttpClient<
+    IChatbotService,
+    GeminiChatbotService>();
 
 // ============================================================
 // Build Application

@@ -1,0 +1,485 @@
+﻿/* ============================================================
+FITNESS GYM - GYM AI CHATBOT
+============================================================ */
+
+.gym-chatbot {
+    position: fixed;
+    right: 25px;
+    bottom: 25px;
+    z-index: 99999;
+    font-family: "Muli", Arial, sans-serif;
+}
+
+/* ============================================================
+Floating Button
+============================================================ */
+
+.gym-chatbot-toggle {
+    border: 0;
+    outline: none;
+    cursor: pointer;
+     display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 12px 17px;
+    border-radius: 30px;
+    background: #f36100;
+    color: #ffffff;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.28), 0 2px 8px rgba(243, 97, 0, 0.25);
+    font-size: 14px;
+    font-weight: 700;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    
+}
+
+    .gym-chatbot-toggle:hover {
+        background: #ff6f0f;
+        transform: translateY(-3px);
+         box-shadow: 0 12px 30px rgba(0, 0, 0, 0.32), 0 4px 12px rgba(243, 97, 0, 0.3);
+        
+    }
+
+.gym-chatbot-toggle-icon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.16);
+    
+}
+
+    .gym-chatbot-toggle-icon i {
+        font-size: 14px;
+    }
+
+.gym-chatbot-toggle-text {
+    letter-spacing: 0.4px;
+}
+
+/* ============================================================
+Chat Window
+============================================================ */
+
+.gym-chatbot-window {
+    position: absolute;
+    right: 0;
+    bottom: 62px;
+    width: 390px;
+    max-width: calc(100vw - 30px);
+    height: 570px;
+    max-height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: #111111;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45), 0 5px 20px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(15px) scale(0.97);
+    transition: opacity 0.22s ease, visibility 0.22s ease, transform 0.22s ease;
+    
+}
+
+.gym-chatbot.is-open .gym-chatbot-window {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+}
+
+/* ============================================================
+Header
+============================================================ */
+
+.gym-chatbot-header {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 17px;
+    background: linear-gradient( 135deg, #171717 0%, #101010 100% );
+    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    
+}
+
+.gym-chatbot-header-info {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+}
+
+.gym-chatbot-avatar {
+    width: 42px;
+    height: 42px;
+     display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 13px;
+    background: #f36100;
+    color: #ffffff;
+    box-shadow: 0 5px 15px rgba(243, 97, 0, 0.25);
+    
+}
+
+    .gym-chatbot-avatar i {
+        font-size: 17px;
+    }
+
+.gym-chatbot-header h5 {
+    margin: 0;
+     color: #ffffff;
+    font-family: "Oswald", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    
+}
+
+.gym-chatbot-header span {
+    display: block;
+     margin-top: 2px;
+    color: #999999;
+    font-size: 11px;
+    
+}
+
+.gym-chatbot-close {
+    width: 34px;
+    height: 34px;
+     display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    outline: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    color: #bbbbbb;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease;
+    
+}
+
+    .gym-chatbot-close:hover {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+    }
+
+/* ============================================================
+Messages
+============================================================ */
+
+.gym-chatbot-messages {
+    flex: 1;
+     overflow-y: auto;
+    padding: 18px 15px;
+    background: #0d0d0d;
+    scroll-behavior: smooth;
+    
+}
+
+    .gym-chatbot-messages::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    .gym-chatbot-messages::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .gym-chatbot-messages::-webkit-scrollbar-thumb {
+        background: #343434;
+        border-radius: 10px;
+    }
+
+.gym-chatbot-message {
+    display: flex;
+    align-items: flex-start;
+     gap: 8px;
+    margin-bottom: 15px;
+    
+}
+
+.gym-chatbot-message-user {
+    justify-content: flex-end;
+}
+
+.gym-chatbot-message-avatar {
+    flex-shrink: 0;
+     width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2px;
+    border-radius: 9px;
+    background: #f36100;
+    color: #ffffff;
+    font-size: 11px;
+    
+}
+
+.gym-chatbot-message-content {
+    max-width: 82%;
+}
+
+.gym-chatbot-message-bubble {
+    padding: 10px 12px;
+     border-radius: 13px;
+    color: #eeeeee;
+    background: #1b1b1b;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 13px;
+    line-height: 1.65;
+    word-break: break-word;
+    white-space: pre-wrap;
+    
+}
+
+.gym-chatbot-message-user .gym-chatbot-message-bubble {
+    background: #f36100;
+    color: #ffffff;
+     border-color: transparent;
+    border-bottom-right-radius: 4px;
+    
+}
+
+.gym-chatbot-message-bot .gym-chatbot-message-bubble {
+    border-bottom-left-radius: 4px;
+}
+
+/* ============================================================
+Quick Questions
+============================================================ */
+
+.gym-chatbot-quick-questions {
+    display: flex;
+    gap: 7px;
+     overflow-x: auto;
+    padding: 9px 12px;
+    background: #111111;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    
+}
+
+    .gym-chatbot-quick-questions::-webkit-scrollbar {
+        height: 0;
+    }
+
+.gym-chatbot-quick-btn {
+    flex-shrink: 0;
+     padding: 7px 11px;
+    border: 1px solid rgba(243, 97, 0, 0.35);
+    border-radius: 20px;
+    background: rgba(243, 97, 0, 0.07);
+    color: #dddddd;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+    
+}
+
+    .gym-chatbot-quick-btn:hover {
+        background: rgba(243, 97, 0, 0.16);
+        border-color: rgba(243, 97, 0, 0.65);
+        color: #ffffff;
+    }
+
+/* ============================================================
+Input Area
+============================================================ */
+
+.gym-chatbot-input-area {
+    flex-shrink: 0;
+     padding: 10px 12px 9px;
+    background: #151515;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    
+}
+
+.gym-chatbot-input-wrapper {
+    display: flex;
+    align-items: flex-end;
+     gap: 8px;
+    padding: 5px 5px 5px 11px;
+    background: #202020;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 13px;
+    transition: border-color 0.2s ease;
+    
+}
+
+    .gym-chatbot-input-wrapper:focus-within {
+        border-color: rgba(243, 97, 0, 0.65);
+    }
+
+.gym-chatbot-input {
+    flex: 1;
+     min-height: 36px;
+    max-height: 90px;
+    resize: none;
+    border: 0;
+    outline: none;
+    padding: 7px 0;
+    background: transparent;
+    color: #ffffff;
+    font-family: "Muli", Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    
+}
+
+    .gym-chatbot-input::placeholder {
+        color: #777777;
+    }
+
+.gym-chatbot-send {
+    flex-shrink: 0;
+     width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 10px;
+    background: #f36100;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+    
+}
+
+    .gym-chatbot-send:hover {
+        background: #ff6f0f;
+        transform: translateY(-1px);
+    }
+
+    .gym-chatbot-send:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+.gym-chatbot-footer-text {
+    margin-top: 6px;
+     text-align: center;
+    color: #666666;
+    font-size: 9px;
+    letter-spacing: 0.3px;
+    
+}
+
+/* ============================================================
+Loading
+============================================================ */
+
+.gym-chatbot-typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+     min-height: 18px;
+    
+}
+
+    .gym-chatbot-typing span {
+        width: 5px;
+        height: 5px;
+         border-radius: 50%;
+        background: #999999;
+        animation: gymChatbotTyping 1.2s infinite ease-in-out;
+        
+    }
+
+        .gym-chatbot-typing span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .gym-chatbot-typing span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+@keyframes gymChatbotTyping {
+
+     0%, 60%, 100% {
+        opacity: 0.3;
+        transform: translateY(0);
+    }
+
+    30% {
+        opacity: 1;
+        transform: translateY(-3px);
+    }
+
+    
+}
+
+/* ============================================================
+Error
+============================================================ */
+
+.gym-chatbot-error {
+    color: #ffb3b3 !important;
+    background: rgba(160, 30, 30, 0.12) !important;
+    border-color: rgba(255, 80, 80, 0.15) !important;
+}
+
+/* ============================================================
+Mobile
+============================================================ */
+
+@media (max-width: 575px) {
+
+    
+    .gym-chatbot {
+        right: 15px;
+        bottom: 15px;
+    }
+
+    .gym-chatbot-toggle {
+        width: 52px;
+        height: 52px;
+        justify-content: center;
+        padding: 0;
+        border-radius: 50%;
+    }
+
+    .gym-chatbot-toggle-text {
+        display: none;
+    }
+
+    .gym-chatbot-toggle-icon {
+        width: 34px;
+        height: 34px;
+        background: transparent;
+    }
+
+        .gym-chatbot-toggle-icon i {
+            font-size: 18px;
+        }
+
+    .gym-chatbot-window {
+        right: -1px;
+        bottom: 62px;
+        width: calc(100vw - 30px);
+        height: min(600px, calc(100vh - 90px));
+        border-radius: 16px;
+    }
+
+    .gym-chatbot-message-bubble strong {
+        font-weight: 700;
+    }
+
+    .chatbot-bullet {
+        display: block;
+        margin: 4px 0;
+        padding-right: 4px;
+    }
+
+    .gym-chatbot-message-bubble br + .chatbot-bullet {
+        margin-top: 4px;
+    }
+
+
+
+}

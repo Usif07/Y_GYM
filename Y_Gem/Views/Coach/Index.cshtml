@@ -1,136 +1,250 @@
 ﻿@model IEnumerable<Y_GYM.Models.Coach>
 
 @{
-    ViewData["Title"] = "Coaches";
+    ViewData["Title"] = "Our Trainers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container-fluid py-4">
+<style>
+    .trainers-page {
+        min-height: calc(100vh - 70px);
+        padding: 90px 28px 50px;
+        background: #101010;
+    }
 
-    <div class="gym-page-header d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
-        <div>
-            <h1 class="mb-1">Coaches</h1>
-            <p class="text-muted mb-0">
-                Manage gym coaches and their account information.
+    .trainers-container {
+        max-width: 1250px;
+        margin: 0 auto;
+    }
+
+    .trainers-page-header {
+        margin-bottom: 35px;
+        padding: 0 5px;
+    }
+
+    .page-label {
+        display: inline-block;
+        margin-bottom: 10px;
+        color: #ff9d22;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+    }
+
+    .trainers-page-header h1 {
+        margin: 0 0 10px;
+        color: #ffffff;
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .trainers-page-header p {
+        margin: 0;
+        color: #929292;
+        font-size: 14px;
+        line-height: 1.7;
+    }
+
+    .trainer-card {
+        height: 100%;
+        padding: 25px;
+        background: #151515;
+        border: 1px solid #292929;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .22);
+        transition: .25s ease;
+    }
+
+    .trainer-card:hover {
+        transform: translateY(-3px);
+        border-color: #3a3a3a;
+        background: #181818;
+    }
+
+    .trainer-icon {
+        width: 58px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        border-radius: 50%;
+        background: rgba(255, 140, 0, .10);
+        border: 1px solid rgba(255, 140, 0, .20);
+        color: #ff9d22;
+        font-size: 23px;
+    }
+
+    .trainer-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #777777;
+        font-size: 10px;
+        font-weight: 600;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+
+    .trainer-name {
+        margin: 0 0 18px;
+        color: #ffffff;
+        font-size: 21px;
+        font-weight: 600;
+    }
+
+    .trainer-info {
+        padding-top: 16px;
+        border-top: 1px solid #292929;
+    }
+
+    .trainer-info-label {
+        display: block;
+        margin-bottom: 7px;
+        color: #777777;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: .5px;
+    }
+
+    .trainer-specialty {
+        color: #ff9d22;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .empty-state {
+        padding: 70px 25px;
+        text-align: center;
+        background: #151515;
+        border: 1px solid #292929;
+        border-radius: 14px;
+    }
+
+    .empty-state-icon {
+        margin-bottom: 18px;
+        color: #555555;
+        font-size: 38px;
+    }
+
+    .empty-state h3 {
+        margin: 0 0 8px;
+        color: #dddddd;
+        font-size: 20px;
+    }
+
+    .empty-state p {
+        margin: 0;
+        color: #777777;
+        font-size: 14px;
+    }
+
+    @@media (max-width: 768px) {
+
+        .trainers-page {
+            padding: 85px 18px 35px;
+        }
+
+        .trainers-page-header {
+            margin-bottom: 25px;
+        }
+
+        .trainers-page-header h1 {
+            font-size: 26px;
+        }
+
+        .trainer-card {
+            padding: 22px;
+            border-radius: 11px;
+        }
+    }
+</style>
+
+
+<div class="trainers-page">
+
+    <div class="trainers-container">
+
+        <!-- Header -->
+        <div class="trainers-page-header">
+
+            <span class="page-label">
+                OUR TEAM
+            </span>
+
+            <h1>
+                Our Trainers
+            </h1>
+
+            <p>
+                Meet our professional trainers and explore their specialties.
             </p>
+
         </div>
 
-        <a asp-action="Create" class="btn gym-btn">
-            <i class="bi bi-plus-lg me-1"></i>
-            Add Coach
-        </a>
-    </div>
 
-    @if (Model != null && Model.Any())
-    {
-        <div class="card gym-card border-0 shadow-sm">
+        <!-- Trainers -->
+        @if (Model != null && Model.Any())
+        {
+            <div class="row g-4">
 
-            <div class="card-body p-0">
+                @foreach (var coach in Model)
+                {
+                    <div class="col-xl-4 col-md-6">
 
-                <div class="table-responsive">
+                        <div class="trainer-card">
 
-                    <table class="table gym-table table-hover align-middle mb-0">
+                            <div class="trainer-icon">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
 
-                        <thead>
-                            <tr>
-                                <th>Coach</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Specialty</th>
-                                <th class="text-end">Actions</th>
-                            </tr>
-                        </thead>
+                            <span class="trainer-label">
+                                Trainer
+                            </span>
 
-                        <tbody>
+                            <h2 class="trainer-name">
+                                @(coach.User?.FullName ?? "Trainer")
+                            </h2>
 
-                            @foreach (var coach in Model)
-                            {
-                                <tr>
+                            <div class="trainer-info">
 
-                                    <td>
-                                        <div class="fw-semibold">
-                                            @(coach.User?.FullName ?? "No name")
-                                        </div>
-                                    </td>
+                                <span class="trainer-info-label">
+                                    Specialty
+                                </span>
 
-                                    <td>
-                                        @(coach.User?.UserName ?? "-")
-                                    </td>
+                                <span class="trainer-specialty">
+                                    @(string.IsNullOrWhiteSpace(coach.CoachSpecialty)
+                                        ? "General Fitness"
+                                        : coach.CoachSpecialty)
+                                </span>
 
-                                    <td>
-                                        @(coach.User?.Email ?? "-")
-                                    </td>
+                            </div>
 
-                                    <td>
-                                        @(coach.User?.PhoneNumber ?? "-")
-                                    </td>
+                        </div>
 
-                                    <td>
-                                        <span class="badge text-bg-light">
-                                            @(coach.CoachSpecialty ?? "-")
-                                        </span>
-                                    </td>
-
-                                    <td class="text-end">
-
-                                        <div class="btn-group" role="group">
-
-                                            <a asp-action="Details"
-                                               asp-route-id="@coach.Id"
-                                               class="btn btn-sm btn-outline-secondary">
-                                                Details
-                                            </a>
-
-                                            <a asp-action="Edit"
-                                               asp-route-id="@coach.Id"
-                                               class="btn btn-sm btn-outline-primary">
-                                                Edit
-                                            </a>
-
-                                            <a asp-action="Delete"
-                                               asp-route-id="@coach.Id"
-                                               class="btn btn-sm btn-outline-danger">
-                                                Delete
-                                            </a>
-
-                                        </div>
-
-                                    </td>
-
-                                </tr>
-                            }
-
-                        </tbody>
-
-                    </table>
-
-                </div>
+                    </div>
+                }
 
             </div>
+        }
+        else
+        {
+            <div class="empty-state">
 
-        </div>
-    }
-    else
-    {
-        <div class="card gym-card border-0 shadow-sm">
-            <div class="card-body text-center py-5">
-
-                <div class="mb-3">
-                    <i class="bi bi-person-badge fs-1"></i>
+                <div class="empty-state-icon">
+                    <i class="fas fa-user-tie"></i>
                 </div>
 
-                <h4>No coaches found</h4>
+                <h3>
+                    No Trainers Available
+                </h3>
 
-                <p class="text-muted mb-4">
-                    There are currently no coaches registered in the gym.
+                <p>
+                    Trainer information will appear here once trainers are added.
                 </p>
 
-                <a asp-action="Create" class="btn gym-btn">
-                    Add First Coach
-                </a>
-
             </div>
-        </div>
-    }
+        }
+
+    </div>
 
 </div>

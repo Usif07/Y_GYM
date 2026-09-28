@@ -1,0 +1,145 @@
+﻿@using Microsoft.AspNetCore.Antiforgery
+
+<div id="gymChatbot"
+     class="gym-chatbot"
+     aria-hidden="true">
+
+
+<!-- Floating Button -->
+
+<button type="button"
+        id="gymChatbotToggle"
+        class="gym-chatbot-toggle"
+        aria-label="Open GYM AI Assistant"
+        aria-expanded="false">
+
+    <span class="gym-chatbot-toggle-icon">
+        <i class="fa fa-comments"></i>
+    </span>
+
+    <span class="gym-chatbot-toggle-text">
+        GYM AI
+    </span>
+
+</button>
+
+
+<!-- Chat Window -->
+
+<div id="gymChatbotWindow"
+     class="gym-chatbot-window"
+     role="dialog"
+     aria-modal="false"
+     aria-labelledby="gymChatbotTitle">
+
+    <!-- Header -->
+
+    <div class="gym-chatbot-header">
+
+        <div class="gym-chatbot-header-info">
+
+            <div class="gym-chatbot-avatar">
+
+                <i class="fa fa-bolt"></i>
+
+            </div>
+
+            <div>
+
+                <h5 id="gymChatbotTitle">
+                    GYM AI
+                </h5>
+
+                <span>
+                    Fitness Assistant
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <button type="button"
+                id="gymChatbotClose"
+                class="gym-chatbot-close"
+                aria-label="Close chatbot">
+
+            <i class="fa fa-times"></i>
+
+        </button>
+
+    </div>
+
+
+    <!-- Messages -->
+
+    <div id="gymChatbotMessages"
+         class="gym-chatbot-messages">
+
+        <div class="gym-chatbot-message gym-chatbot-message-bot">
+
+            <div class="gym-chatbot-message-avatar">
+                <i class="fa fa-bolt"></i>
+            </div>
+
+            <div class="gym-chatbot-message-content">
+
+                <div class="gym-chatbot-message-bubble">
+
+                    <div>
+                        أهلاً بك في FITNESS GYM 👋
+                    </div>
+
+                    <div class="mt-1">
+                        أنا مساعدك الذكي، اسألني عن الاشتراكات،
+                        الحصص، الحجوزات أو بيانات حسابك.
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    
+
+
+    <!-- Input -->
+
+    <div class="gym-chatbot-input-area">
+
+        @Html.AntiForgeryToken()
+
+        <div class="gym-chatbot-input-wrapper">
+
+            <textarea id="gymChatbotInput"
+                      class="gym-chatbot-input"
+                      rows="1"
+                      maxlength="1000"
+                      placeholder="اكتب رسالتك هنا..."
+                      autocomplete="off"></textarea>
+
+
+            <button type="button"
+                    id="gymChatbotSend"
+                    class="gym-chatbot-send"
+                    aria-label="Send message">
+
+                <i class="fa fa-paper-plane"></i>
+
+            </button>
+
+        </div>
+
+        <div class="gym-chatbot-footer-text">
+            GYM AI • Powered by Gemini
+        </div>
+
+    </div>
+
+</div>
+
+</div>

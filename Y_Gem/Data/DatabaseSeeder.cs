@@ -36,6 +36,9 @@ namespace Y_GYM.Data
 
             // ==========================================
             // ADMIN
+            // Existing account - DO NOT CHANGE
+            // Username: admin
+            // Password: Admin123!
             // ==========================================
 
             var admin = await userManager.FindByNameAsync("admin");
@@ -69,7 +72,10 @@ namespace Y_GYM.Data
             }
 
             // ==========================================
-            // STAFF USER
+            // EXISTING STAFF USER
+            // DO NOT CHANGE
+            // Username: staff1
+            // Password: Staff123!
             // ==========================================
 
             var staffUser =
@@ -106,7 +112,7 @@ namespace Y_GYM.Data
             }
 
             // ==========================================
-            // STAFF PROFILE
+            // EXISTING STAFF PROFILE
             // ==========================================
 
             var staff = await context.Staff
@@ -128,7 +134,10 @@ namespace Y_GYM.Data
             }
 
             // ==========================================
-            // TRAINER USER
+            // EXISTING TRAINER USER
+            // DO NOT CHANGE
+            // Username: coach1
+            // Password: Trainer123!
             // ==========================================
 
             var coachUser =
@@ -165,7 +174,7 @@ namespace Y_GYM.Data
             }
 
             // ==========================================
-            // COACH PROFILE
+            // EXISTING COACH PROFILE
             // ==========================================
 
             var coach = await context.Coaches
@@ -183,6 +192,187 @@ namespace Y_GYM.Data
                 context.Coaches.Add(coach);
 
                 await context.SaveChangesAsync();
+            }
+
+            // ==========================================
+            // ADDITIONAL STAFF USERS
+            // ==========================================
+
+            var additionalStaffData = new[]
+            {
+                new
+                {
+                    Username = "staff2",
+                    Email = "staff2@fitnessgym.local",
+                    Name = "Omar Khaled",
+                    Phone = "01010000002",
+                    JobTitle = "Reception Staff",
+                    ShiftTime = "Evening"
+                },
+
+                new
+                {
+                    Username = "staff3",
+                    Email = "staff3@fitnessgym.local",
+                    Name = "Karim Hassan",
+                    Phone = "01010000003",
+                    JobTitle = "Front Desk",
+                    ShiftTime = "Night"
+                }
+            };
+
+            foreach (var data in additionalStaffData)
+            {
+                var user = await userManager
+                    .FindByNameAsync(data.Username);
+
+                if (user == null)
+                {
+                    user = new ApplicationUser
+                    {
+                        UserName = data.Username,
+                        Email = data.Email,
+                        FullName = data.Name,
+                        PhoneNumber = data.Phone,
+                        EmailConfirmed = true
+                    };
+
+                    var result = await userManager.CreateAsync(
+                        user,
+                        "Staff123!");
+
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(
+                            $"Could not create {data.Username}");
+                    }
+                }
+
+                if (!await userManager.IsInRoleAsync(
+                        user,
+                        "Staff"))
+                {
+                    await userManager.AddToRoleAsync(
+                        user,
+                        "Staff");
+                }
+
+                var staffProfile = await context.Staff
+                    .FirstOrDefaultAsync(
+                        s => s.UserId == user.Id);
+
+                if (staffProfile == null)
+                {
+                    context.Staff.Add(new Staff
+                    {
+                        UserId = user.Id,
+                        JobTitle = data.JobTitle,
+                        ShiftTime = data.ShiftTime
+                    });
+                }
+            }
+
+            await context.SaveChangesAsync();
+
+            // ==========================================
+            // ADDITIONAL TRAINERS
+            // ==========================================
+
+            var additionalTrainersData = new[]
+            {
+                new
+                {
+                    Username = "coach2",
+                    Email = "coach2@fitnessgym.local",
+                    Name = "Ahmed Hassan",
+                    Phone = "01020000002",
+                    Specialty = "Cardio & Fat Loss"
+                },
+
+                new
+                {
+                    Username = "coach3",
+                    Email = "coach3@fitnessgym.local",
+                    Name = "Mohamed Adel",
+                    Phone = "01020000003",
+                    Specialty = "CrossFit"
+                },
+
+                new
+                {
+                    Username = "coach4",
+                    Email = "coach4@fitnessgym.local",
+                    Name = "Omar Samir",
+                    Phone = "01020000004",
+                    Specialty = "Bodybuilding"
+                },
+
+                new
+                {
+                    Username = "coach5",
+                    Email = "coach5@fitnessgym.local",
+                    Name = "Karim Mostafa",
+                    Phone = "01020000005",
+                    Specialty = "Yoga & Mobility"
+                }
+            };
+
+            var additionalCoaches = new List<Coach>();
+
+            foreach (var data in additionalTrainersData)
+            {
+                var user = await userManager
+                    .FindByNameAsync(data.Username);
+
+                if (user == null)
+                {
+                    user = new ApplicationUser
+                    {
+                        UserName = data.Username,
+                        Email = data.Email,
+                        FullName = data.Name,
+                        PhoneNumber = data.Phone,
+                        EmailConfirmed = true
+                    };
+
+                    var result = await userManager.CreateAsync(
+                        user,
+                        "Trainer123!");
+
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(
+                            $"Could not create {data.Username}");
+                    }
+                }
+
+                if (!await userManager.IsInRoleAsync(
+                        user,
+                        "Trainer"))
+                {
+                    await userManager.AddToRoleAsync(
+                        user,
+                        "Trainer");
+                }
+
+                var trainer = await context.Coaches
+                    .FirstOrDefaultAsync(
+                        c => c.UserId == user.Id);
+
+                if (trainer == null)
+                {
+                    trainer = new Coach
+                    {
+                        UserId = user.Id,
+                        CoachSpecialty = data.Specialty
+                    };
+
+                    context.Coaches.Add(trainer);
+
+                    await context.SaveChangesAsync();
+                }
+
+                additionalCoaches.Add(trainer);
             }
 
             // ==========================================
@@ -237,10 +427,44 @@ namespace Y_GYM.Data
                 context.MembershipPlans.Add(quarterlyPlan);
             }
 
+            // NEW PLAN
+            var halfYearPlan = await context.MembershipPlans
+                .FirstOrDefaultAsync(
+                    p => p.Name == "Half Year");
+
+            if (halfYearPlan == null)
+            {
+                halfYearPlan = new MembershipPlan
+                {
+                    Name = "Half Year",
+                    Price = 2100,
+                    DurationDays = 180
+                };
+
+                context.MembershipPlans.Add(halfYearPlan);
+            }
+
+            // NEW PLAN
+            var annualPlan = await context.MembershipPlans
+                .FirstOrDefaultAsync(
+                    p => p.Name == "Annual");
+
+            if (annualPlan == null)
+            {
+                annualPlan = new MembershipPlan
+                {
+                    Name = "Annual",
+                    Price = 3600,
+                    DurationDays = 365
+                };
+
+                context.MembershipPlans.Add(annualPlan);
+            }
+
             await context.SaveChangesAsync();
 
             // ==========================================
-            // MEMBERS
+            // EXISTING MEMBERS
             // ==========================================
 
             var membersData = new[]
@@ -251,7 +475,9 @@ namespace Y_GYM.Data
                     Email = "member1@fitnessgym.local",
                     Name = "Ahmed Mohamed",
                     Phone = "01000000001",
-                    PlanId = monthlyPlan.Id
+                    PlanId = monthlyPlan.Id,
+                    FitnessLevel = "Intermediate",
+                    Goal = "General Fitness"
                 },
 
                 new
@@ -260,7 +486,9 @@ namespace Y_GYM.Data
                     Email = "member2@fitnessgym.local",
                     Name = "Mohamed Ali",
                     Phone = "01000000002",
-                    PlanId = quarterlyPlan.Id
+                    PlanId = quarterlyPlan.Id,
+                    FitnessLevel = "Advanced",
+                    Goal = "Muscle Gain"
                 },
 
                 new
@@ -269,7 +497,9 @@ namespace Y_GYM.Data
                     Email = "member3@fitnessgym.local",
                     Name = "Omar Hassan",
                     Phone = "01000000003",
-                    PlanId = basicPlan.Id
+                    PlanId = basicPlan.Id,
+                    FitnessLevel = "Beginner",
+                    Goal = "Weight Loss"
                 },
 
                 new
@@ -278,7 +508,9 @@ namespace Y_GYM.Data
                     Email = "member4@fitnessgym.local",
                     Name = "Youssef Samir",
                     Phone = "01000000004",
-                    PlanId = monthlyPlan.Id
+                    PlanId = monthlyPlan.Id,
+                    FitnessLevel = "Intermediate",
+                    Goal = "Muscle Gain"
                 },
 
                 new
@@ -287,7 +519,9 @@ namespace Y_GYM.Data
                     Email = "member5@fitnessgym.local",
                     Name = "Karim Adel",
                     Phone = "01000000005",
-                    PlanId = basicPlan.Id
+                    PlanId = basicPlan.Id,
+                    FitnessLevel = "Beginner",
+                    Goal = "General Fitness"
                 }
             };
 
@@ -305,6 +539,7 @@ namespace Y_GYM.Data
                         UserName = data.Username,
                         Email = data.Email,
                         FullName = data.Name,
+                        PhoneNumber = data.Phone,
                         EmailConfirmed = true
                     };
 
@@ -341,11 +576,157 @@ namespace Y_GYM.Data
                         JoinDate = DateTime.Today.AddDays(-30),
                         MembershipPlanId = data.PlanId,
                         UserId = user.Id,
-                        FitnessLevel = "Intermediate",
-                        Goal = "General Fitness"
+                        FitnessLevel = data.FitnessLevel,
+                        Goal = data.Goal
                     };
 
                     context.Members.Add(member);
+
+                    await context.SaveChangesAsync();
+                }
+
+                members.Add(member);
+            }
+
+            // ==========================================
+            // ADDITIONAL MEMBERS
+            // ==========================================
+
+            var additionalMembersData = new[]
+            {
+                new
+                {
+                    Username = "member6",
+                    Email = "member6@fitnessgym.local",
+                    Name = "Mostafa Tarek",
+                    Phone = "01000000006",
+                    PlanId = halfYearPlan.Id,
+                    FitnessLevel = "Advanced",
+                    Goal = "Bodybuilding"
+                },
+
+                new
+                {
+                    Username = "member7",
+                    Email = "member7@fitnessgym.local",
+                    Name = "Mahmoud Fathy",
+                    Phone = "01000000007",
+                    PlanId = annualPlan.Id,
+                    FitnessLevel = "Intermediate",
+                    Goal = "General Fitness"
+                },
+
+                new
+                {
+                    Username = "member8",
+                    Email = "member8@fitnessgym.local",
+                    Name = "Amr Nabil",
+                    Phone = "01000000008",
+                    PlanId = monthlyPlan.Id,
+                    FitnessLevel = "Beginner",
+                    Goal = "Weight Loss"
+                },
+
+                new
+                {
+                    Username = "member9",
+                    Email = "member9@fitnessgym.local",
+                    Name = "Tarek Ahmed",
+                    Phone = "01000000009",
+                    PlanId = quarterlyPlan.Id,
+                    FitnessLevel = "Advanced",
+                    Goal = "Strength"
+                },
+
+                new
+                {
+                    Username = "member10",
+                    Email = "member10@fitnessgym.local",
+                    Name = "Khaled Sameh",
+                    Phone = "01000000010",
+                    PlanId = basicPlan.Id,
+                    FitnessLevel = "Beginner",
+                    Goal = "Weight Loss"
+                },
+
+                new
+                {
+                    Username = "member11",
+                    Email = "member11@fitnessgym.local",
+                    Name = "Ali Mahmoud",
+                    Phone = "01000000011",
+                    PlanId = monthlyPlan.Id,
+                    FitnessLevel = "Intermediate",
+                    Goal = "Muscle Gain"
+                },
+
+                new
+                {
+                    Username = "member12",
+                    Email = "member12@fitnessgym.local",
+                    Name = "Seif Ibrahim",
+                    Phone = "01000000012",
+                    PlanId = annualPlan.Id,
+                    FitnessLevel = "Advanced",
+                    Goal = "Athletic Performance"
+                }
+            };
+
+            foreach (var data in additionalMembersData)
+            {
+                var user = await userManager
+                    .FindByNameAsync(data.Username);
+
+                if (user == null)
+                {
+                    user = new ApplicationUser
+                    {
+                        UserName = data.Username,
+                        Email = data.Email,
+                        FullName = data.Name,
+                        PhoneNumber = data.Phone,
+                        EmailConfirmed = true
+                    };
+
+                    var result = await userManager.CreateAsync(
+                        user,
+                        "Member123!");
+
+                    if (!result.Succeeded)
+                    {
+                        throw new Exception(
+                            $"Could not create {data.Username}");
+                    }
+                }
+
+                if (!await userManager.IsInRoleAsync(
+                        user,
+                        "Member"))
+                {
+                    await userManager.AddToRoleAsync(
+                        user,
+                        "Member");
+                }
+
+                var member = await context.Members
+                    .FirstOrDefaultAsync(
+                        m => m.UserId == user.Id);
+
+                if (member == null)
+                {
+                    member = new Member
+                    {
+                        FullName = data.Name,
+                        Phone = data.Phone,
+                        JoinDate = DateTime.Today.AddDays(-45),
+                        MembershipPlanId = data.PlanId,
+                        UserId = user.Id,
+                        FitnessLevel = data.FitnessLevel,
+                        Goal = data.Goal
+                    };
+
+                    context.Members.Add(member);
+
                     await context.SaveChangesAsync();
                 }
 
@@ -396,6 +777,64 @@ namespace Y_GYM.Data
                 DateTime.Today.AddDays(25),
                 "Active");
 
+            // Additional subscriptions
+
+            await CreateSubscriptionIfMissing(
+                context,
+                members[5],
+                halfYearPlan,
+                DateTime.Today.AddDays(-40),
+                DateTime.Today.AddDays(140),
+                "Active");
+
+            await CreateSubscriptionIfMissing(
+                context,
+                members[6],
+                annualPlan,
+                DateTime.Today.AddDays(-100),
+                DateTime.Today.AddDays(265),
+                "Active");
+
+            await CreateSubscriptionIfMissing(
+                context,
+                members[7],
+                monthlyPlan,
+                DateTime.Today.AddDays(-35),
+                DateTime.Today.AddDays(-5),
+                "Expired");
+
+            await CreateSubscriptionIfMissing(
+                context,
+                members[8],
+                quarterlyPlan,
+                DateTime.Today.AddDays(10),
+                DateTime.Today.AddDays(100),
+                "Pending");
+
+            await CreateSubscriptionIfMissing(
+                context,
+                members[9],
+                basicPlan,
+                DateTime.Today.AddDays(-15),
+                DateTime.Today.AddDays(15),
+                "Active");
+
+            await CreateSubscriptionIfMissing(
+                context,
+                members[10],
+                monthlyPlan,
+                DateTime.Today.AddDays(-2),
+                DateTime.Today.AddDays(28),
+                "Active");
+
+            await CreateSubscriptionIfMissing(
+                context,
+                members[11],
+                annualPlan,
+                DateTime.Today.AddDays(-180),
+                DateTime.Today.AddDays(185),
+                "Active");
+
             // ==========================================
             // PAYMENTS
             // ==========================================
@@ -415,7 +854,8 @@ namespace Y_GYM.Data
                         p.SubscriptionId ==
                         subscription.Id);
 
-                if (!exists && subscription.MembershipPlan != null)
+                if (!exists &&
+                    subscription.MembershipPlan != null)
                 {
                     context.Payments.Add(new Payment
                     {
@@ -436,58 +876,30 @@ namespace Y_GYM.Data
             // CHECK INS
             // ==========================================
 
-            var hasCheckIns =
-                await context.CheckIns.AnyAsync();
-
-            if (!hasCheckIns)
+            foreach (var member in members)
             {
-                // Allowed
-                context.CheckIns.Add(new CheckIn
-                {
-                    MemberId = members[0].Id,
-                    StaffId = staff.Id,
-                    CheckInTime = DateTime.Now.AddHours(-2),
-                    Status = "Allowed"
-                });
+                var hasMemberCheckIn =
+                    await context.CheckIns
+                        .AnyAsync(c =>
+                            c.MemberId == member.Id);
 
-                // Allowed
-                context.CheckIns.Add(new CheckIn
+                if (!hasMemberCheckIn)
                 {
-                    MemberId = members[1].Id,
-                    StaffId = staff.Id,
-                    CheckInTime = DateTime.Now.AddHours(-1),
-                    Status = "Allowed"
-                });
-
-                // Expired
-                context.CheckIns.Add(new CheckIn
-                {
-                    MemberId = members[2].Id,
-                    StaffId = staff.Id,
-                    CheckInTime = DateTime.Now.AddDays(-2),
-                    Status = "Rejected-Expired"
-                });
-
-                // Pending
-                context.CheckIns.Add(new CheckIn
-                {
-                    MemberId = members[3].Id,
-                    StaffId = staff.Id,
-                    CheckInTime = DateTime.Now.AddMinutes(-30),
-                    Status = "Rejected-Pending"
-                });
-
-                // Allowed
-                context.CheckIns.Add(new CheckIn
-                {
-                    MemberId = members[4].Id,
-                    StaffId = staff.Id,
-                    CheckInTime = DateTime.Now.AddMinutes(-15),
-                    Status = "Allowed"
-                });
-
-                await context.SaveChangesAsync();
+                    context.CheckIns.Add(new CheckIn
+                    {
+                        MemberId = member.Id,
+                        StaffId = staff.Id,
+                        CheckInTime =
+                            DateTime.Now.AddMinutes(
+                                -(member.Id * 12)),
+                        Status = member.Id % 4 == 0
+                            ? "Rejected-Expired"
+                            : "Allowed"
+                    });
+                }
             }
+
+            await context.SaveChangesAsync();
 
             // ==========================================
             // CLASSES
@@ -508,6 +920,52 @@ namespace Y_GYM.Data
                 "Strength",
                 12);
 
+            var crossFitClass = await CreateClassIfMissing(
+                context,
+                "CrossFit",
+                10);
+
+            var bodybuildingClass = await CreateClassIfMissing(
+                context,
+                "Bodybuilding",
+                8);
+
+            var mobilityClass = await CreateClassIfMissing(
+                context,
+                "Mobility",
+                15);
+
+            var absClass = await CreateClassIfMissing(
+                context,
+                "Abs & Core",
+                18);
+
+            // ==========================================
+            // GET ALL TRAINERS
+            // ==========================================
+
+            var allCoaches = await context.Coaches
+                .ToListAsync();
+
+            var coach1 = allCoaches
+                .First(c => c.Id == coach.Id);
+
+            var coach2 = additionalCoaches.Count > 0
+                ? additionalCoaches[0]
+                : coach1;
+
+            var coach3 = additionalCoaches.Count > 1
+                ? additionalCoaches[1]
+                : coach1;
+
+            var coach4 = additionalCoaches.Count > 2
+                ? additionalCoaches[2]
+                : coach1;
+
+            var coach5 = additionalCoaches.Count > 3
+                ? additionalCoaches[3]
+                : coach1;
+
             // ==========================================
             // CLASS SCHEDULES
             // ==========================================
@@ -515,7 +973,7 @@ namespace Y_GYM.Data
             await CreateScheduleIfMissing(
                 context,
                 yogaClass,
-                coach,
+                coach1,
                 DateTime.Today.AddDays(1).AddHours(10),
                 DateTime.Today.AddDays(1).AddHours(11),
                 yogaClass.Capacity);
@@ -523,17 +981,65 @@ namespace Y_GYM.Data
             await CreateScheduleIfMissing(
                 context,
                 cardioClass,
-                coach,
-                DateTime.Today.AddDays(2).AddHours(18),
-                DateTime.Today.AddDays(2).AddHours(19),
+                coach2,
+                DateTime.Today.AddDays(1).AddHours(18),
+                DateTime.Today.AddDays(1).AddHours(19),
                 cardioClass.Capacity);
 
             await CreateScheduleIfMissing(
                 context,
                 strengthClass,
-                coach,
+                coach1,
+                DateTime.Today.AddDays(2).AddHours(19),
+                DateTime.Today.AddDays(2).AddHours(20),
+                strengthClass.Capacity);
+
+            await CreateScheduleIfMissing(
+                context,
+                crossFitClass,
+                coach3,
+                DateTime.Today.AddDays(2).AddHours(17),
+                DateTime.Today.AddDays(2).AddHours(18),
+                crossFitClass.Capacity);
+
+            await CreateScheduleIfMissing(
+                context,
+                bodybuildingClass,
+                coach4,
+                DateTime.Today.AddDays(3).AddHours(16),
+                DateTime.Today.AddDays(3).AddHours(17),
+                bodybuildingClass.Capacity);
+
+            await CreateScheduleIfMissing(
+                context,
+                mobilityClass,
+                coach5,
+                DateTime.Today.AddDays(3).AddHours(18),
                 DateTime.Today.AddDays(3).AddHours(19),
-                DateTime.Today.AddDays(3).AddHours(20),
+                mobilityClass.Capacity);
+
+            await CreateScheduleIfMissing(
+                context,
+                absClass,
+                coach2,
+                DateTime.Today.AddDays(4).AddHours(19),
+                DateTime.Today.AddDays(4).AddHours(20),
+                absClass.Capacity);
+
+            await CreateScheduleIfMissing(
+                context,
+                yogaClass,
+                coach5,
+                DateTime.Today.AddDays(5).AddHours(11),
+                DateTime.Today.AddDays(5).AddHours(12),
+                yogaClass.Capacity);
+
+            await CreateScheduleIfMissing(
+                context,
+                strengthClass,
+                coach3,
+                DateTime.Today.AddDays(6).AddHours(20),
+                DateTime.Today.AddDays(6).AddHours(21),
                 strengthClass.Capacity);
         }
 
@@ -569,13 +1075,18 @@ namespace Y_GYM.Data
             }
         }
 
+        // ==========================================
+        // CLASS HELPER
+        // ==========================================
+
         private static async Task<Class> CreateClassIfMissing(
             ApplicationDbContext context,
             string name,
             int capacity)
         {
             var gymClass = await context.Classes
-                .FirstOrDefaultAsync(c => c.Name == name);
+                .FirstOrDefaultAsync(
+                    c => c.Name == name);
 
             if (gymClass == null)
             {
@@ -586,11 +1097,16 @@ namespace Y_GYM.Data
                 };
 
                 context.Classes.Add(gymClass);
+
                 await context.SaveChangesAsync();
             }
 
             return gymClass;
         }
+
+        // ==========================================
+        // SCHEDULE HELPER
+        // ==========================================
 
         private static async Task CreateScheduleIfMissing(
             ApplicationDbContext context,

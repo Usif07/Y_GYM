@@ -1,7 +1,8 @@
-﻿@model Y_GYM.Models.Coach
+﻿
+@model Y_GYM.Models.Staff
 
 @{
-    ViewData["Title"] = "Delete Trainer";
+    ViewData["Title"] = "Delete Staff";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -57,7 +58,7 @@
         font-size: 14px;
     }
 
-    .trainer-info {
+    .staff-info {
         background: #101010;
         border: 1px solid #292929;
         border-radius: 10px;
@@ -65,7 +66,7 @@
         margin-bottom: 28px;
     }
 
-    .trainer-info-row {
+    .staff-info-row {
         display: flex;
         justify-content: space-between;
         gap: 20px;
@@ -73,16 +74,16 @@
         border-bottom: 1px solid #242424;
     }
 
-    .trainer-info-row:last-child {
+    .staff-info-row:last-child {
         border-bottom: none;
     }
 
-    .trainer-info-label {
+    .staff-info-label {
         color: #777777;
         font-size: 13px;
     }
 
-    .trainer-info-value {
+    .staff-info-value {
         color: #eeeeee;
         font-size: 14px;
         font-weight: 500;
@@ -152,12 +153,12 @@
             padding: 23px;
         }
 
-        .trainer-info-row {
+        .staff-info-row {
             flex-direction: column;
             gap: 4px;
         }
 
-        .trainer-info-value {
+        .staff-info-value {
             text-align: left;
         }
 
@@ -180,97 +181,75 @@
                 <i class="fas fa-trash"></i>
             </div>
 
-            <h1>Delete Trainer</h1>
+            <h1>Delete Staff</h1>
 
             <p class="delete-description">
-                Are you sure you want to delete this trainer?
-                This will remove the trainer profile and associated account.
+                Are you sure you want to delete this staff member?
+                This action will remove the staff profile and associated account.
             </p>
 
-            <div class="trainer-info">
+            <div class="staff-info">
 
-                <div class="trainer-info-row">
-                    <span class="trainer-info-label">
-                        Name
-                    </span>
-
-                    <span class="trainer-info-value">
+                <div class="staff-info-row">
+                    <span class="staff-info-label">Name</span>
+                    <span class="staff-info-value">
                         @Model.User?.FullName
                     </span>
                 </div>
 
-                <div class="trainer-info-row">
-                    <span class="trainer-info-label">
-                        Username
-                    </span>
-
-                    <span class="trainer-info-value">
+                <div class="staff-info-row">
+                    <span class="staff-info-label">Username</span>
+                    <span class="staff-info-value">
                         @Model.User?.UserName
                     </span>
                 </div>
 
-                <div class="trainer-info-row">
-                    <span class="trainer-info-label">
-                        Email
-                    </span>
-
-                    <span class="trainer-info-value">
+                <div class="staff-info-row">
+                    <span class="staff-info-label">Email</span>
+                    <span class="staff-info-value">
                         @Model.User?.Email
                     </span>
                 </div>
 
-                <div class="trainer-info-row">
-                    <span class="trainer-info-label">
-                        Phone
-                    </span>
-
-                    <span class="trainer-info-value">
-                        @(Model.User?.PhoneNumber ?? "N/A")
+                <div class="staff-info-row">
+                    <span class="staff-info-label">Job Title</span>
+                    <span class="staff-info-value">
+                        @Model.JobTitle
                     </span>
                 </div>
 
-                <div class="trainer-info-row">
-                    <span class="trainer-info-label">
-                        Specialty
-                    </span>
-
-                    <span class="trainer-info-value">
-                        @Model.CoachSpecialty
+                <div class="staff-info-row">
+                    <span class="staff-info-label">Shift</span>
+                    <span class="staff-info-value">
+                        @Model.ShiftTime
                     </span>
                 </div>
 
             </div>
 
             <div class="warning">
-                If this trainer has classes or diet plans assigned to them,
-                the database may prevent deletion to protect existing records.
+                Please make sure this staff account is no longer needed before confirming deletion.
             </div>
 
-            <form asp-controller="Coach"
-                  asp-action="Delete"
-                  method="post">
-
+            <form asp-controller="Staff" asp-action="Delete" method="post">
                 @Html.AntiForgeryToken()
 
-                <input type="hidden"
-                       name="id"
-                       value="@Model.Id" />
+                <input type="hidden" name="id" value="@Model.Id" />
 
                 <div class="delete-actions">
 
-                    <a asp-controller="Coach"
-                       asp-action="Index"
+                    <a asp-controller="Staff"
+                       asp-action="Manage"
                        class="btn-admin btn-cancel">
                         Cancel
                     </a>
 
                     <button type="submit"
                             class="btn-admin btn-delete">
-                        Delete Trainer
+                        Delete Staff
                     </button>
 
                 </div>
-
             </form>
 
         </div>

@@ -1,7 +1,5 @@
-﻿@model Y_GYM.Models.Coach
-
-@{
-    ViewData["Title"] = "Edit Trainer";
+﻿@{
+    ViewData["Title"] = "Add Staff";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -80,20 +78,8 @@
         color: #ffffff;
     }
 
-    .form-control:disabled {
-        background: #1b1b1b;
-        color: #777777;
-        cursor: not-allowed;
-    }
-
-    .validation-summary {
-        margin-bottom: 22px;
-        padding: 13px 15px;
-        border-radius: 8px;
-        background: rgba(220, 53, 69, .08);
-        border: 1px solid rgba(220, 53, 69, .25);
-        color: #ff7b87;
-        font-size: 13px;
+    .form-control::placeholder {
+        color: #666666;
     }
 
     .form-actions {
@@ -139,6 +125,7 @@
     .btn-cancel:hover {
         background: #252525;
         color: #ffffff;
+        border-color: #444444;
     }
 
     @@media (max-width: 768px) {
@@ -168,39 +155,25 @@
     <div class="admin-form-container">
 
         <div class="admin-form-header">
-            <h1>Edit Trainer</h1>
-            <p>Update trainer account and specialty information.</p>
+            <h1>Add Staff</h1>
+            <p>Create a new staff account and assign their work details.</p>
         </div>
 
         <div class="admin-form-card">
 
-            <div asp-validation-summary="All"
-                 class="validation-summary"></div>
+            <h2 class="form-section-title">Staff Account</h2>
 
-            <h2 class="form-section-title">
-                Account Information
-            </h2>
-
-            <form asp-controller="Coach"
-                  asp-action="Edit"
-                  method="post">
-
+            <form asp-controller="Staff" asp-action="Create" method="post">
                 @Html.AntiForgeryToken()
 
-                <input type="hidden"
-                       name="id"
-                       value="@Model.Id" />
-
                 <div class="row">
-
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label">Full Name</label>
-
                             <input type="text"
                                    name="fullName"
                                    class="form-control"
-                                   value="@Model.User?.FullName"
+                                   placeholder="Enter full name"
                                    required />
                         </div>
                     </div>
@@ -208,26 +181,23 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label">Username</label>
-
                             <input type="text"
+                                   name="userName"
                                    class="form-control"
-                                   value="@Model.User?.UserName"
-                                   disabled />
+                                   placeholder="Enter username"
+                                   required />
                         </div>
                     </div>
-
                 </div>
 
                 <div class="row">
-
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label">Email</label>
-
                             <input type="email"
                                    name="email"
                                    class="form-control"
-                                   value="@Model.User?.Email"
+                                   placeholder="Enter email"
                                    required />
                         </div>
                     </div>
@@ -235,48 +205,65 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label class="form-label">Phone</label>
-
                             <input type="text"
                                    name="phone"
                                    class="form-control"
-                                   value="@Model.User?.PhoneNumber" />
+                                   placeholder="Enter phone number" />
                         </div>
                     </div>
-
                 </div>
 
-                <h2 class="form-section-title"
-                    style="margin-top: 30px;">
-                    Trainer Information
-                </h2>
-
                 <div class="form-group">
-                    <label class="form-label">Specialty</label>
-
-                    <input type="text"
-                           name="coachSpecialty"
+                    <label class="form-label">Password</label>
+                    <input type="password"
+                           name="password"
                            class="form-control"
-                           value="@Model.CoachSpecialty"
+                           placeholder="Enter password"
                            required />
                 </div>
 
-                <div class="form-actions">
+                <h2 class="form-section-title" style="margin-top: 30px;">
+                    Work Information
+                </h2>
 
-                    <a asp-controller="Coach"
-                       asp-action="Index"
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Job Title</label>
+                            <input type="text"
+                                   name="jobTitle"
+                                   class="form-control"
+                                   placeholder="e.g. Receptionist"
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Shift Time</label>
+                            <input type="text"
+                                   name="shiftTime"
+                                   class="form-control"
+                                   placeholder="e.g. 09:00 AM - 05:00 PM"
+                                   required />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <a asp-controller="Staff"
+                       asp-action="Manage"
                        class="btn-admin btn-cancel">
                         Cancel
                     </a>
 
                     <button type="submit"
                             class="btn-admin btn-save">
-                        Save Changes
+                        Add Staff
                     </button>
-
                 </div>
 
             </form>
-
         </div>
 
     </div>

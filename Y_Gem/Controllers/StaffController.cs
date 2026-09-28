@@ -12,97 +12,93 @@ namespace Y_GYM.Controllers
     [Authorize(Roles = "Admin,Staff")]
     public class StaffController : Controller
     {
-        private readonly IStaffRepository _staffRepo;
-        private readonly IMemberRepository _memberRepo;
+        private readonly IStaffRepository _staffRepository;
+        private readonly IMemberRepository _memberRepository;
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-    public StaffController(
-        IStaffRepository staffRepo,
-        IMemberRepository memberRepo,
-        ApplicationDbContext context,
-        UserManager<ApplicationUser> userManager)
+        public StaffController(
+            IStaffRepository staffRepository,
+            IMemberRepository memberRepository,
+            ApplicationDbContext context,
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager)
         {
-            _staffRepo = staffRepo;
-            _memberRepo = memberRepo;
+            _staffRepository = staffRepository;
+            _memberRepository = memberRepository;
             _context = context;
             _userManager = userManager;
+            _roleManager = roleManager;
         }
 
-        [HttpGet]
+        // ============================================================
+        // STAFF DASHBOARD
+        // ============================================================
+
         public async Task<IActionResult> Index()
         {
-            var userId = _userManager.GetUserId(User);
+            var currentUserId = _userManager.GetUserId(User);
 
-            if (string.IsNullOrEmpty(userId))
-                return Challenge();
+            Staff? currentStaff = null;
 
-            var isAdmin = User.IsInRole("Admin");
-
-            Staff? staff = null;
-
-            if (!isAdmin)
+            if (!User.IsInRole("Admin") && !string.IsNullOrEmpty(currentUserId))
             {
-                staff = await _context.Staff
+                currentStaff = await _context.Staff
                     .Include(s => s.User)
-                    .FirstOrDefaultAsync(s => s.UserId == userId);
-
-                if (staff == null)
-                    return NotFound("Staff profile was not found.");
+                    .FirstOrDefaultAsync(s => s.UserId == currentUserId);
             }
 
             var today = DateTime.Today;
             var tomorrow = today.AddDays(1);
 
-            var totalMembers =
-                await _context.Members.CountAsync();
+            var totalMembers = await _context.Members.CountAsync();
 
-            var activeMembers =
-                await _context.Subscriptions
-                    .Where(s =>
-                        s.Status == "Active" &&
-                        s.StartDate <= today &&
-                        s.EndDate >= today)
-                    .Select(s => s.MemberId)
-                    .Distinct()
-                    .CountAsync();
+            var activeMembers = await _context.Subscriptions
+                .Where(s =>
+                    s.Status == "Active" &&
+                    s.StartDate <= today &&
+                    s.EndDate >= today)
+                .Select(s => s.MemberId)
+                .Distinct()
+                .CountAsync();
 
-            var todayCheckIns =
-                await _context.CheckIns
-                    .CountAsync(c =>
-                        c.CheckInTime >= today &&
-                        c.CheckInTime < tomorrow &&
-                        c.Status == "Allowed");
+            var todayCheckIns = await _context.CheckIns
+                .CountAsync(c =>
+                    c.CheckInTime >= today &&
+                    c.CheckInTime < tomorrow &&
+                    c.Status == "Allowed");
 
-            var todayPayments =
-                await _context.Payments
-                    .Where(p =>
-                        p.PaymentDate >= today &&
-                        p.PaymentDate < tomorrow)
-                    .SumAsync(p => (decimal?)p.Amount) ?? 0;
+            var todayPayments = await _context.Payments
+                .Where(p =>
+                    p.PaymentDate >= today &&
+                    p.PaymentDate < tomorrow)
+                .SumAsync(p => (decimal?)p.Amount) ?? 0m;
 
-            var recentCheckIns =
-                await _context.CheckIns
-                    .Include(c => c.Member)
-                        .ThenInclude(m => m.User)
-                    .OrderByDescending(c => c.CheckInTime)
-                    .Take(8)
-                    .ToListAsync();
+            var recentCheckIns = await _context.CheckIns
+                .Include(c => c.Member)
+                    .ThenInclude(m => m.User)
+                .Include(c => c.Staff)
+                    .ThenInclude(s => s.User)
+                .OrderByDescending(c => c.CheckInTime)
+                .Take(8)
+                .ToListAsync();
 
-            var recentPayments =
-                await _context.Payments
-                    .Include(p => p.Member)
-                        .ThenInclude(m => m.User)
-                    .Include(p => p.Subscription)
-                        .ThenInclude(s => s.MembershipPlan)
-                    .OrderByDescending(p => p.PaymentDate)
-                    .Take(8)
-                    .ToListAsync();
+            var recentPayments = await _context.Payments
+                .Include(p => p.Member)
+                    .ThenInclude(m => m.User)
+                .Include(p => p.Subscription)
+                    .ThenInclude(s => s.MembershipPlan)
+                .Include(p => p.Staff)
+                    .ThenInclude(s => s.User)
+                .OrderByDescending(p => p.PaymentDate)
+                .Take(8)
+                .ToListAsync();
 
             var vm = new StaffDashboardVM
             {
-                Staff = staff,
-                IsAdmin = isAdmin,
+                Staff = currentStaff,
+                IsAdmin = User.IsInRole("Admin"),
                 TotalMembers = totalMembers,
                 ActiveMembers = activeMembers,
                 TodayCheckIns = todayCheckIns,
@@ -114,94 +110,129 @@ namespace Y_GYM.Controllers
             return View(vm);
         }
 
-        [HttpGet]
-        public IActionResult RegisterMember()
+        // ============================================================
+        // ADMIN - STAFF LIST
+        // ============================================================
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Manage()
         {
-            return View(new RegisterMemberVM());
+            var staff = await _context.Staff
+                .Include(s => s.User)
+                .OrderBy(s => s.User.FullName)
+                .ToListAsync();
+
+            return View(staff);
         }
 
+        // ============================================================
+        // ADMIN - CREATE STAFF - GET
+        // ============================================================
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // ============================================================
+        // ADMIN - CREATE STAFF - POST
+        // ============================================================
+
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RegisterMember(RegisterMemberVM vm)
+        public async Task<IActionResult> Create(
+            string fullName,
+            string userName,
+            string email,
+            string password,
+            string phone,
+            string jobTitle,
+            string shiftTime)
         {
-            if (!ModelState.IsValid)
-                return View(vm);
+            fullName = fullName?.Trim() ?? string.Empty;
+            userName = userName?.Trim() ?? string.Empty;
+            email = email?.Trim() ?? string.Empty;
+            password = password ?? string.Empty;
+            phone = phone?.Trim() ?? string.Empty;
+            jobTitle = jobTitle?.Trim() ?? string.Empty;
+            shiftTime = shiftTime?.Trim() ?? string.Empty;
 
-            vm.UserName = vm.UserName.Trim();
-            vm.Email = vm.Email.Trim();
-            vm.Phone = vm.Phone.Trim();
-
-            var existingUsername =
-                await _userManager.FindByNameAsync(vm.UserName);
-
-            if (existingUsername != null)
+            if (string.IsNullOrWhiteSpace(fullName) ||
+                string.IsNullOrWhiteSpace(userName) ||
+                string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(password) ||
+                string.IsNullOrWhiteSpace(phone) ||
+                string.IsNullOrWhiteSpace(jobTitle) ||
+                string.IsNullOrWhiteSpace(shiftTime))
             {
                 ModelState.AddModelError(
-                    nameof(vm.UserName),
-                    "This username is already registered.");
+                    string.Empty,
+                    "Please fill in all required fields.");
 
-                return View(vm);
+                return View();
             }
 
-            var existingEmail =
-                await _userManager.FindByEmailAsync(vm.Email);
+            var existingUserName = await _userManager.FindByNameAsync(userName);
+
+            if (existingUserName != null)
+            {
+                ModelState.AddModelError(
+                    "userName",
+                    "This username is already in use.");
+
+                return View();
+            }
+
+            var existingEmail = await _userManager.FindByEmailAsync(email);
 
             if (existingEmail != null)
             {
                 ModelState.AddModelError(
-                    nameof(vm.Email),
-                    "This email is already registered.");
+                    "email",
+                    "This email is already in use.");
 
-                return View(vm);
+                return View();
             }
 
-            var existingPhone =
-                await _context.Members
-                    .AnyAsync(m => m.Phone == vm.Phone);
-
-            if (existingPhone)
+            var user = new ApplicationUser
             {
-                ModelState.AddModelError(
-                    nameof(vm.Phone),
-                    "This phone number is already registered.");
-
-                return View(vm);
-            }
-
-            var newUser = new ApplicationUser
-            {
-                UserName = vm.UserName,
-                Email = vm.Email,
-                FullName = vm.FullName.Trim(),
-                PhoneNumber = vm.Phone,
+                UserName = userName,
+                Email = email,
+                PhoneNumber = phone,
+                FullName = fullName,
                 EmailConfirmed = true
             };
 
-            var userResult =
-                await _userManager.CreateAsync(
-                    newUser,
-                    vm.Password);
+            var createResult =
+                await _userManager.CreateAsync(user, password);
 
-            if (!userResult.Succeeded)
+            if (!createResult.Succeeded)
             {
-                foreach (var error in userResult.Errors)
+                foreach (var error in createResult.Errors)
                 {
                     ModelState.AddModelError(
                         string.Empty,
                         error.Description);
                 }
 
-                return View(vm);
+                return View();
+            }
+
+            if (!await _roleManager.RoleExistsAsync("Staff"))
+            {
+                await _roleManager.CreateAsync(
+                    new IdentityRole("Staff"));
             }
 
             var roleResult =
-                await _userManager.AddToRoleAsync(
-                    newUser,
-                    "Member");
+                await _userManager.AddToRoleAsync(user, "Staff");
 
             if (!roleResult.Succeeded)
             {
-                await _userManager.DeleteAsync(newUser);
+                await _userManager.DeleteAsync(user);
 
                 foreach (var error in roleResult.Errors)
                 {
@@ -210,725 +241,669 @@ namespace Y_GYM.Controllers
                         error.Description);
                 }
 
-                return View(vm);
+                return View();
             }
 
-            var member = new Member
+            var staff = new Staff
             {
-                UserId = newUser.Id,
-                FullName = vm.FullName.Trim(),
-                Phone = vm.Phone,
-                Weight = vm.Weight,
-                Height = vm.Height,
-                Goal = vm.Goal,
-                FitnessLevel = vm.FitnessLevel,
-                JoinDate = DateTime.Now,
-                MembershipPlanId = null
+                UserId = user.Id,
+                JobTitle = jobTitle,
+                ShiftTime = shiftTime
             };
-
-            _context.Members.Add(member);
 
             try
             {
+                _context.Staff.Add(staff);
                 await _context.SaveChangesAsync();
             }
             catch
             {
-                await _userManager.RemoveFromRoleAsync(
-                    newUser,
-                    "Member");
-
-                await _userManager.DeleteAsync(newUser);
+                await _userManager.DeleteAsync(user);
 
                 ModelState.AddModelError(
                     string.Empty,
-                    "The member account could not be completed. Please try again.");
+                    "Unable to create the staff profile.");
 
-                return View(vm);
+                return View();
             }
 
-            TempData["Success"] =
-                $"Member {member.FullName} has been registered successfully.";
+            TempData["SuccessMessage"] =
+                "Staff account created successfully.";
 
-            TempData["MemberUsername"] =
-                newUser.UserName;
-
-            return RedirectToAction(nameof(RegisterMember));
+            return RedirectToAction(nameof(Manage));
         }
 
+        // ============================================================
+        // ADMIN - EDIT STAFF - GET
+        // ============================================================
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var staff = await _context.Staff
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (staff == null)
+            {
+                return NotFound();
+            }
+
+            return View(staff);
+        }
+
+        // ============================================================
+        // ADMIN - EDIT STAFF - POST
+        // ============================================================
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(
+            int id,
+            string fullName,
+            string email,
+            string phone,
+            string jobTitle,
+            string shiftTime)
+        {
+            var staff = await _context.Staff
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (staff == null)
+            {
+                return NotFound();
+            }
+
+            fullName = fullName?.Trim() ?? string.Empty;
+            email = email?.Trim() ?? string.Empty;
+            phone = phone?.Trim() ?? string.Empty;
+            jobTitle = jobTitle?.Trim() ?? string.Empty;
+            shiftTime = shiftTime?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(fullName) ||
+                string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(phone) ||
+                string.IsNullOrWhiteSpace(jobTitle) ||
+                string.IsNullOrWhiteSpace(shiftTime))
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Please fill in all required fields.");
+
+                return View(staff);
+            }
+
+            var emailOwner = await _userManager.FindByEmailAsync(email);
+
+            if (emailOwner != null &&
+                emailOwner.Id != staff.UserId)
+            {
+                ModelState.AddModelError(
+                    "email",
+                    "This email is already in use.");
+
+                return View(staff);
+            }
+
+            staff.User.FullName = fullName;
+            staff.User.Email = email;
+            staff.User.PhoneNumber = phone;
+
+            staff.JobTitle = jobTitle;
+            staff.ShiftTime = shiftTime;
+
+            var updateResult =
+                await _userManager.UpdateAsync(staff.User);
+
+            if (!updateResult.Succeeded)
+            {
+                foreach (var error in updateResult.Errors)
+                {
+                    ModelState.AddModelError(
+                        string.Empty,
+                        error.Description);
+                }
+
+                return View(staff);
+            }
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] =
+                "Staff information updated successfully.";
+
+            return RedirectToAction(nameof(Manage));
+        }
+
+        // ============================================================
+        // ADMIN - DELETE STAFF - GET
+        // ============================================================
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var staff = await _context.Staff
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (staff == null)
+            {
+                return NotFound();
+            }
+
+            return View(staff);
+        }
+
+        // ============================================================
+        // ADMIN - DELETE STAFF - POST
+        // ============================================================
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var staff = await _context.Staff
+                .Include(s => s.User)
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (staff == null)
+            {
+                return NotFound();
+            }
+
+            var user = staff.User;
+
+            _context.Staff.Remove(staff);
+            await _context.SaveChangesAsync();
+
+            if (user != null)
+            {
+                await _userManager.DeleteAsync(user);
+            }
+
+            TempData["SuccessMessage"] =
+                "Staff account deleted successfully.";
+
+            return RedirectToAction(nameof(Manage));
+        }
+
+        // ============================================================
+        // STAFF - REGISTER MEMBER
+        // ============================================================
+
+        [Authorize(Roles = "Admin,Staff")]
+        [HttpGet]
+        public IActionResult RegisterMember()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin,Staff")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RegisterMember(
+            string fullName,
+            string username,
+            string email,
+            string phone,
+            double? weight,
+            double? height,
+            string? goal,
+            string? fitnessLevel)
+        {
+            fullName = fullName?.Trim() ?? string.Empty;
+            username = username?.Trim() ?? string.Empty;
+            email = email?.Trim() ?? string.Empty;
+            phone = phone?.Trim() ?? string.Empty;
+
+            if (string.IsNullOrWhiteSpace(fullName) ||
+                string.IsNullOrWhiteSpace(username) ||
+                string.IsNullOrWhiteSpace(email) ||
+                string.IsNullOrWhiteSpace(phone))
+            {
+                ModelState.AddModelError(
+                    string.Empty,
+                    "Please fill in all required fields.");
+
+                return View();
+            }
+
+            if (await _userManager.FindByNameAsync(username) != null)
+            {
+                ModelState.AddModelError(
+                    "username",
+                    "This username is already in use.");
+
+                return View();
+            }
+
+            if (await _userManager.FindByEmailAsync(email) != null)
+            {
+                ModelState.AddModelError(
+                    "email",
+                    "This email is already in use.");
+
+                return View();
+            }
+
+            var phoneExists = await _context.Members
+                .AnyAsync(m => m.Phone == phone);
+
+            if (phoneExists)
+            {
+                ModelState.AddModelError(
+                    "phone",
+                    "This phone number is already registered.");
+
+                return View();
+            }
+
+            var user = new ApplicationUser
+            {
+                UserName = username,
+                Email = email,
+                PhoneNumber = phone,
+                FullName = fullName,
+                EmailConfirmed = true
+            };
+
+            var result =
+                await _userManager.CreateAsync(user, "Member@123");
+
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(
+                        string.Empty,
+                        error.Description);
+                }
+
+                return View();
+            }
+
+            await _userManager.AddToRoleAsync(user, "Member");
+
+            var member = new Member
+            {
+                FullName = fullName,
+                Phone = phone,
+                Weight = weight,
+                Height = height,
+                Goal = goal,
+                FitnessLevel = fitnessLevel,
+                UserId = user.Id
+            };
+
+            _context.Members.Add(member);
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] =
+                "Member registered successfully.";
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // ============================================================
+        // STAFF - REGISTER PAYMENT
+        // ============================================================
+
+        [Authorize(Roles = "Admin,Staff")]
         [HttpGet]
         public async Task<IActionResult> RegisterPayment()
         {
-            var plans = await _context.MembershipPlans
+            ViewBag.Plans = await _context.MembershipPlans
                 .OrderBy(p => p.Price)
                 .ToListAsync();
 
-            ViewBag.Plans = plans;
-
-            return View(new RegisterPaymentVM());
+            return View();
         }
 
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RegisterPayment(
-            RegisterPaymentVM vm)
+            string phone,
+            int planId,
+            decimal amountPaid)
         {
-            var plans = await _context.MembershipPlans
-                .OrderBy(p => p.Price)
-                .ToListAsync();
+            phone = phone?.Trim() ?? string.Empty;
 
-            ViewBag.Plans = plans;
-
-            if (!ModelState.IsValid)
-                return View(vm);
-
-            var userId =
-                _userManager.GetUserId(User);
-
-            if (string.IsNullOrEmpty(userId))
-                return Challenge();
-
-            Staff? staff = null;
-
-            if (!User.IsInRole("Admin"))
-            {
-                staff = await _context.Staff
-                    .FirstOrDefaultAsync(
-                        s => s.UserId == userId);
-
-                if (staff == null)
-                {
-                    TempData["Error"] =
-                        "Staff profile was not found.";
-
-                    return RedirectToAction(
-                        nameof(RegisterPayment));
-                }
-            }
-
-            var member =
-                await _context.Members
-                    .Include(m => m.User)
-                    .FirstOrDefaultAsync(
-                        m => m.Phone == vm.Phone);
-
-            if (member == null)
+            if (string.IsNullOrWhiteSpace(phone))
             {
                 ModelState.AddModelError(
-                    nameof(vm.Phone),
-                    "No member was found with this phone number.");
-
-                return View(vm);
+                    "phone",
+                    "Please enter the member phone number.");
             }
 
-            var plan =
-                await _context.MembershipPlans
-                    .FirstOrDefaultAsync(
-                        p => p.Id == vm.PlanId);
+            if (amountPaid <= 0)
+            {
+                ModelState.AddModelError(
+                    "amountPaid",
+                    "Amount must be greater than zero.");
+            }
+
+            var plan = await _context.MembershipPlans
+                .FirstOrDefaultAsync(p => p.Id == planId);
 
             if (plan == null)
             {
                 ModelState.AddModelError(
-                    nameof(vm.PlanId),
-                    "The selected membership plan does not exist.");
-
-                return View(vm);
+                    "planId",
+                    "Selected membership plan was not found.");
             }
 
-            if (plan.TotalVisits <= 0)
-            {
-                ModelState.AddModelError(
-                    nameof(vm.PlanId),
-                    "The selected membership plan has no valid visit limit.");
-
-                return View(vm);
-            }
-
-            if (vm.AmountPaid <= 0)
-            {
-                ModelState.AddModelError(
-                    nameof(vm.AmountPaid),
-                    "Amount paid must be greater than zero.");
-
-                return View(vm);
-            }
-
-            var pendingSubscription =
-                await _context.Subscriptions
-                    .FirstOrDefaultAsync(s =>
-                        s.MemberId == member.Id &&
-                        s.PlanId == plan.Id &&
-                        s.Status == "Pending");
-
-            if (pendingSubscription != null)
-            {
-                var previousPayments =
-                    await _context.Payments
-                        .Where(p =>
-                            p.SubscriptionId ==
-                            pendingSubscription.Id)
-                        .SumAsync(p =>
-                            (decimal?)p.Amount) ?? 0;
-
-                var planPrice =
-                    (decimal)plan.Price;
-
-                var amountRemainingBeforePayment =
-                    planPrice - previousPayments;
-
-                if (amountRemainingBeforePayment <= 0)
-                {
-                    pendingSubscription.Status =
-                        "Active";
-
-                    pendingSubscription.TotalVisits =
-                        plan.TotalVisits;
-
-                    pendingSubscription.RemainingVisits =
-                        plan.TotalVisits;
-
-                    member.MembershipPlanId =
-                        plan.Id;
-
-                    await _context.SaveChangesAsync();
-
-                    TempData["Success"] =
-                        $"The membership for {member.FullName} is now Active.";
-
-                    return RedirectToAction(nameof(Index));
-                }
-
-                var newTotalPaid =
-                    previousPayments +
-                    vm.AmountPaid;
-
-                var remainingAfterPayment =
-                    planPrice -
-                    newTotalPaid;
-
-                var strategy =
-                    _context.Database
-                        .CreateExecutionStrategy();
-
-                try
-                {
-                    await strategy.ExecuteAsync(async () =>
-                    {
-                        await using var transaction =
-                            await _context.Database
-                                .BeginTransactionAsync();
-
-                        try
-                        {
-                            var payment = new Payment
-                            {
-                                MemberId =
-                                    member.Id,
-
-                                SubscriptionId =
-                                    pendingSubscription.Id,
-
-                                Amount =
-                                    vm.AmountPaid,
-
-                                PaymentDate =
-                                    DateTime.Now,
-
-                                StaffId =
-                                    staff?.Id
-                            };
-
-                            _context.Payments.Add(payment);
-
-                            if (newTotalPaid >= planPrice)
-                            {
-                                pendingSubscription.Status =
-                                    "Active";
-
-                                pendingSubscription.TotalVisits =
-                                    plan.TotalVisits;
-
-                                pendingSubscription.RemainingVisits =
-                                    plan.TotalVisits;
-
-                                member.MembershipPlanId =
-                                    plan.Id;
-                            }
-
-                            await _context.SaveChangesAsync();
-
-                            await transaction.CommitAsync();
-                        }
-                        catch
-                        {
-                            await transaction.RollbackAsync();
-                            throw;
-                        }
-                    });
-
-                    if (newTotalPaid < planPrice)
-                    {
-                        TempData["Success"] =
-                            $"Payment recorded for {member.FullName}. " +
-                            $"Subscription is still Pending. " +
-                            $"Remaining amount: {remainingAfterPayment:0.00} EGP";
-
-                        return RedirectToAction(nameof(Index));
-                    }
-
-                    var change =
-                        newTotalPaid - planPrice;
-
-                    TempData["Success"] =
-                        $"Payment completed successfully for {member.FullName}. " +
-                        $"Membership is now Active. " +
-                        $"Change: {change:0.00} EGP";
-
-                    return RedirectToAction(nameof(Index));
-                }
-                catch
-                {
-                    TempData["Error"] =
-                        "An error occurred while processing the payment.";
-
-                    return RedirectToAction(
-                        nameof(RegisterPayment));
-                }
-            }
-
-            var activeSubscription =
-                await _context.Subscriptions
-                    .FirstOrDefaultAsync(s =>
-                        s.MemberId == member.Id &&
-                        s.PlanId == plan.Id &&
-                        s.Status == "Active" &&
-                        s.StartDate <= DateTime.Today &&
-                        s.EndDate >= DateTime.Today);
-
-            if (activeSubscription != null)
-            {
-                ModelState.AddModelError(
-                    nameof(vm.PlanId),
-                    "This member already has an active membership for this plan.");
-
-                return View(vm);
-            }
-
-            var planPriceNew =
-                (decimal)plan.Price;
-
-            var isFullyPaid =
-                vm.AmountPaid >= planPriceNew;
-
-            var subscriptionStatus =
-                isFullyPaid
-                    ? "Active"
-                    : "Pending";
-
-            var startDate =
-                DateTime.Today;
-
-            var endDate =
-                startDate.AddDays(
-                    plan.DurationDays);
-
-            var strategyNew =
-                _context.Database
-                    .CreateExecutionStrategy();
-
-            try
-            {
-                await strategyNew.ExecuteAsync(async () =>
-                {
-                    await using var transaction =
-                        await _context.Database
-                            .BeginTransactionAsync();
-
-                    try
-                    {
-                        var subscription =
-                            new Subscription
-                            {
-                                MemberId =
-                                    member.Id,
-
-                                PlanId =
-                                    plan.Id,
-
-                                StartDate =
-                                    startDate,
-
-                                EndDate =
-                                    endDate,
-
-                                Status =
-                                    subscriptionStatus,
-
-                                TotalVisits =
-                                    plan.TotalVisits,
-
-                                RemainingVisits =
-                                    plan.TotalVisits
-                            };
-
-                        _context.Subscriptions.Add(
-                            subscription);
-
-                        await _context.SaveChangesAsync();
-
-                        var payment =
-                            new Payment
-                            {
-                                MemberId =
-                                    member.Id,
-
-                                SubscriptionId =
-                                    subscription.Id,
-
-                                Amount =
-                                    vm.AmountPaid,
-
-                                PaymentDate =
-                                    DateTime.Now,
-
-                                StaffId =
-                                    staff?.Id
-                            };
-
-                        _context.Payments.Add(
-                            payment);
-
-                        if (isFullyPaid)
-                        {
-                            member.MembershipPlanId =
-                                plan.Id;
-                        }
-
-                        await _context.SaveChangesAsync();
-
-                        await transaction.CommitAsync();
-                    }
-                    catch
-                    {
-                        await transaction.RollbackAsync();
-                        throw;
-                    }
-                });
-
-                if (!isFullyPaid)
-                {
-                    var remaining =
-                        planPriceNew -
-                        vm.AmountPaid;
-
-                    TempData["Success"] =
-                        $"Payment recorded for {member.FullName}. " +
-                        $"Subscription is Pending. " +
-                        $"Remaining amount: {remaining:0.00} EGP";
-
-                    return RedirectToAction(nameof(Index));
-                }
-
-                var changeNew =
-                    vm.AmountPaid -
-                    planPriceNew;
-
-                TempData["Success"] =
-                    $"Payment completed successfully for {member.FullName}. " +
-                    $"Membership is now Active. " +
-                    $"Change: {changeNew:0.00} EGP";
-
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                TempData["Error"] =
-                    "An error occurred while processing the payment.";
-
-                return RedirectToAction(
-                    nameof(RegisterPayment));
-            }
-        }
-
-        [HttpGet]
-        public IActionResult CheckIn()
-        {
-            return View(new CheckInVM());
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CheckIn(CheckInVM vm)
-        {
             if (!ModelState.IsValid)
-                return View(vm);
+            {
+                ViewBag.Plans = await _context.MembershipPlans
+                    .OrderBy(p => p.Price)
+                    .ToListAsync();
 
-            var userId =
-                _userManager.GetUserId(User);
+                return View();
+            }
 
-            if (string.IsNullOrEmpty(userId))
-                return Challenge();
+            var member = await _context.Members
+                .Include(m => m.User)
+                .FirstOrDefaultAsync(m => m.Phone == phone);
+
+            if (member == null)
+            {
+                ModelState.AddModelError(
+                    "phone",
+                    "Member was not found.");
+
+                ViewBag.Plans = await _context.MembershipPlans
+                    .OrderBy(p => p.Price)
+                    .ToListAsync();
+
+                return View();
+            }
+
+            var staffUserId = _userManager.GetUserId(User);
 
             Staff? staff = null;
 
-            if (!User.IsInRole("Admin"))
+            if (!User.IsInRole("Admin") &&
+                !string.IsNullOrEmpty(staffUserId))
             {
                 staff = await _context.Staff
-                    .FirstOrDefaultAsync(
-                        s => s.UserId == userId);
-
-                if (staff == null)
-                {
-                    TempData["Error"] =
-                        "Staff profile was not found.";
-
-                    return RedirectToAction(
-                        nameof(CheckIn));
-                }
+                    .FirstOrDefaultAsync(s =>
+                        s.UserId == staffUserId);
             }
 
-            var member =
-                await _context.Members
-                    .Include(m => m.User)
-                    .FirstOrDefaultAsync(
-                        m => m.Phone == vm.Phone);
-
-            if (member == null)
-            {
-                TempData["Error"] =
-                    "No member was found with this phone number.";
-
-                return RedirectToAction(
-                    nameof(CheckIn));
-            }
-
-            var activeSub =
+            var existingSubscription =
                 await _context.Subscriptions
-                    .Include(s => s.MembershipPlan)
-                    .Where(s =>
+                    .FirstOrDefaultAsync(s =>
                         s.MemberId == member.Id &&
-                        s.Status == "Active" &&
-                        s.StartDate <= DateTime.Today &&
-                        s.EndDate >= DateTime.Today)
-                    .OrderByDescending(
-                        s => s.EndDate)
-                    .FirstOrDefaultAsync();
+                        s.Status == "Pending");
 
-            if (activeSub == null)
+            var strategy =
+                _context.Database.CreateExecutionStrategy();
+
+            decimal changeAmount = 0;
+
+            await strategy.ExecuteAsync(async () =>
             {
-                var rejectedCheckIn =
-                    new CheckIn
+                await using var transaction =
+                    await _context.Database.BeginTransactionAsync();
+
+                if (existingSubscription != null)
+                {
+                    var remainingAmount =
+                        (decimal)(existingSubscription.MembershipPlan?.Price ?? plan!.Price);
+
+                    var paidAlready = await _context.Payments
+                        .Where(p =>
+                            p.SubscriptionId ==
+                            existingSubscription.Id)
+                        .SumAsync(p => (decimal?)p.Amount) ?? 0m;
+
+                    remainingAmount -= paidAlready;
+
+                    var payment = new Payment
                     {
-                        MemberId =
-                            member.Id,
-
-                        StaffId =
-                            staff?.Id,
-
-                        CheckInTime =
-                            DateTime.Now,
-
-                        Status =
-                            "Rejected-Expired"
+                        MemberId = member.Id,
+                        SubscriptionId =
+                            existingSubscription.Id,
+                        StaffId = staff?.Id,
+                        Amount = amountPaid,
+                        PaymentDate = DateTime.Now
                     };
 
-                _context.CheckIns.Add(
-                    rejectedCheckIn);
+                    _context.Payments.Add(payment);
 
-                try
-                {
-                    await _context.SaveChangesAsync();
-                }
-                catch
-                {
-                    TempData["Error"] =
-                        "The check-in could not be recorded.";
+                    var totalPaid =
+                        paidAlready + amountPaid;
 
-                    return RedirectToAction(
-                        nameof(CheckIn));
-                }
-
-                TempData["Error"] =
-                    $"Access denied. {member.FullName} does not have an active membership.";
-
-                return RedirectToAction(
-                    nameof(CheckIn));
-            }
-
-            /*
-             * Repair subscriptions created before
-             * visit tracking was added.
-             *
-             * This only repairs subscriptions where
-             * TotalVisits was never initialized.
-             */
-            if (activeSub.TotalVisits <= 0 &&
-                activeSub.MembershipPlan != null &&
-                activeSub.MembershipPlan.TotalVisits > 0)
-            {
-                activeSub.TotalVisits =
-                    activeSub.MembershipPlan.TotalVisits;
-
-                activeSub.RemainingVisits =
-                    activeSub.MembershipPlan.TotalVisits;
-
-                await _context.SaveChangesAsync();
-            }
-
-            if (activeSub.RemainingVisits <= 0)
-            {
-                var rejectedCheckIn =
-                    new CheckIn
+                    if (totalPaid >= remainingAmount + paidAlready)
                     {
-                        MemberId =
-                            member.Id,
+                        existingSubscription.Status = "Active";
+                    }
 
-                        StaffId =
-                            staff?.Id,
-
-                        CheckInTime =
-                            DateTime.Now,
-
-                        Status =
-                            "Rejected-NoVisits"
+                    changeAmount =
+                        amountPaid > remainingAmount
+                            ? amountPaid - remainingAmount
+                            : 0;
+                }
+                else
+                {
+                    var subscription = new Subscription
+                    {
+                        MemberId = member.Id,
+                        PlanId = plan!.Id,
+                        StartDate = DateTime.Today,
+                        EndDate = DateTime.Today.AddDays(
+                            plan.DurationDays),
+                        Status = amountPaid >=
+                                 (decimal)plan.Price
+                            ? "Active"
+                            : "Pending",
+                        TotalVisits = plan.TotalVisits,
+                        RemainingVisits = plan.TotalVisits
                     };
 
-                _context.CheckIns.Add(
-                    rejectedCheckIn);
+                    _context.Subscriptions.Add(subscription);
 
-                try
-                {
                     await _context.SaveChangesAsync();
+
+                    var payment = new Payment
+                    {
+                        MemberId = member.Id,
+                        SubscriptionId =
+                            subscription.Id,
+                        StaffId = staff?.Id,
+                        Amount = amountPaid,
+                        PaymentDate = DateTime.Now
+                    };
+
+                    _context.Payments.Add(payment);
+
+                    changeAmount =
+                        amountPaid > (decimal)plan.Price
+                            ? amountPaid - (decimal)plan.Price
+                            : 0;
                 }
-                catch
-                {
-                    TempData["Error"] =
-                        "The check-in could not be recorded.";
 
-                    return RedirectToAction(
-                        nameof(CheckIn));
-                }
-
-                TempData["Error"] =
-                    $"Access denied. {member.FullName} has no remaining visits.";
-
-                return RedirectToAction(
-                    nameof(CheckIn));
-            }
-
-            activeSub.RemainingVisits--;
-
-            var checkIn =
-                new CheckIn
-                {
-                    MemberId =
-                        member.Id,
-
-                    StaffId =
-                        staff?.Id,
-
-                    CheckInTime =
-                        DateTime.Now,
-
-                    Status =
-                        "Allowed"
-                };
-
-            _context.CheckIns.Add(checkIn);
-
-            try
-            {
                 await _context.SaveChangesAsync();
-            }
-            catch
-            {
-                TempData["Error"] =
-                    "An error occurred while recording the check-in. Please try again.";
+                await transaction.CommitAsync();
+            });
 
-                return RedirectToAction(
-                    nameof(CheckIn));
-            }
+            TempData["SuccessMessage"] =
+                $"Payment registered successfully. Change: {changeAmount:0.00}";
 
-            TempData["Success"] =
-                $"Check-in successful. Welcome {member.FullName}! " +
-                $"Remaining visits: {activeSub.RemainingVisits}";
-
-            return RedirectToAction(
-                nameof(CheckIn));
+            return RedirectToAction(nameof(Index));
         }
 
-        /*
-         * Temporary administrative repair action.
-         *
-         * This is intended to repair an existing active
-         * membership whose visit values were created before
-         * the visit-tracking system was introduced.
-         */
+        // ============================================================
+        // STAFF - CHECK IN
+        // ============================================================
+
+        [Authorize(Roles = "Admin,Staff")]
+        [HttpGet]
+        public IActionResult CheckIn()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "Admin,Staff")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ResetMemberVisits(
-            string phone)
+        public async Task<IActionResult> CheckIn(string phone)
         {
+            phone = phone?.Trim() ?? string.Empty;
+
             if (string.IsNullOrWhiteSpace(phone))
             {
-                TempData["Error"] =
-                    "Please enter the member phone number.";
+                ModelState.AddModelError(
+                    "phone",
+                    "Please enter the member phone number.");
 
-                return RedirectToAction(
-                    nameof(CheckIn));
+                return View();
             }
 
-            phone = phone.Trim();
-
-            var member =
-                await _context.Members
-                    .FirstOrDefaultAsync(
-                        m => m.Phone == phone);
+            var member = await _context.Members
+                .FirstOrDefaultAsync(m => m.Phone == phone);
 
             if (member == null)
             {
-                TempData["Error"] =
-                    "Member was not found.";
+                ModelState.AddModelError(
+                    "phone",
+                    "Member was not found.");
 
-                return RedirectToAction(
-                    nameof(CheckIn));
+                return View();
             }
 
-            var subscription =
-                await _context.Subscriptions
-                    .Include(s => s.MembershipPlan)
-                    .Where(s =>
-                        s.MemberId == member.Id &&
-                        s.Status == "Active")
-                    .OrderByDescending(
-                        s => s.EndDate)
+            var subscription = await _context.Subscriptions
+                .Include(s => s.MembershipPlan)
+                .Where(s =>
+                    s.MemberId == member.Id &&
+                    s.Status == "Active" &&
+                    s.StartDate <= DateTime.Today &&
+                    s.EndDate >= DateTime.Today)
+                .OrderByDescending(s => s.EndDate)
+                .FirstOrDefaultAsync();
+
+            var staffUserId = _userManager.GetUserId(User);
+
+            int? staffId = null;
+
+            if (!User.IsInRole("Admin") &&
+                !string.IsNullOrEmpty(staffUserId))
+            {
+                staffId = await _context.Staff
+                    .Where(s => s.UserId == staffUserId)
+                    .Select(s => (int?)s.Id)
                     .FirstOrDefaultAsync();
+            }
 
             if (subscription == null)
             {
-                TempData["Error"] =
-                    $"No active membership was found for {member.FullName}.";
+                _context.CheckIns.Add(new CheckIn
+                {
+                    MemberId = member.Id,
+                    StaffId = staffId,
+                    CheckInTime = DateTime.Now,
+                    Status = "Rejected-Expired"
+                });
 
-                return RedirectToAction(
-                    nameof(CheckIn));
+                await _context.SaveChangesAsync();
+
+                ModelState.AddModelError(
+                    "phone",
+                    "Member does not have an active subscription.");
+
+                return View();
             }
 
-            if (subscription.MembershipPlan == null)
+            if (subscription.TotalVisits <= 0 &&
+                subscription.MembershipPlan != null)
             {
-                TempData["Error"] =
-                    "The membership plan for this subscription could not be found.";
+                subscription.TotalVisits =
+                    subscription.MembershipPlan.TotalVisits;
 
-                return RedirectToAction(
-                    nameof(CheckIn));
+                subscription.RemainingVisits =
+                    subscription.MembershipPlan.TotalVisits;
             }
 
-            if (subscription.MembershipPlan.TotalVisits <= 0)
+            if (subscription.RemainingVisits <= 0)
             {
-                TempData["Error"] =
-                    "The membership plan does not have a valid visit limit.";
+                _context.CheckIns.Add(new CheckIn
+                {
+                    MemberId = member.Id,
+                    StaffId = staffId,
+                    CheckInTime = DateTime.Now,
+                    Status = "Rejected-NoVisits"
+                });
 
-                return RedirectToAction(
-                    nameof(CheckIn));
+                await _context.SaveChangesAsync();
+
+                ModelState.AddModelError(
+                    "phone",
+                    "Member has no remaining visits.");
+
+                return View();
+            }
+
+            subscription.RemainingVisits--;
+
+            _context.CheckIns.Add(new CheckIn
+            {
+                MemberId = member.Id,
+                StaffId = staffId,
+                CheckInTime = DateTime.Now,
+                Status = "Allowed"
+            });
+
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] =
+                $"Check-in allowed. Remaining visits: {subscription.RemainingVisits}";
+
+            return RedirectToAction(nameof(CheckIn));
+        }
+
+        // ============================================================
+        // STAFF - RESET MEMBER VISITS
+        // ============================================================
+
+        [Authorize(Roles = "Admin,Staff")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ResetMemberVisits(string phone)
+        {
+            phone = phone?.Trim() ?? string.Empty;
+
+            var member = await _context.Members
+                .FirstOrDefaultAsync(m => m.Phone == phone);
+
+            if (member == null)
+            {
+                TempData["ErrorMessage"] =
+                    "Member was not found.";
+
+                return RedirectToAction(nameof(CheckIn));
+            }
+
+            var subscription = await _context.Subscriptions
+                .Include(s => s.MembershipPlan)
+                .Where(s =>
+                    s.MemberId == member.Id &&
+                    s.Status == "Active")
+                .OrderByDescending(s => s.EndDate)
+                .FirstOrDefaultAsync();
+
+            if (subscription == null ||
+                subscription.MembershipPlan == null)
+            {
+                TempData["ErrorMessage"] =
+                    "Active subscription was not found.";
+
+                return RedirectToAction(nameof(CheckIn));
             }
 
             subscription.TotalVisits =
@@ -939,33 +914,32 @@ namespace Y_GYM.Controllers
 
             await _context.SaveChangesAsync();
 
-            TempData["Success"] =
-                $"{member.FullName}'s membership has been reset to " +
-                $"{subscription.RemainingVisits} visits.";
+            TempData["SuccessMessage"] =
+                "Member visits have been reset successfully.";
 
-            return RedirectToAction(
-                nameof(CheckIn));
+            return RedirectToAction(nameof(CheckIn));
         }
 
-        [HttpGet]
-        public async Task<IActionResult> SearchMember(
-            string? phone)
-        {
-            if (string.IsNullOrWhiteSpace(phone))
-                return View(new List<Member>());
+        // ============================================================
+        // STAFF - SEARCH MEMBER
+        // ============================================================
 
-            var members =
-                await _context.Members
-                    .Include(m => m.User)
-                    .Include(m => m.Plan)
-                    .Where(m =>
-                        m.Phone.Contains(phone))
-                    .OrderBy(m => m.FullName)
-                    .Take(20)
-                    .ToListAsync();
+        [Authorize(Roles = "Admin,Staff")]
+        [HttpGet]
+        public async Task<IActionResult> SearchMember(string phone)
+        {
+            phone = phone?.Trim() ?? string.Empty;
+
+            var members = await _context.Members
+                .Include(m => m.User)
+                .Include(m => m.Plan)
+                .Where(m => string.IsNullOrEmpty(phone) ||
+                            m.Phone.Contains(phone))
+                .OrderBy(m => m.FullName)
+                .Take(20)
+                .ToListAsync();
 
             return View(members);
         }
     }
-
 }

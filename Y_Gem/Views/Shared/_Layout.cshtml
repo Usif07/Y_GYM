@@ -4,10 +4,12 @@
 @inject UserManager<ApplicationUser> UserManager
 
 <!DOCTYPE html>
+
 <html lang="en" dir="ltr">
 
 <head>
 
+    
     <meta charset="utf-8" />
 
     <meta name="viewport"
@@ -59,17 +61,24 @@
     <link rel="stylesheet"
           href="~/css/fitness-gym.css" />
 
+    <!-- ========================================= -->
+    <!-- GYM AI Chatbot -->
+    <!-- ========================================= -->
+
+    <link rel="stylesheet"
+          href="~/css/chatbot.css" />
+
 
     @await RenderSectionAsync(
         "Styles",
         required: false)
+    
 
 </head>
 
-
 <body>
 
-
+    
     <!-- ========================================= -->
     <!-- Preloader -->
     <!-- ========================================= -->
@@ -1433,6 +1442,7 @@
                         <p class="mb-0">
 
                             © @DateTime.Now.Year FITNESS GYM -
+
                             All Rights Reserved
 
                         </p>
@@ -1494,10 +1504,8 @@
 
     <script src="~/js/jquery-3.3.1.min.js"></script>
 
-   
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-
 
 
     <script src="~/js/jquery.magnific-popup.min.js"></script>
@@ -1516,6 +1524,15 @@
     @await RenderSectionAsync(
         "Scripts",
         required: false)
+
+
+    <!-- ========================================= -->
+    <!-- GYM AI Chatbot -->
+    <!-- ========================================= -->
+    @await Html.PartialAsync("_ChatbotWidget")
+
+    <script src="~/js/chatbot.js"></script>
+    
 
 </body>
 
