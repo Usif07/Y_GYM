@@ -1,7 +1,8 @@
-﻿@model IEnumerable<Y_GYM.Models.Coach>
+﻿
+@model Y_GYM.ViewModels.AdminDashboardViewModel
 
 @{
-    ViewData["Title"] = "Our Trainers";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
 <section class="gym-page">
@@ -12,101 +13,476 @@
         <div class="gym-page-header">
 
             <span class="page-label">
-                OUR TEAM
+                FITNESS GYM ADMIN
             </span>
 
             <h1>
-                Our Trainers
+                Admin Dashboard
             </h1>
 
             <p>
-                Meet our professional trainers and explore their specialties.
+                Manage gym administration, users, staff and system configuration.
             </p>
 
         </div>
 
 
-        <!-- Trainers -->
-        <div class="row g-4">
+        <!-- Main Statistics -->
+        <div class="row g-4 mb-4">
 
-            @if (Model != null && Model.Any())
-            {
-                foreach (var coach in Model)
-                {
-                    <div class="col-xl-4 col-md-6">
+            <!-- Members -->
+            <div class="col-xl-3 col-md-6">
 
-                        <div class="admin-dashboard-card h-100">
+                <div class="admin-stat-card">
 
-                            <div class="admin-card-heading">
-
-                                <div>
-
-                                    <span>
-                                        TRAINER
-                                    </span>
-
-                                    <h3>
-                                        @coach.User?.FullName
-                                    </h3>
-
-                                </div>
-
-                                <i class="fa fa-user-md"></i>
-
-                            </div>
-
-
-                            <div class="mt-3">
-
-                                <p class="mb-2">
-                                    <strong>
-                                        Specialty
-                                    </strong>
-                                </p>
-
-                                <p class="text-white-50 mb-4">
-                                    @coach.CoachSpecialty
-                                </p>
-
-
-                                <a asp-controller="Coach"
-                                   asp-action="Details"
-                                   asp-route-id="@coach.Id"
-                                   class="btn btn-outline-light btn-sm">
-
-                                    View Profile
-
-                                    <i class="fa fa-arrow-right ms-2"></i>
-
-                                </a>
-
-                            </div>
-
-                        </div>
-
+                    <div class="admin-stat-icon">
+                        <i class="fa fa-users"></i>
                     </div>
-                }
-            }
-            else
-            {
-                <div class="col-12">
 
-                    <div class="admin-dashboard-card text-center">
+                    <div>
 
-                        <i class="fa fa-users fa-2x mb-3"></i>
+                        <span class="admin-stat-label">
+                            MEMBERS
+                        </span>
 
                         <h3>
-                            No Trainers Available
+                            @Model.TotalMembers
                         </h3>
 
-                        <p class="text-white-50 mb-0">
-                            Trainer information will appear here once trainers are added.
-                        </p>
+                        <span class="admin-stat-description">
+                            Registered members
+                        </span>
 
                     </div>
 
                 </div>
-            }
+
+            </div>
+
+
+            <!-- Coaches -->
+            <div class="col-xl-3 col-md-6">
+
+                <div class="admin-stat-card">
+
+                    <div class="admin-stat-icon">
+                        <i class="fa fa-user-md"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="admin-stat-label">
+                            COACHES
+                        </span>
+
+                        <h3>
+                            @Model.TotalCoaches
+                        </h3>
+
+                        <span class="admin-stat-description">
+                            Registered trainers
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Staff -->
+            <div class="col-xl-3 col-md-6">
+
+                <div class="admin-stat-card">
+
+                    <div class="admin-stat-icon">
+                        <i class="fa fa-id-badge"></i>
+                    </div>
+
+                    <div>
+
+                        <span class="admin-stat-label">
+                            STAFF
+                        </span>
+
+                        <h3>
+                            @Model.TotalStaff
+                        </h3>
+
+                        <span class="admin-stat-description">
+                            Gym staff members
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Users card removed -->
+
+        </div>
+
+
+        <!-- Membership / Revenue -->
+        <div class="row g-4 mb-4">
+
+            <!-- Active Subscriptions -->
+            <div class="col-lg-4">
+
+                <div class="admin-dashboard-card h-100">
+
+                    <div class="admin-card-heading">
+
+                        <div>
+
+                            <span>
+                                MEMBERSHIP
+                            </span>
+
+                            <h3>
+                                Active Subscriptions
+                            </h3>
+
+                        </div>
+
+                        <i class="fa fa-id-card"></i>
+
+                    </div>
+
+                    <div class="admin-big-number">
+                        @Model.ActiveSubscriptions
+                    </div>
+
+                    <p>
+                        Active memberships currently running.
+                    </p>
+
+                    <a asp-controller="Subscription"
+                       asp-action="Index"
+                       class="btn btn-outline-light btn-sm">
+
+                        Manage Subscriptions
+
+                        <i class="fa fa-arrow-right ms-2"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Revenue -->
+            <div class="col-lg-4">
+
+                <div class="admin-dashboard-card h-100">
+
+                    <div class="admin-card-heading">
+
+                        <div>
+
+                            <span>
+                                REVENUE
+                            </span>
+
+                            <h3>
+                                Total Payments
+                            </h3>
+
+                        </div>
+
+                        <i class="fa fa-money"></i>
+
+                    </div>
+
+                    <div class="admin-big-number">
+
+                        @Model.TotalRevenue.ToString("N2")
+
+                        <small>
+                            EGP
+                        </small>
+
+                    </div>
+
+                    <p>
+                        Total recorded payment value.
+                    </p>
+
+                    <a asp-controller="Payment"
+                       asp-action="Index"
+                       class="btn btn-outline-light btn-sm">
+
+                        Manage Payments
+
+                        <i class="fa fa-arrow-right ms-2"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Classes -->
+            <div class="col-lg-4">
+
+                <div class="admin-dashboard-card h-100">
+
+                    <div class="admin-card-heading">
+
+                        <div>
+
+                            <span>
+                                CLASSES
+                            </span>
+
+                            <h3>
+                                Available Classes
+                            </h3>
+
+                        </div>
+
+                        <i class="fa fa-calendar"></i>
+
+                    </div>
+
+                    <div class="admin-big-number">
+                        @Model.TotalClasses
+                    </div>
+
+                    <p>
+                        Classes configured in the gym system.
+                    </p>
+
+                    <a asp-controller="Class"
+                       asp-action="Index"
+                       class="btn btn-outline-light btn-sm">
+
+                        Manage Classes
+
+                        <i class="fa fa-arrow-right ms-2"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Staff Access -->
+        <div class="admin-dashboard-card mb-4">
+
+            <div class="admin-section-heading">
+
+                <div>
+
+                    <span>
+                        STAFF MANAGEMENT
+                    </span>
+
+                    <h3>
+                        Staff Operations
+                    </h3>
+
+                </div>
+
+                <i class="fa fa-cogs"></i>
+
+            </div>
+
+
+            <div class="row g-4">
+
+                <div class="col-lg-8">
+
+                    <p class="text-white-50 mb-0">
+
+                        Open the Staff Dashboard to manage members,
+                        registrations, payments and daily gym operations.
+
+                    </p>
+
+                </div>
+
+
+                <div class="col-lg-4 d-flex align-items-center justify-content-lg-end">
+
+                    <a asp-controller="Staff"
+                       asp-action="Index"
+                       class="btn primary-btn gym-btn">
+
+                        <i class="fa fa-tachometer me-2"></i>
+
+                        Open Staff Dashboard
+
+                        <i class="fa fa-arrow-right ms-2"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Management -->
+        <div class="admin-dashboard-card">
+
+            <div class="admin-section-heading">
+
+                <div>
+
+                    <span>
+                        ADMINISTRATION
+                    </span>
+
+                    <h3>
+                        System Management
+                    </h3>
+
+                </div>
+
+            </div>
+
+
+            <div class="row g-3">
+
+                <!-- Membership Plans -->
+                <div class="col-lg-3 col-md-6">
+
+                    <a asp-controller="MembershipPlans"
+                       asp-action="Index"
+                       class="admin-action-card">
+
+                        <i class="fa fa-list"></i>
+
+                        <div>
+
+                            <strong>
+                                Membership Plans
+                            </strong>
+
+                            <span>
+                                @Model.TotalMembershipPlans plans
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- Classes -->
+                <div class="col-lg-3 col-md-6">
+
+                    <a asp-controller="Class"
+                       asp-action="Index"
+                       class="admin-action-card">
+
+                        <i class="fa fa-calendar"></i>
+
+                        <div>
+
+                            <strong>
+                                Classes
+                            </strong>
+
+                            <span>
+                                @Model.TotalClasses classes
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- Add Administrator -->
+                <div class="col-lg-3 col-md-6">
+
+                    <a asp-controller="Admin"
+                       asp-action="Create"
+                       class="admin-action-card">
+
+                        <i class="fa fa-user-plus"></i>
+
+                        <div>
+
+                            <strong>
+                                Add Administrator
+                            </strong>
+
+                            <span>
+                                Create admin account
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- Staff Management -->
+                <div class="col-lg-3 col-md-6">
+
+                    <a asp-controller="Staff"
+                       asp-action="Manage"
+                       class="admin-action-card">
+
+                        <i class="fa fa-id-badge"></i>
+
+                        <div>
+
+                            <strong>
+                                Staff Management
+                            </strong>
+
+                            <span>
+                                Manage staff accounts
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+
+                <!-- Trainer Management -->
+                <div class="col-lg-3 col-md-6">
+
+                    <a asp-controller="Coach"
+                       asp-action="Index"
+                       class="admin-action-card">
+
+                        <i class="fa fa-user-md"></i>
+
+                        <div>
+
+                            <strong>
+                                Trainer Management
+                            </strong>
+
+                            <span>
+                                Manage trainers
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                </div>
+
+            </div>
 
         </div>
 
